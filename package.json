@@ -18,6 +18,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
     "jsonwebtoken": "^9.0.1",
     "lottie-react": "^2.4.0",
     "material-icons": "^1.13.9",
