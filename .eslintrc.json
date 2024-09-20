@@ -1,0 +1,13 @@
+{
+  "extends": ["next", "prettier", "next/core-web-vitals", "eslint:recommended"],
+  "globals": {
+    "React": "readonly"
+  },
+  // 0: Turn off rule. Will never bug you about unused variables again
+  // 1: Warning.       Turn the rule on as a warning (doesn’t affect exit code)
+  // 2: Error.         Turn the rule on as an error (exit code will be 1)
+
+  "rules": {
+    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+  }
+}
