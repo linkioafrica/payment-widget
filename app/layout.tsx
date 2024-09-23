@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./fonts.css";
+import { PaymentLinkMerchantProvider } from "@/contexts/PaymentLinkMerchantContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          <PaymentLinkMerchantProvider>{children}</PaymentLinkMerchantProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

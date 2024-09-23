@@ -9,11 +9,11 @@ export const Currency = [
     name: "BRL",
     image: "/assets/images/flags/brazil.svg",
   },
-  {
-    id: 2,
-    name: "CAD",
-    image: "/assets/images/flags/canada.svg",
-  },
+  // {
+  //   id: 2,
+  //   name: "CAD",
+  //   image: "/assets/images/flags/canada.svg",
+  // },
   {
     id: 3,
     name: "USD",
