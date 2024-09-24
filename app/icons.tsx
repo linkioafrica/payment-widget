@@ -118,7 +118,7 @@ export const Icons = {
       <path
         d="M13.5781 0.741457L7.47779 6.8418L1.37745 0.741457"
         stroke="currentColor"
-        stroke-width="1.43537"
+        strokeWidth="1.43537"
       />
     </svg>
   ),
@@ -298,7 +298,7 @@ export const Icons = {
         x2="68.096"
         y2="67.689"
         stroke="currentColor"
-        stroke-width="4"
+        strokeWidth="4"
       />
     </svg>
   ),
