@@ -17,7 +17,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LINK Checkout",
+  title: "LINK Payment Checkout",
   description: "Merchant checkout page for LINK",
 };
 
