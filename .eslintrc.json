@@ -8,6 +8,7 @@
   // 2: Error.         Turn the rule on as an error (exit code will be 1)
 
   "rules": {
+    "react/no-unescaped-entities": "off",
     "no-unused-vars": [0, { "args": "after-used", "argsIgnorePattern": "^_" }]
   }
 }
