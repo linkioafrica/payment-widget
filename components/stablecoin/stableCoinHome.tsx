@@ -130,7 +130,10 @@ export const StableCoinHome = () => {
             </div>
             <div className="w-full flex flex-col gap-6 mt-14">
               {Wallets.map((wallet) => (
-                <div className="w-full flex items-center justify-between ">
+                <div
+                  key={wallet.id}
+                  className="w-full flex items-center justify-between "
+                >
                   <div className="flex items-center gap-2">
                     <Image src={wallet.image} alt="" width={40} height={40} />
                     <span className="text-lg">{wallet.name}</span>

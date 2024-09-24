@@ -33,6 +33,7 @@ export const CurrencyDropDown = () => {
           <div className="absolute left-0 w-full -bottom-1 pt-1 drop-shadow-xl z-10 border-[0.8px] dark:bg-[#101113] dark:border-[#242425] border-[#E2E3E7] translate-y-full bg-white max-h-[200px] overflow-y-auto rounded-md">
             {Currency.map((cur) => (
               <div
+                key={cur.id} // Assuming each currency has a unique 'code' property
                 className="flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-2 px-2 gap-2 text-black cursor-pointer hover:bg-[#a6cbfe50]"
                 onClick={() => {
                   setCurrency(cur);
