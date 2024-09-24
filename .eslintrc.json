@@ -8,6 +8,6 @@
   // 2: Error.         Turn the rule on as an error (exit code will be 1)
 
   "rules": {
-    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+    "no-unused-vars": [0, { "args": "after-used", "argsIgnorePattern": "^_" }]
   }
 }
