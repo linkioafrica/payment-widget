@@ -58,13 +58,11 @@ export default function Home() {
     }
   };
 
- 
-
   return (
     <div
       className={`w-full min-h-screen bg-black flex items-center justify-center py-20 `}
     >
-      <div className="w-[950px] flex font-sora">
+      <div className="w-[950px] flex ">
         {/* Left Panel Pay With */}
         <div className="w-[350px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
           <div className="flex flex-col w-full gap-8 px-10 ">

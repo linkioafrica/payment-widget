@@ -1,24 +1,16 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Sora } from "next/font/google";
+
 import "./globals.css";
-import "./fonts.css";
+
 import { PaymentLinkMerchantProvider } from "@/contexts/PaymentLinkMerchantContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const sora = Sora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LINK Payment Checkout",
-  description: "Merchant checkout page for LINK",
+  title: "Checkout",
+  description: "Merchant checkout",
 };
 
 export default function RootLayout({
@@ -28,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${sora.className} antialiased`}>
         <ThemeProvider>
           <PaymentLinkMerchantProvider>{children}</PaymentLinkMerchantProvider>
         </ThemeProvider>
