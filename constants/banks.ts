@@ -24,7 +24,6 @@ export const AllCurrencyBanks = [
         value: "120001",
         image:
           "https://res.cloudinary.com/dqw0lwkil/image/upload/v1703080001/LINK/Bank_List/9bank_c0jqji.png",
-      
       },
       {
         label: "Access Bank",

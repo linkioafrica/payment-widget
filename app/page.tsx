@@ -62,14 +62,14 @@ export default function Home() {
     <div
       className={`w-full min-h-screen bg-black flex items-center justify-center py-20 `}
     >
-      <div className="w-[950px] flex ">
+      <div className="w-[750px] h-[600px] flex ">
         {/* Left Panel Pay With */}
-        <div className="w-[350px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
-          <div className="flex flex-col w-full gap-8 px-10 ">
+        <div className="w-[270px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
+          <div className="flex flex-col w-full gap-6 px-5">
             <h1 className="text-white font-medium text-xl">PAY WITH</h1>
-            <div className="flex flex-col w-full gap-4">
+            <div className="flex flex-col w-full gap-3">
               <button
-                className={`w-full text-start  hover:bg-[#4f4f4f] py-4 px-6 text-lg rounded-full flex gap-3 items-center  ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+                className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
                 onClick={() => {
                   setPaywith("transfer");
                   setIsConfirming(false);
@@ -80,7 +80,7 @@ export default function Home() {
                 Transfer
               </button>
               <button
-                className={`w-full text-start  hover:bg-[#4f4f4f] py-4 px-6 text-lg rounded-full flex gap-3 items-center  ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+                className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
                 onClick={() => {
                   setPaywith("bank");
                   setIsConfirming(false);
@@ -90,7 +90,7 @@ export default function Home() {
                 <i>{Icons.bank}</i>
                 Bank
               </button>
-              <button className="w-full  text-start   py-4 px-6 text-lg rounded-full cursor-default flex gap-3 items-center text-white">
+              <button className="w-full  text-start  py-3 px-6  rounded-full cursor-default flex gap-2 items-center text-white">
                 <i>{Icons.card}</i>
                 Card
                 <Tag
@@ -100,7 +100,7 @@ export default function Home() {
                 ></Tag>
               </button>
               <button
-                className={`w-full text-start  hover:bg-[#4f4f4f] py-4 px-6 text-lg rounded-full flex gap-3 items-center  ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+                className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
                 onClick={() => {
                   setPaywith("stablecoin");
                   setIsConfirming(false);
@@ -119,16 +119,16 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="border-t flex flex-col px-10 border-[#888888] py-10 gap-8">
+          <div className="border-t flex flex-col px-5 border-[#888888] py-10 gap-4">
             <div className="flex items-center gap-3">
               <i className="text-[#9F9F9F]">{Icons.info}</i>
-              <span className="text-[#9F9F9F] text-sm">
+              <span className="text-[#9F9F9F] text-xs">
                 Available methods change according to currency.
               </span>
             </div>
             <div className="flex items-center gap-3">
               <i className="text-[#9F9F9F]">{Icons.info}</i>
-              <span className="text-[#9F9F9F] text-sm">
+              <span className="text-[#9F9F9F] text-xs">
                 Available methods change according to currency.
               </span>
             </div>

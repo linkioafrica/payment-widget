@@ -18,7 +18,7 @@ export const SearchDropDown = ({
       >
         <input
           type="text"
-          className="w-full outline-none text-lg px-3 py-4 rounded-lg bg-[#F3F3F3] dark:bg-[#141415] dark:text-white"
+          className="w-full outline-none  px-3 py-3 rounded-lg bg-[#F3F3F3] dark:bg-[#141415] dark:text-white"
           placeholder={placeholder}
           value={searchValue}
           onChange={(change) => setSearchValue(change.target.value)}
@@ -45,7 +45,7 @@ export const SearchDropDown = ({
               .map((data: any, index: number) => (
                 <span
                   key={index}
-                  className="py-2 px-6 hover:bg-[#E2E3E7] select-none cursor-pointer dark:text-[#F9F9F9] dark:hover:bg-[#282828]"
+                  className="py-2 px-3 hover:bg-[#E2E3E7] select-none cursor-pointer dark:text-[#F9F9F9] dark:hover:bg-[#282828]"
                   onClick={() => {
                     setSearchValue(data[dropDownDataKey]);
                     setIsActive(false);

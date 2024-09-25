@@ -10,12 +10,12 @@ export const PayWithModal = ({ children }: any) => {
     usePaymentLinkMerchantContext();
   const { theme, toggleTheme } = useTheme();
   return (
-    <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-10 pb-6 flex-col ">
+    <div className="flex-grow bg-white dark:bg-[#101113] px-6 pt-6 pb-3 flex-col relative ">
       <div
         className={`flex items-start ${isConfirming || isSuccessfull ? "justify-end" : "justify-between"}`}
       >
         {isConfirming || isSuccessfull ? null : (
-          <h2 className="text-xl text-[#696F79] font-medium">Akarabox</h2>
+          <h2 className="text-lg text-[#696F79] font-medium">Akarabox</h2>
         )}
         <div className="flex gap-4">
           {isConfirming || isSuccessfull ? null : paywith == "stablecoin" ? (
@@ -31,7 +31,19 @@ export const PayWithModal = ({ children }: any) => {
           </button>
         </div>
       </div>
+      <div className="w-full flex gap-2 mt-3">
+        <span className="text-xl text-black dark:text-white">
+          {isConfirming || isSuccessfull ? "Amount you sent" : "Pay"}
+        </span>
+        <span className="text-xl text-[#0259D6]  dark:text-[#4893FF] font-semibold">
+          USD 5,000
+        </span>
+      </div>
+      <hr className="mt-5 dark:border-[#242425]" />
       {children}
+      <div className="w-full flex items-center justify-center absolute bottom-6 left-0">
+        <span className="dark:text-white">Powered by LINK</span>
+      </div>
     </div>
   );
 };

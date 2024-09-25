@@ -7,8 +7,8 @@ export const CircularLoader = ({ classes }: any) => {
       <Image
         src={"/assets/icons/spinner.png"}
         alt="Plaid Icon"
-        width={150}
-        height={150}
+        width={120}
+        height={120}
       />
     </div>
   );
