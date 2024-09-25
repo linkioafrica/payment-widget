@@ -24,6 +24,7 @@ export const AllCurrencyBanks = [
         value: "120001",
         image:
           "https://res.cloudinary.com/dqw0lwkil/image/upload/v1703080001/LINK/Bank_List/9bank_c0jqji.png",
+      
       },
       {
         label: "Access Bank",
@@ -521,21 +522,7 @@ export const AllVendorList = [
       },
     ],
   },
-  // {
-  //   currency: "IDR",
-  //   banks: [
-  //     {
-  //       venderName: "Rupiah Token ke LINK Technology Limited",
-  //       vendorNumber: "1236260109020137",
-  //       vendorBank: "Bank Rakyat Indonesia (BRI)",
-  //     },
-  //     {
-  //       venderName: "Rupiah Token ke LINK Technology Limited",
-  //       vendorNumber: "8889940109020137",
-  //       vendorBank: "Bank Mandiri",
-  //     },
-  //   ],
-  // },
+
   {
     currency: "NGN",
     banks: [

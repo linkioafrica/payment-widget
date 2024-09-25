@@ -20,12 +20,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       document.documentElement.classList.add(storedTheme);
     } else {
       // Set default theme based on system preference
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      const defaultTheme = prefersDark ? "dark" : "light";
-      setTheme(defaultTheme);
-      document.documentElement.classList.add(defaultTheme);
+      // const prefersDark = window.matchMedia(
+      //   "(prefers-color-scheme: dark)"
+      // ).matches;
+      // const defaultTheme = prefersDark ? "dark" : "light";
+      setTheme("light");
+      document.documentElement.classList.add("light");
     }
   }, []);
 

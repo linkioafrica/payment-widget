@@ -34,7 +34,7 @@ export const BankNGN = () => {
         <button className="w-full text-white bg-[#0E70FD] text-xl rounded-lg text-center  py-4">
           Next
         </button>
-        <span className="text-lg">Powered by LINK</span>
+        <span className="text-lg dark:text-[#F9F9F9]">Powered by LINK</span>
       </div>
     </div>
   );

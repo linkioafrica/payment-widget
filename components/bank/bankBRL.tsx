@@ -13,7 +13,7 @@ export const BankBRL = () => {
           USD 5,000
         </span>
       </div>
-      <hr className="mt-5" />
+      <hr className="mt-5 dark:border-[#242425]" />
 
       <div className="w-full flex  flex-col items-center justify-center gap-20 mt-20">
         <div className="flex items-center flex-col w-full gap-6">
