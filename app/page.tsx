@@ -36,7 +36,6 @@ export default function Home() {
   } = usePaymentLinkMerchantContext();
 
   const renderContent = () => {
-    console.log(currency);
     if (isConfirming) {
       return <LoadingState></LoadingState>;
     } else if (isSuccessfull) {
@@ -50,7 +49,6 @@ export default function Home() {
       let selectedCurrency = AllCurrencyBanks.find(
         (bankCurrency) => bankCurrency.currency == currency.currency
       );
-      console.log(selectedCurrency);
       return selectedCurrency?.component;
     } else if (paywith == "stablecoin") {
       const screen =

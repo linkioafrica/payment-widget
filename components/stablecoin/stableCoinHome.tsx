@@ -28,15 +28,15 @@ export const StableCoinHome = () => {
   return (
     <>
       <div>
-        <div className="w-full flex items-center justify-center mt-8">
-          <span className="text-center dark:text-[#F9F9F9] text-black text-[15px] font-medium">
+        <div className="w-full flex items-center justify-center mt-3">
+          <span className="text-center dark:text-[#F9F9F9] text-black text-[13px] font-medium">
             Select how you would like to pay
           </span>
         </div>
 
-        <div className="w-full min-h-[200px]  mt-5  flex flex-col gap-3">
+        <div className="w-full min-h-[170px]  mt-3  flex flex-col gap-3">
           <label
-            className={`flex flex-row h-[60px] px-4 justify-between border-[0.8px] items-center  border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
+            className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center  border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
               selectedMethod === "qrCode"
                 ? "border-black dark:border-[#9F9F9F]"
                 : ""
@@ -44,7 +44,7 @@ export const StableCoinHome = () => {
             onClick={() => setSelectedMethod("qrCode")}
           >
             <div className="flex items-center gap-2 ">
-              <div className="h-8 w-8 flex items-center justify-center  rounded-full bg-transparent dark:bg-[#ABABAB]">
+              <div className="h-7 w-7 flex items-center justify-center  rounded-full bg-transparent dark:bg-[#ABABAB]">
                 <i className="text-black ">{Icons.qrCodeIcon}</i>
               </div>
               <span className="font-medium text-sm ">Pay with QR code</span>
@@ -57,7 +57,7 @@ export const StableCoinHome = () => {
             />
           </label>
           <label
-            className={`flex flex-row h-[60px] px-4 justify-between border-[0.8px] items-center  border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
+            className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center  border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
               selectedMethod === "wallet"
                 ? "border-black dark:border-[#9F9F9F]"
                 : ""
@@ -65,7 +65,7 @@ export const StableCoinHome = () => {
             onClick={() => setSelectedMethod("wallet")}
           >
             <div className="flex items-center gap-2 ">
-              <div className="h-8 w-8 flex items-center justify-center  rounded-full bg-transparent dark:bg-[#ABABAB]">
+              <div className="h-7 w-7 flex items-center justify-center  rounded-full bg-transparent dark:bg-[#ABABAB]">
                 <i className="text-black ">{Icons.walletIcon}</i>
               </div>
               <div className="flex flex-col">
@@ -85,7 +85,7 @@ export const StableCoinHome = () => {
         </div>
         <div className="w-full flex flex-col items-center gap-8">
           <button
-            className="w-full text-white bg-[#0E70FD]  rounded-lg text-center  py-2"
+            className="w-full text-white bg-[#0E70FD] text-sm rounded-lg text-center  py-2"
             onClick={
               selectedMethod == "qrCode"
                 ? () => {

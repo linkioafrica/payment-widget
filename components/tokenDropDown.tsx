@@ -14,8 +14,8 @@ export const TokensDropDown = () => {
         className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-1 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
         onClick={() => setDropDown(!dropDown)}
       >
-        <Image src={token.image} alt={"flag"} width={20} height={20} priority />
-        <span className="font-semibold text-xs">{token.name}</span>
+        <Image src={token.image} alt={"flag"} width={18} height={18} priority />
+        <span className="font-medium text-[11px]">{token.name}</span>
         <i>{Icons.chevron_down}</i>
       </div>
       {dropDown && (
@@ -39,11 +39,11 @@ export const TokensDropDown = () => {
                 <Image
                   src={tok.image}
                   alt={`${tok.name} icon`}
-                  width={22}
-                  height={22}
+                  width={20}
+                  height={20}
                   priority
                 />
-                <span className="font-semibold text-xs">{tok.name}</span>
+                <span className="font-semibold text-[10px]">{tok.name}</span>
               </div>
             ))}
           </div>

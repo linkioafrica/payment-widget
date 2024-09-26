@@ -18,11 +18,11 @@ export const CurrencyDropDown = () => {
         <Image
           src={currency.flag}
           alt={"flag"}
-          width={18}
-          height={18}
+          width={17}
+          height={17}
           priority
         />
-        <span className="font-semibold text-xs">{currency.currency}</span>
+        <span className="font-semibold text-[11px]">{currency.currency}</span>
         <i>{Icons.chevron_down}</i>
       </div>
       {dropDown && (
@@ -58,11 +58,11 @@ export const CurrencyDropDown = () => {
                   <Image
                     src={currency.flag}
                     alt={`${currency.label} flag`}
-                    width={20}
-                    height={20}
+                    width={18}
+                    height={18}
                     priority
                   />
-                  <span className="font-semibold text-xs">
+                  <span className="font-semibold text-[11px]">
                     {currency.currency}
                   </span>
                 </div>

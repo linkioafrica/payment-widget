@@ -35,8 +35,8 @@ export const LoadingState = () => {
 
   return (
     <div>
-      <div className="w-full mt-8 flex items-center flex-col">
-        <span className="font-semibold text-[15px] max-w-[450px] text-center text-black dark:text-[#F9F9F9]">
+      <div className="w-full mt-3 flex items-center flex-col">
+        <span className="font-semibold text-[13px] max-w-[450px] text-center text-black dark:text-[#F9F9F9]">
           We’re waiting to confirm your payment. This can take a few minutes...
         </span>
         <CircularLoader classes="mt-10"></CircularLoader>
