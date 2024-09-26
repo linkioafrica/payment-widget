@@ -29,20 +29,22 @@ export const TransferUSD = () => {
   return (
     <div>
       <div className="w-full flex items-center justify-center mt-5">
-        <span className="text-center dark:text-white text-black text-[17px] font-medium">
+        <span className="text-center dark:text-white text-black text-[15px] font-medium">
           Transfer USD 5,000 to the details below
         </span>
       </div>
-      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] px-3 py-5 flex flex-col gap-3 rounded-md mt-5">
+      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] px-3 py-3 flex flex-col gap-2 text-sm rounded-md mt-5">
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
             Account holder
           </span>
-          <span className="dark:text-white">LINK FINANCIAL INC</span>
+          <span className="dark:text-white text-black">LINK FINANCIAL INC</span>
         </div>
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">Bank</span>
-          <span className="dark:text-white">Choice Financial Group</span>
+          <span className="dark:text-white text-black">
+            Choice Financial Group
+          </span>
         </div>
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
@@ -57,7 +59,7 @@ export const TransferUSD = () => {
           <span className="text-[#696F79] dark:text-[#888888]">
             Account type
           </span>
-          <span className="dark:text-white">Checking</span>
+          <span className="dark:text-white text-black">Checking</span>
         </div>
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
@@ -72,11 +74,11 @@ export const TransferUSD = () => {
       <div className="flex flex-col mt-4 items-center gap-2">
         <div className="text-black flex items-center gap-1 dark:text-[#9F9F9F]">
           <i>{Icons.info}</i>
-          <span className="text-xs">
+          <span className="text-[11px]">
             Use this account for this transaction only
           </span>
         </div>
-        <span className="text-sm text-[#696F79]">
+        <span className="text-[#696F79] text-xs">
           Transaction expires in{" "}
           <span className="text-[#0259D6] dark:text-[#4893FF]">
             {formatTime(secondsRemaining)}
@@ -85,7 +87,7 @@ export const TransferUSD = () => {
       </div>
       <div className="w-full flex flex-col items-center mt-4 gap-8">
         <button
-          className="w-full text-white bg-[#0E70FD] text-lg rounded-lg text-center py-3 dark:bg-[#0E70FD]"
+          className="w-full text-white bg-[#0E70FD] rounded-lg text-center py-2 dark:bg-[#0E70FD]"
           onClick={() => setIsConfirming(true)}
         >
           I've sent the money

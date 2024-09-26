@@ -15,7 +15,7 @@ export const TokensDropDown = () => {
         onClick={() => setDropDown(!dropDown)}
       >
         <Image src={token.image} alt={"flag"} width={20} height={20} priority />
-        <span className="font-semibold">{token.name}</span>
+        <span className="font-semibold text-xs">{token.name}</span>
         <i>{Icons.chevron_down}</i>
       </div>
       {dropDown && (
@@ -28,7 +28,7 @@ export const TokensDropDown = () => {
             {Tokens.map((tok) => (
               <div
                 key={tok.id} // Assuming each currency has a unique 'code' property
-                className="flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-2 px-2 gap-2 text-black cursor-pointer hover:bg-[#a6cbfe50]"
+                className="flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-1 px-2 gap-2 text-black cursor-pointer hover:bg-[#a6cbfe50]"
                 onClick={() => {
                   setToken(tok);
                   setDropDown(false);
@@ -39,11 +39,11 @@ export const TokensDropDown = () => {
                 <Image
                   src={tok.image}
                   alt={`${tok.name} icon`}
-                  width={26}
-                  height={26}
+                  width={22}
+                  height={22}
                   priority
                 />
-                <span className="font-semibold">{tok.name}</span>
+                <span className="font-semibold text-xs">{tok.name}</span>
               </div>
             ))}
           </div>

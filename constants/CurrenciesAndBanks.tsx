@@ -1,3 +1,11 @@
+import React from "react";
+import { TransferBRL } from "@/components/transfer/transferBRL";
+import { TransferNGN } from "@/components/transfer/transferNGN";
+import { TransferUSD } from "@/components/transfer/transferUSD";
+import { BankNGN } from "@/components/bank/bankNGN";
+import { BankUSD } from "@/components/bank/bankUSD";
+import { BankBRL } from "@/components/bank/bankBRL";
+
 export const Banks = [
   {
     id: 0,
@@ -14,6 +22,156 @@ export const Banks = [
 ];
 
 // LIST OF BANKS FOR EACH CURRENCY(THOSE WE ARE USING NOW AND LATER)
+
+// LIST OF FIAT CURRENCIES (THOSE WE ARE USING NOW AND LATER)
+export const fiatCurrency = [
+  {
+    href: "/",
+    key: "ars",
+    label: "ars",
+    currency: "ARS",
+    flag: "/assets/svg/fiat/ars.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "aud",
+    label: "aud",
+    currency: "AUD",
+    flag: "/assets/svg/fiat/aud.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "brl",
+    label: "brl",
+    currency: "BRL",
+    flag: "/assets/svg/fiat/brl.svg",
+    status: "available",
+  },
+  {
+    href: "/",
+    key: "cad",
+    label: "cad",
+    currency: "CAD",
+    flag: "/assets/svg/fiat/cad.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "chf",
+    label: "chf",
+    currency: "CHF",
+    flag: "/assets/svg/fiat/chf.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "eur",
+    label: "eur",
+    currency: "EUR",
+    flag: "/assets/svg/fiat/eur.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "gbp",
+    label: "gbp",
+    currency: "GBP",
+    flag: "/assets/svg/fiat/gbp.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "ghs",
+    label: "ghs",
+    currency: "GHS",
+    flag: "/assets/svg/fiat/ghs.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "idr",
+    label: "idr",
+    currency: "IDR",
+    flag: "/assets/svg/fiat/idr.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "isk",
+    label: "isk",
+    currency: "ISK",
+    flag: "/assets/svg/fiat/isk.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "jpy",
+    label: "jpy",
+    currency: "JPY",
+    flag: "/assets/svg/fiat/jpy.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "kes",
+    label: "kes",
+    currency: "KES",
+    flag: "/assets/svg/fiat/kes.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "ngn",
+    label: "ngn",
+    currency: "NGN",
+    flag: "/assets/svg/fiat/ngn.svg",
+    status: "available",
+  },
+  {
+    href: "/",
+    key: "nzd",
+    label: "nzd",
+    currency: "NZD",
+    flag: "/assets/svg/fiat/nzd.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "sgd",
+    label: "sgd",
+    currency: "SGD",
+    flag: "/assets/svg/fiat/sgd.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "try",
+    label: "try",
+    currency: "TRY",
+    flag: "/assets/svg/fiat/try.svg",
+    status: "unavailable",
+  },
+  {
+    href: "/",
+    key: "usd",
+    label: "usd",
+    currency: "USD",
+    flag: "/assets/svg/fiat/usd.svg",
+    status: "available",
+  },
+  {
+    href: "/",
+    key: "zar",
+    label: "zar",
+    currency: "ZAR",
+    flag: "/assets/svg/fiat/zar.svg",
+    status: "unavailable",
+  },
+];
+// LIST OF VENDOR DETAILS FOR EACH CURRENCY(THOSE WE ARE USING NOW AND LATER)
+
 export const AllCurrencyBanks = [
   {
     currency: "NGN",
@@ -251,6 +409,7 @@ export const AllCurrencyBanks = [
           "https://res.cloudinary.com/dqw0lwkil/image/upload/v1675739939/LINK/Bank_List/zenithbank_qx59ic.png",
       },
     ],
+    component: <BankNGN />,
   },
   {
     currency: "USD",
@@ -364,154 +523,15 @@ export const AllCurrencyBanks = [
           "https://res.cloudinary.com/dqw0lwkil/image/upload/v1714730125/LINK/Bank_List/USD/Santander_Bank_dembwm.svg",
       },
     ],
-  },
-];
-
-// LIST OF FIAT CURRENCIES (THOSE WE ARE USING NOW AND LATER)
-export const fiatCurrency = [
-  {
-    href: "/",
-    key: "ars",
-    label: "ars",
-    currency: "ARS",
-    flag: "/assets/svg/fiat/ars.svg",
-    status: "unavailable",
+    component: <BankUSD />,
   },
   {
-    href: "/",
-    key: "aud",
-    label: "aud",
-    currency: "AUD",
-    flag: "/assets/svg/fiat/aud.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "brl",
-    label: "brl",
     currency: "BRL",
-    flag: "/assets/svg/fiat/brl.svg",
-  },
-  {
-    href: "/",
-    key: "cad",
-    label: "cad",
-    currency: "CAD",
-    flag: "/assets/svg/fiat/cad.svg",
-  },
-  {
-    href: "/",
-    key: "chf",
-    label: "chf",
-    currency: "CHF",
-    flag: "/assets/svg/fiat/chf.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "eur",
-    label: "eur",
-    currency: "EUR",
-    flag: "/assets/svg/fiat/eur.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "gbp",
-    label: "gbp",
-    currency: "GBP",
-    flag: "/assets/svg/fiat/gbp.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "ghs",
-    label: "ghs",
-    currency: "GHS",
-    flag: "/assets/svg/fiat/ghs.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "idr",
-    label: "idr",
-    currency: "IDR",
-    flag: "/assets/svg/fiat/idr.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "isk",
-    label: "isk",
-    currency: "ISK",
-    flag: "/assets/svg/fiat/isk.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "jpy",
-    label: "jpy",
-    currency: "JPY",
-    flag: "/assets/svg/fiat/jpy.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "kes",
-    label: "kes",
-    currency: "KES",
-    flag: "/assets/svg/fiat/kes.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "ngn",
-    label: "ngn",
-    currency: "NGN",
-    flag: "/assets/svg/fiat/ngn.svg",
-  },
-  {
-    href: "/",
-    key: "nzd",
-    label: "nzd",
-    currency: "NZD",
-    flag: "/assets/svg/fiat/nzd.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "sgd",
-    label: "sgd",
-    currency: "SGD",
-    flag: "/assets/svg/fiat/sgd.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "try",
-    label: "try",
-    currency: "TRY",
-    flag: "/assets/svg/fiat/try.svg",
-    status: "unavailable",
-  },
-  {
-    href: "/",
-    key: "usd",
-    label: "usd",
-    currency: "USD",
-    flag: "/assets/svg/fiat/usd.svg",
-  },
-  {
-    href: "/",
-    key: "zar",
-    label: "zar",
-    currency: "ZAR",
-    flag: "/assets/svg/fiat/zar.svg",
-    status: "unavailable",
+    banks: [],
+    component: <BankBRL />,
   },
 ];
 
-// LIST OF VENDOR DETAILS FOR EACH CURRENCY(THOSE WE ARE USING NOW AND LATER)
 export const AllVendorList = [
   {
     currency: "BRL",
@@ -520,6 +540,7 @@ export const AllVendorList = [
         PixKey: "11754090-d0cf-4b1b-9d45-6669b695f5f3",
       },
     ],
+    component: <TransferBRL />,
   },
 
   {
@@ -556,6 +577,7 @@ export const AllVendorList = [
         vendorBank: "Providus Bank",
       },
     ],
+    component: <TransferNGN />,
   },
   {
     currency: "USD",
@@ -568,5 +590,6 @@ export const AllVendorList = [
         accountType: "Checking",
       },
     ],
+    component: <TransferUSD />,
   },
 ];

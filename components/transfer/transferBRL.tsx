@@ -9,7 +9,7 @@ export const TransferBRL = () => {
   return (
     <div>
       <div className="w-full flex items-center justify-center mt-5">
-        <span className="text-center text-black text-[17px] font-medium dark:text-[#F9F9F9]">
+        <span className="text-center text-black text-[15px] font-medium dark:text-[#F9F9F9]">
           Transfer R$ 28,350 to the PIX key below
         </span>
       </div>
@@ -24,14 +24,14 @@ export const TransferBRL = () => {
         <Image
           src={"/assets/images/qrCode/BRLTransfer.svg"}
           alt="QR code"
-          width={150}
-          height={150}
+          width={120}
+          height={120}
         />
-        <span className="text-xs text-[#696F79]  dark:text-[#888888]">
+        <span className="text-[10px] text-[#696F79]  dark:text-[#888888]">
           Scan this QR code to pay with your PIX account
         </span>
         <button
-          className="w-full text-white bg-[#0E70FD] rounded-lg text-center text-lg py-3 dark:bg-[#0E70FD]"
+          className="w-full text-white bg-[#0E70FD] rounded-lg text-center  py-2 dark:bg-[#0E70FD]"
           onClick={() => setIsConfirming(true)}
         >
           I've sent the money

@@ -18,7 +18,7 @@ export const SearchDropDown = ({
       >
         <input
           type="text"
-          className="w-full outline-none  px-3 py-3 rounded-lg bg-[#F3F3F3] dark:bg-[#141415] dark:text-white"
+          className="w-full outline-none text-sm px-3 py-2 rounded-lg bg-[#F3F3F3] dark:bg-[#141415] dark:text-white"
           placeholder={placeholder}
           value={searchValue}
           onChange={(change) => setSearchValue(change.target.value)}
@@ -29,12 +29,12 @@ export const SearchDropDown = ({
         </i>
       </div>
       {isActive && (
-        <div className="w-full absolute -bottom-1">
+        <div className="w-full absolute -bottom-1 z-10">
           <div
             className="w-screen h-screen bg-black fixed top-0 left-0 opacity-0"
             onClick={() => setIsActive(false)}
           ></div>
-          <div className="w-full white max-h-[200px] flex flex-col translate-y-full border-[0.8px] border-[#E2E3E7] bg-[#F3F4F6] rounded-lg py-2 overflow-auto shadow-lg dark:bg-[#101113] dark:border-[#242425]">
+          <div className="w-full white max-h-[200px] flex flex-col translate-y-full border-[0.8px] border-[#E2E3E7] bg-[#F3F4F6] rounded-lg py-1 overflow-auto shadow-lg dark:bg-[#101113] dark:border-[#242425]">
             {dropDownData
               .filter((data: any) => {
                 // Check if the searchValue is included in the dropdown data (case-insensitive)
@@ -45,7 +45,7 @@ export const SearchDropDown = ({
               .map((data: any, index: number) => (
                 <span
                   key={index}
-                  className="py-2 px-3 hover:bg-[#E2E3E7] select-none cursor-pointer dark:text-[#F9F9F9] dark:hover:bg-[#282828]"
+                  className="py-2 px-3 hover:bg-[#E2E3E7] select-none text-sm cursor-pointer dark:text-[#F9F9F9] text-black dark:hover:bg-[#282828]"
                   onClick={() => {
                     setSearchValue(data[dropDownDataKey]);
                     setIsActive(false);

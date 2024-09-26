@@ -10,7 +10,7 @@ export const StableQRCode = () => {
   return (
     <div>
       <div className="w-full flex items-center justify-center mt-7">
-        <span className="text-center text-black text-[17px] font-medium max-w-[350px] dark:text-[#F9F9F9]">
+        <span className="text-center text-black text-[15px] font-medium max-w-[350px] dark:text-[#F9F9F9]">
           Scan the QR code below to pay with your solana wallet
         </span>
       </div>
@@ -19,11 +19,11 @@ export const StableQRCode = () => {
         <Image
           src={"/assets/icons/qrCode.svg"}
           alt="QR code"
-          width={150}
-          height={150}
+          width={120}
+          height={120}
         />
         <button
-          className="text-sm flex items-center text-black dark:bg-[#141415] dark:text-[#F9F9F9] bg-[#F3F3F3] border-[0.7px] dark:border-[#242425] border-[#E2E3E7] px-2 py-[2px] rounded-md"
+          className="text-xs flex items-center text-black dark:bg-[#141415] dark:text-[#F9F9F9] bg-[#F3F3F3] border-[0.7px] dark:border-[#242425] border-[#E2E3E7] px-2 py-[2px] rounded-md"
           onClick={() => {
             setStablecoinPaymentMethod("");
           }}
@@ -32,7 +32,7 @@ export const StableQRCode = () => {
           Change payment method
         </button>
         <button
-          className="w-full text-white bg-[#0E70FD] text-lg rounded-lg text-center py-3"
+          className="w-full text-white bg-[#0E70FD] rounded-lg text-center py-2"
           onClick={() => setIsConfirming(true)}
         >
           I've sent the money

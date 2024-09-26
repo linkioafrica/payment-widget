@@ -1,8 +1,8 @@
 export const Icons = {
   transfer: (
     <svg
-      width="16"
-      height="16"
+      width="14"
+      height="14"
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -15,8 +15,8 @@ export const Icons = {
   ),
   bank: (
     <svg
-      width="25"
-      height="25"
+      width="20"
+      height="20"
       viewBox="0 0 31 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +29,8 @@ export const Icons = {
   ),
   card: (
     <svg
-      width="25"
-      height="25"
+      width="20"
+      height="20"
       viewBox="0 0 35 35"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -55,8 +55,8 @@ export const Icons = {
   ),
   stableCoin: (
     <svg
-      width="25"
-      height="25"
+      width="20"
+      height="20"
       viewBox="0 0 35 35"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -95,8 +95,8 @@ export const Icons = {
   ),
   info: (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -124,8 +124,8 @@ export const Icons = {
   ),
   moon: (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -138,8 +138,8 @@ export const Icons = {
   ),
   copy: (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 23 23"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -159,8 +159,8 @@ export const Icons = {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 448 512"
       fill="currentColor"
-      width={18}
-      height={18}
+      width={16}
+      height={16}
     >
       <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
     </svg>
@@ -254,8 +254,8 @@ export const Icons = {
   ),
   plaidIcon: (
     <svg
-      width="50"
-      height="50"
+      width="45"
+      height="45"
       viewBox="0 0 75 76"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -268,8 +268,8 @@ export const Icons = {
   ),
   bankIcon: (
     <svg
-      width="40"
-      height="40"
+      width="35"
+      height="35"
       viewBox="0 0 63 63"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -282,8 +282,8 @@ export const Icons = {
   ),
   bankUnavilableIcon: (
     <svg
-      width="50"
-      height="50"
+      width="45"
+      height="45"
       viewBox="0 0 70 70"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -304,8 +304,8 @@ export const Icons = {
   ),
   sunIcon: (
     <svg
-      width="20"
-      height="20"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

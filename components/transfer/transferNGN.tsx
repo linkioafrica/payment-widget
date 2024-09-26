@@ -29,20 +29,20 @@ export const TransferNGN = () => {
   return (
     <div>
       <div className="w-full flex items-center justify-center mt-5">
-        <span className="text-center text-black text-[17px] font-medium dark:text-[#F9F9F9]">
+        <span className="text-center text-black text-[15px] font-medium dark:text-[#F9F9F9]">
           Transfer NGN 8,000,000 to the details below
         </span>
       </div>
-      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] px-3 py-5 flex flex-col gap-3 rounded-md mt-5">
+      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] text-sm px-3 py-3 flex flex-col gap-2 rounded-md mt-5">
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
             Account holder
           </span>
-          <span className="dark:text-white">LINK LTD</span>
+          <span className="dark:text-white text-black">LINK LTD</span>
         </div>
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79]">Bank</span>
-          <span className="dark:text-white">Wema Bank</span>
+          <span className="dark:text-white text-black">Wema Bank</span>
         </div>
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
@@ -59,25 +59,25 @@ export const TransferNGN = () => {
           </span>
           <div className="flex items-center text-black gap-1">
             <CopyToClipboard textTobeCopied="103785631491"></CopyToClipboard>
-            <span className="dark:text-white">103785631491</span>
+            <span className="dark:text-white text-black">103785631491</span>
           </div>
         </div>
       </div>
       <div className="flex flex-col mt-5 items-center gap-3">
         <div className="text-black flex items-center gap-1 dark:text-[#9F9F9F]">
           <i>{Icons.info}</i>
-          <span className="text-xs">
+          <span className="text-[11px]">
             Use this account for this transaction only
           </span>
         </div>
-        <span className="text-[#696F79] text-sm">
+        <span className="text-[#696F79] text-xs">
           Transaction expires in{" "}
           <span className="text-[#0259D6]">{formatTime(secondsRemaining)}</span>
         </span>
       </div>
       <div className="w-full flex flex-col items-center mt-6 gap-4 ">
         <button
-          className="w-full text-white bg-[#0E70FD] dark:bg-[#0E70FD] text-lg rounded-lg text-center py-3"
+          className="w-full text-white bg-[#0E70FD] dark:bg-[#0E70FD] rounded-lg text-center py-2"
           onClick={() => {
             setIsConfirming(true);
           }}

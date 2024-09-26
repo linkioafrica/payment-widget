@@ -15,7 +15,7 @@ export const PayWithModal = ({ children }: any) => {
         className={`flex items-start ${isConfirming || isSuccessfull ? "justify-end" : "justify-between"}`}
       >
         {isConfirming || isSuccessfull ? null : (
-          <h2 className="text-lg text-[#696F79] font-medium">Akarabox</h2>
+          <h2 className="text-[#696F79] font-medium">Akarabox</h2>
         )}
         <div className="flex gap-4">
           {isConfirming || isSuccessfull ? null : paywith == "stablecoin" ? (
@@ -31,8 +31,8 @@ export const PayWithModal = ({ children }: any) => {
           </button>
         </div>
       </div>
-      <div className="w-full flex gap-2 mt-3">
-        <span className="text-xl text-black dark:text-white">
+      <div className="w-full flex gap-1 mt-1">
+        <span className="text-lg text-black dark:text-white">
           {isConfirming || isSuccessfull ? "Amount you sent" : "Pay"}
         </span>
         <span className="text-xl text-[#0259D6]  dark:text-[#4893FF] font-semibold">
@@ -42,7 +42,9 @@ export const PayWithModal = ({ children }: any) => {
       <hr className="mt-5 dark:border-[#242425]" />
       {children}
       <div className="w-full flex items-center justify-center absolute bottom-6 left-0">
-        <span className="dark:text-white">Powered by LINK</span>
+        <span className="dark:text-white text-black text-sm">
+          Powered by LINK
+        </span>
       </div>
     </div>
   );

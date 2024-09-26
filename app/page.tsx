@@ -18,6 +18,10 @@ import { PaymentSuccessfulState } from "@/components/paymentSuccessfulState";
 import { Currency } from "@/constants/currencies";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { StableQRCode } from "@/components/stablecoin/stableQRCode";
+import {
+  AllCurrencyBanks,
+  AllVendorList,
+} from "@/constants/CurrenciesAndBanks";
 export default function Home() {
   const {
     paywith,
@@ -32,42 +36,43 @@ export default function Home() {
   } = usePaymentLinkMerchantContext();
 
   const renderContent = () => {
+    console.log(currency);
     if (isConfirming) {
       return <LoadingState></LoadingState>;
     } else if (isSuccessfull) {
       return <PaymentSuccessfulState></PaymentSuccessfulState>;
-    } else if (paywith == "transfer" && currency.name == "NGN") {
-      return <TransferNGN></TransferNGN>;
-    } else if (paywith == "transfer" && currency.name == "BRL") {
-      return <TransferBRL></TransferBRL>;
-    } else if (paywith == "transfer" && currency.name == "USD") {
-      return <TransferUSD></TransferUSD>;
-    } else if (paywith == "bank" && currency.name == "USD") {
-      return <BankUSD></BankUSD>;
-    } else if (paywith == "bank" && currency.name == "BRL") {
-      return <BankBRL></BankBRL>;
-    } else if (paywith == "bank" && currency.name == "NGN") {
-      return <BankNGN></BankNGN>;
-    } else if (
-      paywith == "stablecoin" &&
-      (stablecoinPaymentMethod == "" || stablecoinPaymentMethod == "wallet")
-    ) {
-      return <StableCoinHome></StableCoinHome>;
-    } else if (paywith == "stablecoin" && stablecoinPaymentMethod == "qrCode") {
-      return <StableQRCode></StableQRCode>;
+    } else if (paywith == "transfer") {
+      let selectedVendor = AllVendorList.find(
+        (vendor) => vendor.currency == currency.currency
+      );
+      return selectedVendor?.component;
+    } else if (paywith == "bank") {
+      let selectedCurrency = AllCurrencyBanks.find(
+        (bankCurrency) => bankCurrency.currency == currency.currency
+      );
+      console.log(selectedCurrency);
+      return selectedCurrency?.component;
+    } else if (paywith == "stablecoin") {
+      const screen =
+        stablecoinPaymentMethod == "" || stablecoinPaymentMethod == "wallet" ? (
+          <StableCoinHome></StableCoinHome>
+        ) : (
+          <StableQRCode></StableQRCode>
+        );
+      return screen;
     }
   };
 
   return (
     <div
-      className={`w-full min-h-screen bg-black flex items-center justify-center py-20 `}
+      className={`w-full h-screen bg-black flex items-center justify-center `}
     >
-      <div className="w-[750px] h-[600px] flex ">
+      <div className="max-w-[700px] w-2/4 min-w-[640px] max-h-[580px] h-[90%] flex ">
         {/* Left Panel Pay With */}
-        <div className="w-[270px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
+        <div className="w-[250px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
           <div className="flex flex-col w-full gap-6 px-5">
-            <h1 className="text-white font-medium text-xl">PAY WITH</h1>
-            <div className="flex flex-col w-full gap-3">
+            <h1 className="text-white font-medium text-lg">PAY WITH</h1>
+            <div className="flex flex-col w-full gap-3 text-sm">
               <button
                 className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
                 onClick={() => {
@@ -122,13 +127,13 @@ export default function Home() {
           <div className="border-t flex flex-col px-5 border-[#888888] py-10 gap-4">
             <div className="flex items-center gap-3">
               <i className="text-[#9F9F9F]">{Icons.info}</i>
-              <span className="text-[#9F9F9F] text-xs">
+              <span className="text-[#9F9F9F] text-[11px]">
                 Available methods change according to currency.
               </span>
             </div>
             <div className="flex items-center gap-3">
               <i className="text-[#9F9F9F]">{Icons.info}</i>
-              <span className="text-[#9F9F9F] text-xs">
+              <span className="text-[#9F9F9F] text-[11px]">
                 Available methods change according to currency.
               </span>
             </div>

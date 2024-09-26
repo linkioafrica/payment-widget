@@ -2,12 +2,15 @@
 import React, { createContext, useState, useContext } from "react";
 import { Currency } from "@/constants/currencies";
 import { Tokens } from "@/constants/token";
+import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
 
 interface PaymentLinkMerchantContextType {
   paywith: string;
   setPaywith: React.Dispatch<React.SetStateAction<string>>;
-  currency: (typeof Currency)[number]; // Adjust this based on how Currency is structured
-  setCurrency: React.Dispatch<React.SetStateAction<(typeof Currency)[number]>>;
+  currency: (typeof fiatCurrency)[number]; // Adjust this based on how Currency is structured
+  setCurrency: React.Dispatch<
+    React.SetStateAction<(typeof fiatCurrency)[number]>
+  >;
   isConfirming: boolean;
   setIsConfirming: React.Dispatch<React.SetStateAction<boolean>>;
   isSuccessfull: boolean;
@@ -25,11 +28,12 @@ const PaymentLinkMerchantContext = createContext<
 export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [paywith, setPaywith] = useState("transfer");
   const [token, setToken] = useState(Tokens[0]);
-  const [currency, setCurrency] = useState(Currency[0]);
+  const [currency, setCurrency] = useState(
+    fiatCurrency.filter((currency) => currency.status == "available")[0]
+  );
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSuccessfull, setIsSuccessfull] = useState(false);
-  const [stablecoinPaymentMethod, setStablecoinPaymentMethod] =
-    useState("");
+  const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
 
   return (
     <PaymentLinkMerchantContext.Provider
