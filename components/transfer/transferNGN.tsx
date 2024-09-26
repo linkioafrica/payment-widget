@@ -33,7 +33,7 @@ export const TransferNGN = () => {
           Transfer NGN 8,000,000 to the details below
         </span>
       </div>
-      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] text-xs px-3 py-3 flex flex-col gap-[6px] rounded-md mt-3">
+      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] text-xs px-3 py-3 flex flex-col gap-[10px] rounded-md mt-3">
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
             Account holder

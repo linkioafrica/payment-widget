@@ -33,7 +33,7 @@ export const TransferUSD = () => {
           Transfer USD 5,000 to the details below
         </span>
       </div>
-      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] px-3 py-3 flex flex-col gap-[6px] text-xs rounded-md mt-3">
+      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] px-3 py-3 flex flex-col gap-[10px] text-xs rounded-md mt-3">
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
             Account holder
@@ -85,7 +85,7 @@ export const TransferUSD = () => {
           </span>
         </span>
       </div>
-      <div className="w-full flex flex-col items-center mt-4 gap-8">
+      <div className="w-full flex flex-col items-center mt-6 gap-8">
         <button
           className="w-full text-white bg-[#0E70FD] rounded-lg text-center py-2 text-sm dark:bg-[#0E70FD]"
           onClick={() => setIsConfirming(true)}

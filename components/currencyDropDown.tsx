@@ -40,7 +40,7 @@ export const CurrencyDropDown = () => {
                 <div
                   className={`flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-1 px-2 gap-2 text-black cursor-pointer ${
                     currency.status === "available"
-                      ? "hover:bg-[#a6cbfe50]"
+                      ? "hover:bg-[#EDEEF1] dark:hover:bg-[#2A2A2A]"
                       : "opacity-30"
                   }`}
                   onClick={
