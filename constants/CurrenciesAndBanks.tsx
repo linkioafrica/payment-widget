@@ -4,7 +4,7 @@ import { TransferNGN } from "@/components/transfer/transferNGN";
 import { TransferUSD } from "@/components/transfer/transferUSD";
 import { BankNGN } from "@/components/bank/bankNGN";
 import { BankUSD } from "@/components/bank/bankUSD";
-import { BankBRL } from "@/components/bank/bankBRL";
+import { MethodNotAvailable } from "@/components/bank/methodNotAvailable";
 
 export const Banks = [
   {
@@ -523,12 +523,12 @@ export const AllCurrencyBanks = [
           "https://res.cloudinary.com/dqw0lwkil/image/upload/v1714730125/LINK/Bank_List/USD/Santander_Bank_dembwm.svg",
       },
     ],
-    component: <BankUSD />,
+    component: <MethodNotAvailable />,
   },
   {
     currency: "BRL",
     banks: [],
-    component: <BankBRL />,
+    component: <MethodNotAvailable />,
   },
 ];
 

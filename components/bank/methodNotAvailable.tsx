@@ -3,7 +3,7 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 
-export const BankBRL = () => {
+export const MethodNotAvailable = () => {
   const { setPaywith } = usePaymentLinkMerchantContext();
   return (
     <div>

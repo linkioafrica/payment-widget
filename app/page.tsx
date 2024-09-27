@@ -2,20 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Icons } from "./icons";
-import Image from "next/image";
 import Tag from "@/components/tag";
-import { CurrencyDropDown } from "@/components/currencyDropDown";
 import { PayWithModal } from "@/components/payWithModal";
-import { TransferBRL } from "@/components/transfer/transferBRL";
-import { TransferNGN } from "@/components/transfer/transferNGN";
-import { TransferUSD } from "@/components/transfer/transferUSD";
-import { BankUSD } from "@/components/bank/bankUSD";
-import { BankBRL } from "@/components/bank/bankBRL";
-import { BankNGN } from "@/components/bank/bankNGN";
+
 import { StableCoinHome } from "@/components/stablecoin/stableCoinHome";
 import { LoadingState } from "@/components/loadingState";
 import { PaymentSuccessfulState } from "@/components/paymentSuccessfulState";
-import { Currency } from "@/constants/currencies";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { StableQRCode } from "@/components/stablecoin/stableQRCode";
 import {
