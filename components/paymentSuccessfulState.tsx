@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { SuccessAnimation } from "./successAnimation";
+import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
+  const { paywith } = usePaymentLinkMerchantContext();
 
   return (
     <div>
@@ -21,6 +23,11 @@ export const PaymentSuccessfulState = () => {
             <span className="text-[#696F79] text-xs dark:text-[#888888] font-medium  text-center max-w-[450px]">
               You have successfully sent USD 5000.
             </span>
+            {paywith == "stablecoin" && (
+              <span className="text-[#0259D6] underline text-xs cursor-pointer">
+                View on explorer.
+              </span>
+            )}
           </div>
         )}
       </div>

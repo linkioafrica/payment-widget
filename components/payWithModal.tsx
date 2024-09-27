@@ -11,10 +11,10 @@ export const PayWithModal = ({ children }: any) => {
   const { theme, toggleTheme } = useTheme();
   return (
     <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
-      <div
-        className={`flex items-center ${isConfirming || isSuccessful ? "justify-end" : "justify-between"}`}
-      >
-        {isConfirming || isSuccessful ? null : (
+      <div className={`flex items-center justify-between`}>
+        {isConfirming || isSuccessful ? (
+          <span className=" text-black dark:text-white"> Amount you sent</span>
+        ) : (
           <h2 className="text-[#696F79] font-medium text-sm">Akarabox</h2>
         )}
         <div className="flex gap-4">
@@ -33,7 +33,7 @@ export const PayWithModal = ({ children }: any) => {
       </div>
       <div className="w-full flex gap-1 mt-1">
         <span className=" text-black dark:text-white">
-          {isConfirming || isSuccessful ? "Amount you sent" : "Pay"}
+          {isConfirming || isSuccessful ? null : "Pay"}
         </span>
         <span className=" text-[#0259D6]  dark:text-[#4893FF] font-semibold">
           USD 5,000
