@@ -6,19 +6,19 @@ import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export const PayWithModal = ({ children }: any) => {
-  const { paywith, isConfirming, isSuccessfull } =
+  const { paywith, isConfirming, isSuccessful } =
     usePaymentLinkMerchantContext();
   const { theme, toggleTheme } = useTheme();
   return (
-    <div className="flex-grow bg-white dark:bg-[#101113] px-10 pt-6 pb-3 flex-col relative ">
+    <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
       <div
-        className={`flex items-center ${isConfirming || isSuccessfull ? "justify-end" : "justify-between"}`}
+        className={`flex items-center ${isConfirming || isSuccessful ? "justify-end" : "justify-between"}`}
       >
-        {isConfirming || isSuccessfull ? null : (
+        {isConfirming || isSuccessful ? null : (
           <h2 className="text-[#696F79] font-medium text-sm">Akarabox</h2>
         )}
         <div className="flex gap-4">
-          {isConfirming || isSuccessfull ? null : paywith == "stablecoin" ? (
+          {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
             <TokensDropDown></TokensDropDown>
           ) : (
             <CurrencyDropDown></CurrencyDropDown>
@@ -33,7 +33,7 @@ export const PayWithModal = ({ children }: any) => {
       </div>
       <div className="w-full flex gap-1 mt-1">
         <span className=" text-black dark:text-white">
-          {isConfirming || isSuccessfull ? "Amount you sent" : "Pay"}
+          {isConfirming || isSuccessful ? "Amount you sent" : "Pay"}
         </span>
         <span className=" text-[#0259D6]  dark:text-[#4893FF] font-semibold">
           USD 5,000

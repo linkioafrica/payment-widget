@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useState } from "react";
 export const CurrencyDropDown = () => {
   const [dropDown, setDropDown] = useState(false);
-  const { setCurrency, currency, setIsSuccessfull, setIsConfirming } =
+  const { setCurrency, currency, setIsSuccessful, setIsConfirming } =
     usePaymentLinkMerchantContext();
 
   return (
@@ -48,7 +48,7 @@ export const CurrencyDropDown = () => {
                       ? () => {
                           setCurrency(currency);
                           setDropDown(false);
-                          setIsSuccessfull(false);
+                          setIsSuccessful(false);
                           setIsConfirming(false);
                         }
                       : () => {}

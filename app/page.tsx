@@ -20,9 +20,9 @@ export default function Home() {
     setPaywith,
     currency,
     isConfirming,
-    isSuccessfull,
+    isSuccessful,
     setIsConfirming,
-    setIsSuccessfull,
+    setIsSuccessful,
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
   } = usePaymentLinkMerchantContext();
@@ -30,7 +30,7 @@ export default function Home() {
   const renderContent = () => {
     if (isConfirming) {
       return <LoadingState></LoadingState>;
-    } else if (isSuccessfull) {
+    } else if (isSuccessful) {
       return <PaymentSuccessfulState></PaymentSuccessfulState>;
     } else if (paywith == "transfer") {
       let selectedVendor = AllVendorList.find(
@@ -57,7 +57,7 @@ export default function Home() {
     <div
       className={`w-full h-screen bg-black flex items-center justify-center `}
     >
-      <div className="max-w-[700px] w-2/4 min-w-[640px] max-h-[580px] h-[90%] flex ">
+      <div className="max-w-[650px] w-2/4 min-w-[600px] max-h-[520px] h-[90%] flex ">
         {/* Left Panel Pay With */}
         <div className="w-[250px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
           <div className="flex flex-col w-full gap-6 px-5">
@@ -68,7 +68,7 @@ export default function Home() {
                 onClick={() => {
                   setPaywith("transfer");
                   setIsConfirming(false);
-                  setIsSuccessfull(false);
+                  setIsSuccessful(false);
                 }}
               >
                 <i>{Icons.transfer}</i>
@@ -79,7 +79,7 @@ export default function Home() {
                 onClick={() => {
                   setPaywith("bank");
                   setIsConfirming(false);
-                  setIsSuccessfull(false);
+                  setIsSuccessful(false);
                 }}
               >
                 <i>{Icons.bank}</i>
@@ -99,7 +99,7 @@ export default function Home() {
                 onClick={() => {
                   setPaywith("stablecoin");
                   setIsConfirming(false);
-                  setIsSuccessfull(false);
+                  setIsSuccessful(false);
                   setStablecoinPaymentMethod("");
                 }}
               >

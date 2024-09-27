@@ -28,7 +28,7 @@ export const TransferUSD = () => {
 
   return (
     <div>
-      <div className="w-full flex items-center justify-center mt-3">
+      <div className="w-full flex items-center justify-center mt-5">
         <span className="text-center dark:text-white text-black text-[13px] font-medium">
           Transfer USD 5,000 to the details below
         </span>
@@ -71,21 +71,21 @@ export const TransferUSD = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col mt-4 items-center gap-2">
+      <div className="flex flex-col mt-5 items-center gap-2">
         <div className="text-black flex items-center gap-1 dark:text-[#9F9F9F]">
           <i>{Icons.info}</i>
           <span className="text-[10px]">
             Use this account for this transaction only
           </span>
         </div>
-        <span className="text-[#696F79] text-[11px]">
+        <span className="text-[#696F79] mt-2 text-[11px]">
           Transaction expires in{" "}
           <span className="text-[#0259D6] dark:text-[#4893FF]">
             {formatTime(secondsRemaining)}
           </span>
         </span>
       </div>
-      <div className="w-full flex flex-col items-center mt-6 gap-8">
+      <div className="w-full flex flex-col items-center mt-8 gap-8">
         <button
           className="w-full text-white bg-[#0E70FD] rounded-lg text-center py-2 text-sm dark:bg-[#0E70FD]"
           onClick={() => setIsConfirming(true)}

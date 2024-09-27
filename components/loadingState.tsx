@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 
 export const LoadingState = () => {
-  const { setIsConfirming, setIsSuccessfull, isConfirming, isSuccessfull } =
+  const { setIsConfirming, setIsSuccessful, isConfirming, isSuccessful } =
     usePaymentLinkMerchantContext();
 
   const [secondsRemaining, setSecondsRemaining] = useState(14 * 60 + 59); // 14:59 in seconds
 
   useEffect(() => {
     setTimeout(() => {
-      setIsSuccessfull(true);
+      setIsSuccessful(true);
       setIsConfirming(false);
     }, 1500);
 
@@ -21,10 +21,10 @@ export const LoadingState = () => {
 
       return () => clearInterval(timer); // Clean up the timer on unmount
     } else {
-      setIsSuccessfull(false);
+      setIsSuccessful(false);
       setIsConfirming(false);
     }
-  }, [secondsRemaining, setIsSuccessfull, setIsConfirming]);
+  }, [secondsRemaining, setIsSuccessful, setIsConfirming]);
 
   // Format time as MM:SS
   const formatTime = (seconds: number) => {
@@ -35,7 +35,7 @@ export const LoadingState = () => {
 
   return (
     <div>
-      <div className="w-full mt-3 flex items-center flex-col">
+      <div className="w-full mt-5 flex items-center flex-col">
         <span className="font-semibold text-[13px] max-w-[450px] text-center text-black dark:text-[#F9F9F9]">
           We’re waiting to confirm your payment. This can take a few minutes...
         </span>

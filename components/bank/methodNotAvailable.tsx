@@ -13,7 +13,7 @@ export const MethodNotAvailable = () => {
             <i>{Icons.bankUnavilableIcon}</i>
           </div>
           <span className="font-medium  max-w-[300px] text-center text-xs text-black dark:text-[#888888]">
-            This method is unavailable for this currency.
+            This method is coming soon for this currency.
           </span>
         </div>
         <div className="w-full flex flex-col gap-2 text-sm">

@@ -20,14 +20,14 @@ export const TransferBRL = () => {
           <CopyToClipboard textTobeCopied="11754090-d0cf-4b1b-9d45-6669b695f5f3"></CopyToClipboard>
         </div>
       </div>
-      <div className="w-full flex flex-col items-center mt-4 gap-4">
+      <div className="w-full flex flex-col items-center mt-5 gap-4">
         <Image
           src={"/assets/images/qrCode/BRLTransfer.svg"}
           alt="QR code"
-          width={100}
-          height={100}
+          width={120}
+          height={120}
         />
-        <span className="text-[10px] text-[#696F79]  dark:text-[#888888]">
+        <span className="text-[10px] text-[#696F79]  mt-2 dark:text-[#888888]">
           Scan this QR code to pay with your PIX account
         </span>
         <button

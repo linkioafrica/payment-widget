@@ -13,8 +13,8 @@ interface PaymentLinkMerchantContextType {
   >;
   isConfirming: boolean;
   setIsConfirming: React.Dispatch<React.SetStateAction<boolean>>;
-  isSuccessfull: boolean;
-  setIsSuccessfull: React.Dispatch<React.SetStateAction<boolean>>;
+  isSuccessful: boolean;
+  setIsSuccessful: React.Dispatch<React.SetStateAction<boolean>>;
   token: (typeof Tokens)[number];
   setToken: React.Dispatch<React.SetStateAction<(typeof Tokens)[number]>>;
   stablecoinPaymentMethod: string;
@@ -32,7 +32,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
     fiatCurrency.filter((currency) => currency.status == "available")[0]
   );
   const [isConfirming, setIsConfirming] = useState(false);
-  const [isSuccessfull, setIsSuccessfull] = useState(false);
+  const [isSuccessful, setIsSuccessful] = useState(false);
   const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
 
   return (
@@ -44,8 +44,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setCurrency,
         isConfirming,
         setIsConfirming,
-        isSuccessfull,
-        setIsSuccessfull,
+        isSuccessful,
+        setIsSuccessful,
         token,
         setToken,
         stablecoinPaymentMethod,
