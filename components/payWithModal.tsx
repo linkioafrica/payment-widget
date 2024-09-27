@@ -10,7 +10,7 @@ export const PayWithModal = ({ children }: any) => {
     usePaymentLinkMerchantContext();
   const { theme, toggleTheme } = useTheme();
   return (
-    <div className="flex-grow bg-white dark:bg-[#101113] px-6 pt-6 pb-3 flex-col relative ">
+    <div className="flex-grow bg-white dark:bg-[#101113] px-4 pt-6 pb-3 flex-col relative ">
       <div
         className={`flex items-center ${isConfirming || isSuccessfull ? "justify-end" : "justify-between"}`}
       >
