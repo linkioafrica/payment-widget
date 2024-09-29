@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useEffect, useState } from "react";
+import { ChangePaymentMethod } from "../changePaymentMethod";
 
 export const TransferNGN = () => {
   const { setIsConfirming, setIsSuccessful } = usePaymentLinkMerchantContext();
@@ -28,12 +29,12 @@ export const TransferNGN = () => {
 
   return (
     <div>
-      <div className="w-full flex items-center justify-center mt-5">
-        <span className="text-center text-black text-[13px] font-medium dark:text-[#F9F9F9]">
+      <div className="w-full flex items-center justify-center mt-10">
+        <span className="text-center text-black text-lg font-medium max-w-[400px] dark:text-[#F9F9F9]">
           Transfer NGN 8,000,000 to the details below
         </span>
       </div>
-      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] text-xs px-3 py-3 flex flex-col gap-[12px] rounded-md mt-3">
+      <div className="w-full border border-[#E2E3E7] bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] px-3 py-3 flex flex-col gap-5  rounded-md mt-2">
         <div className="w-full flex justify-between items-center">
           <span className="text-[#696F79] dark:text-[#888888]">
             Account holder
@@ -66,24 +67,27 @@ export const TransferNGN = () => {
       <div className="flex flex-col mt-5 items-center gap-3">
         <div className="text-black flex items-center gap-1 dark:text-[#9F9F9F]">
           <i>{Icons.info}</i>
-          <span className="text-[10px]">
+          <span className="text-sm">
             Use this account for this transaction only
           </span>
         </div>
-        <span className="text-[#696F79] text-[11px]">
+        <span className="text-[#696F79] text-sm">
           Transaction expires in{" "}
           <span className="text-[#0259D6]">{formatTime(secondsRemaining)}</span>
         </span>
       </div>
       <div className="w-full flex flex-col items-center mt-10 gap-4 ">
         <button
-          className="w-full text-white bg-[#0E70FD] dark:bg-[#0E70FD] rounded-lg text-sm text-center py-2"
+          className="w-full text-white bg-[#0E70FD] dark:bg-[#0E70FD] rounded-lg text-center py-3"
           onClick={() => {
             setIsConfirming(true);
           }}
         >
           I've sent the money
         </button>
+        <div className="mt-3">
+          <ChangePaymentMethod></ChangePaymentMethod>
+        </div>
       </div>
     </div>
   );

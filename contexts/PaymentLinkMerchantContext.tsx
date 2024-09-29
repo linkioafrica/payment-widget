@@ -19,6 +19,8 @@ interface PaymentLinkMerchantContextType {
   setToken: React.Dispatch<React.SetStateAction<(typeof Tokens)[number]>>;
   stablecoinPaymentMethod: string;
   setStablecoinPaymentMethod: React.Dispatch<React.SetStateAction<string>>;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PaymentLinkMerchantContext = createContext<
@@ -35,6 +37,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   return (
     <PaymentLinkMerchantContext.Provider
       value={{
@@ -50,6 +54,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setToken,
         stablecoinPaymentMethod,
         setStablecoinPaymentMethod,
+        isDrawerOpen,
+        setIsDrawerOpen,
       }}
     >
       {children}

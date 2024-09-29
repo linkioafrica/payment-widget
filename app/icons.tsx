@@ -328,4 +328,29 @@ export const Icons = {
       </g>
     </svg>
   ),
+  menuIcon: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 448 512"
+      fill="currentColor"
+      width={24}
+      height={24}
+    >
+      <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+    </svg>
+  ),
+  chevronLeft: (
+    <svg
+      width="12"
+      height="20"
+      viewBox="0 0 12 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10 20L0 10L10 0L11.775 1.775L3.55 10L11.775 18.225L10 20Z"
+        fill="currentColor"
+      />
+    </svg>
+  ),
 };
