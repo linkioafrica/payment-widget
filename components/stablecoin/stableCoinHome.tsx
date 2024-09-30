@@ -6,13 +6,64 @@ import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantCon
 import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
+import {
+  Connection,
+  PublicKey,
+  clusterApiUrl,
+} from '@solana/web3.js';
+import {
+  WalletProvider,
+  ConnectionProvider,
+  useWallet,
+} from '@solana/wallet-adapter-react';
+import {
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+  TrustWalletAdapter
+  // Import any other wallet adapters you need
+} from '@solana/wallet-adapter-wallets';
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
   const { stablecoinPaymentMethod, setStablecoinPaymentMethod } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
+  const { connected, disconnect } = useWallet(); // Get the wallet status
+  const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
+  const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
+  const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
 
+  const connectWallet = async (walletId: number) => {
+    const wallets = [
+      new PhantomWalletAdapter(), // Ensure you import your wallet adapters
+      new SolflareWalletAdapter(), // Ensure you import your wallet adapters
+      new TrustWalletAdapter(), // Ensure you import your wallet adapters
+    ];
+
+    const wallet = wallets[walletId];
+
+    if (wallet) {
+      // If a wallet is already connected, disconnect it first
+      if (connected) {
+        await disconnect();
+        console.log('Disconnected from previous wallet');
+      }
+
+      try {
+        await wallet.connect(); // Connect to the selected wallet
+        setCurrentWalletId(walletId); // Store the currently connected wallet ID
+        setConnectedWallet(walletId);
+        const publicKey = wallet.publicKey?.toString(); // Replace this with the actual public key you receive
+
+        setWalletPublicKey(publicKey);
+        console.log(`Connected to wallet: ${publicKey}`);
+      } catch (error) {
+        console.error('Failed to connect to wallet:', error);
+      }
+    } else {
+      console.error('Wallet not found');
+    }
+  };
   useEffect(() => {
     if (stablecoinPaymentMethod == "wallet") {
       // Disable scrolling
@@ -160,18 +211,27 @@ export const StableCoinHome = () => {
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
-                {Wallets.map((wallet) => (
-                  <div
-                    key={wallet.id}
-                    className="w-full flex items-center justify-between "
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image src={wallet.image} alt="" width={30} height={30} />
-                      <span className="text-[17px]">{wallet.name}</span>
-                    </div>
-                    <span>Detected</span>
+              {Wallets.map((wallet) => (
+                <div
+                  key={wallet.id}
+                  className="w-full flex items-center justify-between p-4 border-b"
+                >
+                  <div className="flex items-center gap-2">
+                    <Image src={wallet.image} alt={wallet.name} width={30} height={30} />
+                    <span className="text-[17px]">{wallet.name}</span>
                   </div>
-                ))}
+                  {connectedWallet === wallet.id ? (
+                    <span className="text-green-500">Connected</span>
+                  ) : (
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      onClick={() => connectWallet(wallet.id)}
+                    >
+                      Connect
+                    </button>
+                  )}
+                </div>
+              ))}
               </div>
               <div className="w-full flex justify-end mt-8">
                 <button className="flex items-center text-sm gap-3">
@@ -316,18 +376,27 @@ export const StableCoinHome = () => {
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
-                {Wallets.map((wallet) => (
-                  <div
-                    key={wallet.id}
-                    className="w-full flex items-center justify-between "
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image src={wallet.image} alt="" width={30} height={30} />
-                      <span className="text-[17px]">{wallet.name}</span>
-                    </div>
-                    <span>Detected</span>
+              {Wallets.map((wallet) => (
+                <div
+                  key={wallet.id}
+                  className="w-full flex items-center justify-between p-4 border-b"
+                >
+                  <div className="flex items-center gap-2">
+                    <Image src={wallet.image} alt={wallet.name} width={30} height={30} />
+                    <span className="text-[17px]">{wallet.name}</span>
                   </div>
-                ))}
+                  {connectedWallet === wallet.id ? (
+                    <span className="text-green-500">Connected</span>
+                  ) : (
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      onClick={() => connectWallet(wallet.id)}
+                    >
+                      Connect
+                    </button>
+                  )}
+                </div>
+              ))}
               </div>
               <div className="w-full flex justify-end mt-8">
                 <button className="flex items-center text-sm gap-3">
