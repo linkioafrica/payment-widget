@@ -47,7 +47,7 @@ export const NavBar = () => {
               <i>{Icons.card}</i>
               Card
               <Tag
-                text="Comming soon"
+                text="Coming soon"
                 bgColor="bg-[#BFD9FF]"
                 textColor="text-[#4f4f4f]"
               ></Tag>
@@ -121,7 +121,7 @@ export const NavBar = () => {
               <i>{Icons.card}</i>
               Card
               <Tag
-                text="Comming soon"
+                text="Coming soon"
                 bgColor="bg-[#BFD9FF]"
                 textColor="text-[#4f4f4f]"
               ></Tag>

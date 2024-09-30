@@ -33,16 +33,28 @@ export const TokensDropDown = () => {
               onClick={() => setDropDown(false)}
             ></div>
             <div className="absolute left-0 w-full -bottom-1 pt-1 drop-shadow-xl z-10 border-[0.8px] dark:bg-[#101113] dark:border-[#242425] border-[#E2E3E7] translate-y-full bg-white max-h-[200px] overflow-y-auto rounded-md">
-              {Tokens.map((tok, index) => (
+              {Tokens.sort((a, b) =>
+                a.status === "available" ? -1 : b.status === "available" ? 1 : 0
+              ).map((tok, index) => (
                 <div
                   key={index}
-                  className="flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-2 px-2 gap-2 text-black cursor-pointer hover:bg-[#EDEEF1] dark:hover:bg-[#2A2A2A]"
-                  onClick={() => {
-                    setToken(tok);
-                    setDropDown(false);
-                    setIsConfirming(false);
-                    setIsSuccessful(false);
-                  }}
+                  className={`flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-2 px-2 gap-2 text-black cursor-pointer 
+                     ${
+                       tok.status === "available"
+                         ? "hover:bg-[#EDEEF1] dark:hover:bg-[#2A2A2A]"
+                         : "opacity-30"
+                     }
+                    `}
+                  onClick={
+                    tok.status == "available"
+                      ? () => {
+                          setToken(tok);
+                          setDropDown(false);
+                          setIsConfirming(false);
+                          setIsSuccessful(false);
+                        }
+                      : () => {}
+                  }
                 >
                   <Image
                     src={tok.image}
@@ -83,16 +95,27 @@ export const TokensDropDown = () => {
               onClick={() => setDropDown(false)}
             ></div>
             <div className="absolute left-0 w-full -bottom-1 pt-1 drop-shadow-xl z-10 border-[0.8px] dark:bg-[#101113] dark:border-[#242425] border-[#E2E3E7] translate-y-full bg-white max-h-[200px] overflow-y-auto rounded-md">
-              {Tokens.map((tok, index) => (
+              {Tokens.sort((a, b) =>
+                a.status === "available" ? -1 : b.status === "available" ? 1 : 0
+              ).map((tok, index) => (
                 <div
                   key={index}
-                  className="flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-1 px-2 gap-2 text-black cursor-pointer hover:bg-[#EDEEF1] dark:hover:bg-[#2A2A2A]"
-                  onClick={() => {
-                    setToken(tok);
-                    setDropDown(false);
-                    setIsConfirming(false);
-                    setIsSuccessful(false);
-                  }}
+                  className={`flex items-center border-b dark:text-white dark:border-[#242425] border-[#E2E3E7] py-1 px-2 gap-2 text-black cursor-pointer ${
+                    tok.status == "available"
+                      ? "hover:bg-[#EDEEF1]  dark:hover:bg-[#2A2A2A]"
+                      : "opacity-30 "
+                  }
+                    `}
+                  onClick={
+                    tok.status == "available"
+                      ? () => {
+                          setToken(tok);
+                          setDropDown(false);
+                          setIsConfirming(false);
+                          setIsSuccessful(false);
+                        }
+                      : () => {}
+                  }
                 >
                   <Image
                     src={tok.image}
