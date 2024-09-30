@@ -31,7 +31,7 @@ export const StableCoinHome = () => {
     return (
       <>
         <div>
-          <div className="w-full flex items-center justify-center mt-10">
+          <div className="w-full flex items-center justify-center mt-3">
             <span className="text-center dark:text-[#F9F9F9] text-black text-lg max-w-[400px] font-medium">
               Select how you would like to pay
             </span>

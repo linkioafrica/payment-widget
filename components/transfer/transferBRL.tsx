@@ -11,14 +11,14 @@ export const TransferBRL = () => {
   if (isMobile) {
     return (
       <div>
-        <div className="w-full flex items-center justify-center mt-10">
+        <div className="w-full flex items-center justify-center mt-3">
           <span className="text-center  text-black text-lg font-medium max-w-[400px] dark:text-[#F9F9F9]">
             Transfer R$ 28,350 to the PIX key below
           </span>
         </div>
         <div className="w-full flex flex-col mt-4 gap-1">
           <span className="text-[#696F79] ">PIX key</span>
-          <div className="w-full border-[0.8px] border-[#E2E3E7] text-black px-2 py-3 flex justify-between  items-center rounded-lg bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] dark:text-[#F9F9F9]">
+          <div className="w-full border-[0.8px] border-[#E2E3E7] text-black px-2 py-3 flex justify-between text-sm items-center rounded-lg bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] dark:text-[#F9F9F9]">
             <span>11754090-d0cf-4b1b-9d45-6669b695f5f3</span>
             <CopyToClipboard textTobeCopied="11754090-d0cf-4b1b-9d45-6669b695f5f3"></CopyToClipboard>
           </div>
@@ -39,7 +39,7 @@ export const TransferBRL = () => {
           >
             I've sent the money
           </button>
-          <div className="mt-3">
+          <div className="">
             <ChangePaymentMethod></ChangePaymentMethod>
           </div>
         </div>

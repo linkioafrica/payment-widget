@@ -79,8 +79,10 @@ export const PayWithModal = ({ children }: any) => {
             <NavBar></NavBar>
           </div>
         )}
-        <div className="w-full flex items-center justify-center absolute bottom-6 left-0">
-          <span className="dark:text-white text-black ">Powered by LINK</span>
+        <div className="w-full flex items-center justify-center absolute bottom-4 left-0">
+          <span className="dark:text-white text-black text-sm">
+            Powered by LINK
+          </span>
         </div>
       </div>
     );

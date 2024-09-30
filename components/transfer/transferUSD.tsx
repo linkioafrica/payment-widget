@@ -31,7 +31,7 @@ export const TransferUSD = () => {
   if (isMobile) {
     return (
       <div>
-        <div className="w-full flex items-center justify-center mt-10">
+        <div className="w-full flex items-center justify-center mt-3">
           <span className="text-center dark:text-white text-black max-w-[400px] text-lg font-medium">
             Transfer USD 5,000 to the details below
           </span>

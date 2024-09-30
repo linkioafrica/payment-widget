@@ -29,7 +29,7 @@ export const TransferNGN = () => {
 
   return (
     <div>
-      <div className="w-full flex items-center justify-center mt-10">
+      <div className="w-full flex items-center justify-center mt-3">
         <span className="text-center text-black text-lg font-medium max-w-[400px] dark:text-[#F9F9F9]">
           Transfer NGN 8,000,000 to the details below
         </span>

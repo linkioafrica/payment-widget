@@ -11,7 +11,7 @@ export const StableQRCode = () => {
   if (isMobile) {
     return (
       <div>
-        <div className="w-full flex items-center justify-center mt-10">
+        <div className="w-full flex items-center justify-center mt-3">
           <span className="text-center text-black text-lg font-medium max-w-[400px] dark:text-[#F9F9F9]">
             Scan the QR code below to pay with your solana wallet
           </span>

@@ -11,7 +11,7 @@ export const BankNGN = () => {
   if (isMobile) {
     return (
       <div>
-        <div className="w-full  flex flex-col items-center gap-4 mt-20">
+        <div className="w-full  flex flex-col items-center gap-4 mt-10">
           <div className="flex flex-col gap-4 items-center justify-center">
             <div className="bg-[#F3F3F3] dark:bg-[#141415] dark:border-[#242425] border border-[#E2E3E7] px-6 dark:text-white text-black py-6 rounded-full ">
               <i>{Icons.bankIcon}</i>
