@@ -17,7 +17,7 @@ export const DeviceProvider = ({ children }: any) => {
 
   // Define a function to check screen size and calculate viewport height
   const handleResize = () => {
-    const mobile = window.innerWidth <= 768; // Define mobile screen width threshold
+    const mobile = window.innerWidth <= 600; // Define mobile screen width threshold
     setIsMobile(mobile);
 
     // Calculate the actual viewport height and set it in CSS variables
