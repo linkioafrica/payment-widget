@@ -20,7 +20,8 @@ export const NavBar = () => {
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
           <div className="flex flex-col w-full gap-3 ">
             <button
-              className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 setPaywith("transfer");
                 setIsConfirming(false);
@@ -32,7 +33,8 @@ export const NavBar = () => {
               Transfer
             </button>
             <button
-              className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 setPaywith("bank");
                 setIsConfirming(false);
@@ -47,13 +49,14 @@ export const NavBar = () => {
               <i>{Icons.card}</i>
               Card
               <Tag
-                text="Comming soon"
+                text="Coming soon"
                 bgColor="bg-[#BFD9FF]"
                 textColor="text-[#4f4f4f]"
               ></Tag>
             </button>
             <button
-              className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 setPaywith("stablecoin");
                 setIsConfirming(false);
@@ -96,7 +99,8 @@ export const NavBar = () => {
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
           <div className="flex flex-col w-full gap-3 text-sm">
             <button
-              className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 setPaywith("transfer");
                 setIsConfirming(false);
@@ -107,7 +111,8 @@ export const NavBar = () => {
               Transfer
             </button>
             <button
-              className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 setPaywith("bank");
                 setIsConfirming(false);
@@ -121,13 +126,14 @@ export const NavBar = () => {
               <i>{Icons.card}</i>
               Card
               <Tag
-                text="Comming soon"
+                text="Coming soon"
                 bgColor="bg-[#BFD9FF]"
                 textColor="text-[#4f4f4f]"
               ></Tag>
             </button>
             <button
-              className={`w-full text-start  hover:bg-[#4f4f4f] py-3 px-6  rounded-full flex gap-2 items-center  ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 setPaywith("stablecoin");
                 setIsConfirming(false);
