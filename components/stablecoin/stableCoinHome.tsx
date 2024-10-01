@@ -9,7 +9,10 @@ import { ChangePaymentMethod } from "../changePaymentMethod";
 import {
   Connection,
   PublicKey,
+  SystemProgram,
+  Transaction,
   clusterApiUrl,
+  sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import {
   WalletProvider,
@@ -22,16 +25,93 @@ import {
   TrustWalletAdapter
   // Import any other wallet adapters you need
 } from '@solana/wallet-adapter-wallets';
+import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createTransferInstruction, getAccount, createAssociatedTokenAccountInstruction } from '@solana/spl-token';
+import { stableCoinInfos } from "@/constants/stableCoinInfos";
 
 export const StableCoinHome = () => {
+
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
-  const { stablecoinPaymentMethod, setStablecoinPaymentMethod } =
+  const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
+
+  const connection = new Connection(clusterApiUrl('devnet')); // Use 'mainnet-beta' for mainnet
+
+// Function to send USDC
+const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
+  console.log(walletAddress);
+  console.log(recipientAddress);
+
+  if (!walletAddress || !recipientAddress) {
+    return alert('Connect wallet and enter recipient address');
+  }
+
+  try {
+    const senderPublicKey = new PublicKey(walletAddress);
+    const recipientPublicKey = new PublicKey(recipientAddress);
+
+    // Create or get associated token account for the sender
+    const senderTokenAddress = await getAssociatedTokenAddress(
+      new PublicKey(stableCoinInfos.USDC_MINT_ADDRESS),
+      senderPublicKey
+    );
+    console.log(senderTokenAddress);
+
+    // Create or get associated token account for the recipient
+    const recipientTokenAddress = await getAssociatedTokenAddress(
+      new PublicKey(stableCoinInfos.USDC_MINT_ADDRESS),
+      recipientPublicKey
+    );
+    console.log(recipientTokenAddress);
+
+    // Create the transfer instruction
+    // const transaction = new Transaction().add(
+    //   createTransferInstruction(
+    //     senderTokenAddress, // Sender's token address
+    //     recipientTokenAddress, // Recipient's token address
+    //     senderPublicKey, // Sender's public key (authority)
+    //     amountToSend * 10 ** stableCoinInfos.USDC_DECIMALS, // Amount in USDC (1 USDC = 10^6 lamports)
+    //     [], // Multisignature authority (if any)
+    //     TOKEN_PROGRAM_ID
+    //   )
+    // );
+    const amountToSend = 0.1; // Amount of SOL to send (in SOL, not lamports)
+
+    // Create the SOL transfer instruction
+    const transaction = new Transaction().add(
+        SystemProgram.transfer({
+            fromPubkey: senderPublicKey,
+            toPubkey: recipientPublicKey,
+            lamports: amountToSend * 10 ** 9, // Convert SOL to lamports (1 SOL = 10^9 lamports)
+        })
+    );
+
+     // Fetch recent blockhash
+     const { blockhash } = await connection.getLatestBlockhash();
+     transaction.recentBlockhash = blockhash; // Set the recent blockhash
+     transaction.feePayer = senderPublicKey; // Set fee payer
+
+     // Request signature from the connected wallet
+     const signedTransaction = await window.solana.signAndSendTransaction(transaction);
+
+     // Wait for confirmation
+     await connection.confirmTransaction(signedTransaction.signature, 'confirmed');
+
+     console.log('Transaction confirmed:', signedTransaction.signature);
+     alert('USDC sent successfully!');
+     setIsSuccessful(true);
+     setStablecoinPaymentMethod("")
+  } catch (error) {
+    console.error('Error sending USDC:', error);
+    alert('failed!' + error);
+    setIsSuccessful(false);
+    setStablecoinPaymentMethod("")
+  }
+};
 
   const connectWallet = async (walletId: number) => {
     const wallets = [
@@ -53,10 +133,15 @@ export const StableCoinHome = () => {
         await wallet.connect(); // Connect to the selected wallet
         setCurrentWalletId(walletId); // Store the currently connected wallet ID
         setConnectedWallet(walletId);
-        const publicKey = wallet.publicKey?.toString(); // Replace this with the actual public key you receive
+        const publicKey = wallet.publicKey?.toString()?? null; // Replace this with the actual public key you receive
 
-        setWalletPublicKey(publicKey);
-        console.log(`Connected to wallet: ${publicKey}`);
+        if (publicKey) {
+          setWalletPublicKey(publicKey);
+          sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
+          console.log(`Connected to wallet: ${publicKey}`);
+        } else {
+          alert('Wallet public key is undefined');
+        }
       } catch (error) {
         console.error('Failed to connect to wallet:', error);
       }
@@ -221,13 +306,13 @@ export const StableCoinHome = () => {
                     <span className="text-[17px]">{wallet.name}</span>
                   </div>
                   {connectedWallet === wallet.id ? (
-                    <span className="text-green-500">Connected</span>
+                    <span className="text-green-500">Paying...</span>
                   ) : (
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded"
                       onClick={() => connectWallet(wallet.id)}
                     >
-                      Connect
+                      Connect & Pay
                     </button>
                   )}
                 </div>
@@ -386,13 +471,13 @@ export const StableCoinHome = () => {
                     <span className="text-[17px]">{wallet.name}</span>
                   </div>
                   {connectedWallet === wallet.id ? (
-                    <span className="text-green-500">Connected</span>
+                    <span className="text-green-500">Paying...</span>
                   ) : (
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded"
                       onClick={() => connectWallet(wallet.id)}
                     >
-                      Connect
+                      Connect & Pay
                     </button>
                   )}
                 </div>

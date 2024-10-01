@@ -12,11 +12,13 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "@solana/spl-token": "^0.4.8",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.95.3",
     "autoprefixer": "^10.4.20",
+    "encoding": "^0.1.13",
     "jsonwebtoken": "^9.0.1",
     "lottie-react": "^2.4.0",
     "material-icons": "^1.13.9",
@@ -25,6 +27,8 @@
     "next": "13.5.4",
     "next-auth": "^4.22.4",
     "next-qrcode": "^2.5.1",
+    "node-fetch": "^3.3.2",
+    "pino-pretty": "^11.2.2",
     "react": "^18",
     "react-dom": "^18"
   },
