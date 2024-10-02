@@ -14,6 +14,8 @@ import {
 } from "@/constants/CurrenciesAndBanks";
 import { useDevice } from "@/contexts/DeviceContext";
 import { NavBar } from "@/components/navBar";
+import { useRouter } from "next/navigation";
+import { ExpiredState } from "@/components/expiredState";
 
 export default function Home() {
   // Constants
@@ -24,11 +26,19 @@ export default function Home() {
     isConfirming,
     isSuccessful,
     stablecoinPaymentMethod,
+    data,
+    loading,
+    error,
+    setIsExpired,
+    isExpired,
   } = usePaymentLinkMerchantContext();
+  const router = useRouter();
 
   // Functions
   const renderContent = () => {
-    if (isConfirming) {
+    if (isExpired) {
+      return <ExpiredState></ExpiredState>;
+    } else if (isConfirming) {
       return <LoadingState></LoadingState>;
     } else if (isSuccessful) {
       return <PaymentSuccessfulState></PaymentSuccessfulState>;
@@ -52,8 +62,17 @@ export default function Home() {
       return screen;
     }
   };
-
-
+  console.log(data);
+  useEffect(() => {
+    if (!loading) {
+      if (data?.status == 403) {
+        router.push("/error");
+      }
+    }
+    if (data && data.expired) {
+      setIsExpired(true);
+    }
+  }, [data, error, router, loading]);
   // Rendering
   if (isMobile) {
     return (

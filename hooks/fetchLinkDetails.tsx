@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { TrxDetails } from "@/www";
+import { useRouter } from "next/navigation";
 
-export const useFetchLinkDetails = (checkout_id: string) => {
+export const useFetchLinkDetails = (checkout_id: any) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchLinkDetails = async () => {
-      console.log(checkout_id);
       try {
-        const response = await axios.get(
-          `https://seal-app-x3vn7.ondigitalocean.app/api/payment-link/fetch-link-details`,
-          { params: { checkout_id } }
-        );
+        const response = await axios.get(TrxDetails, {
+          params: { checkout_id },
+        });
         setData(response.data);
       } catch (err: any) {
         setError(err);
@@ -24,6 +25,10 @@ export const useFetchLinkDetails = (checkout_id: string) => {
 
     if (checkout_id) {
       fetchLinkDetails();
+    } else {
+      setLoading(false);
+      console.log("Checkour Id not found");
+      setError("Checkout Id not found");
     }
   }, [checkout_id]);
 

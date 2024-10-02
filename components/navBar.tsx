@@ -12,17 +12,13 @@ export const NavBar = () => {
     setIsSuccessful,
     setStablecoinPaymentMethod,
     setIsDrawerOpen,
-    loading,
+    isExpired,
   } = usePaymentLinkMerchantContext();
-  if (loading) {
-    console.log("This is loading");
-  } else {
-    console.log("This is loading completed");
-  }
+
   if (isMobile) {
     return (
       <div className="w-[300px] h-full fixed bg-[#1E1E1E] py-5 flex flex-col justify-between  gap-20 z-10 ">
-        <div className="flex flex-col w-full gap-6 px-5">
+        <div className={`flex flex-col w-full gap-6 px-5 `}>
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
           <div className="flex flex-col w-full gap-3 ">
             <button
@@ -111,7 +107,9 @@ export const NavBar = () => {
       <div className="w-[250px] bg-[#1E1E1E] py-5 flex flex-col justify-between rounded-l-lg gap-20 ">
         <div className="flex flex-col w-full gap-6 px-5">
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
-          <div className="flex flex-col w-full gap-3 text-sm">
+          <div
+            className={`flex flex-col w-full gap-3 text-sm ${isExpired ? "opacity-30" : ""}`}
+          >
             <button
               className={`w-full text-start py-3 px-6 rounded-full flex gap-2 items-center
         ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
@@ -153,14 +151,20 @@ export const NavBar = () => {
               ></Tag>
             </button>
             <button
-              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
-        ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
-              onClick={() => {
-                setPaywith("stablecoin");
-                setIsConfirming(false);
-                setIsSuccessful(false);
-                setStablecoinPaymentMethod("");
-              }}
+              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "stablecoin" && !isExpired ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
+        ${isExpired ? "" : "hover:bg-[#4f4f4f] cursor-pointer"}
+        `}
+              onClick={
+                isExpired
+                  ? () => {}
+                  : () => {
+                      setPaywith("stablecoin");
+                      setIsConfirming(false);
+                      setIsSuccessful(false);
+                      setStablecoinPaymentMethod("");
+                    }
+              }
             >
               <i>{Icons.stableCoin}</i>
               Stablecoin

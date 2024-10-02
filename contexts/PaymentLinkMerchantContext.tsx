@@ -4,6 +4,7 @@ import { useFetchLinkDetails } from "@/hooks/fetchLinkDetails";
 import { Currency } from "@/constants/currencies";
 import { Tokens } from "@/constants/token";
 import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
+import { useRouter } from "next/navigation";
 
 interface PaymentLinkMerchantContextType {
   paywith: string;
@@ -26,6 +27,8 @@ interface PaymentLinkMerchantContextType {
   data: any;
   loading: boolean;
   error: any;
+  isExpired: boolean;
+  setIsExpired: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PaymentLinkMerchantContext = createContext<
@@ -35,27 +38,36 @@ const PaymentLinkMerchantContext = createContext<
 export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [trx, setTrx] = useState<string | null>(null);
 
-  const { data, loading, error } = useFetchLinkDetails(trx as string);
+  const { data, loading, error } = useFetchLinkDetails(trx);
 
   const [paywith, setPaywith] = useState("stablecoin");
-  const [token, setToken] = useState(
-    data && data.status == 200 ? Tokens[0] : Tokens[0]
-  );
+  const [token, setToken] = useState(Tokens[0]);
   const [currency, setCurrency] = useState(
     fiatCurrency.filter((currency) => currency.status == "available")[0]
   );
+
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
       const trxValue = searchParams.get("trx");
+      console.log(trxValue, "this is tex Value");
       setTrx(trxValue);
     }
   }, []);
+  useEffect(() => {
+    if (data && data.status != 403) {
+      const token = Tokens.find(
+        (token) => token.name === data.transactions.currency
+      );
+      if (token) setToken(token);
+    }
+  }, [, data]);
   return (
     <PaymentLinkMerchantContext.Provider
       value={{
@@ -73,6 +85,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setStablecoinPaymentMethod,
         isDrawerOpen,
         setIsDrawerOpen,
+        isExpired,
+        setIsExpired,
         trx, // Provide trx to the context
         data, // Provide fetched data to the context
         loading, // Provide loading state to the context
