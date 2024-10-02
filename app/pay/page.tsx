@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Icons } from "./icons";
-import Tag from "@/components/tag";
 import { PayWithModal } from "@/components/payWithModal";
 
 import { StableCoinHome } from "@/components/stablecoin/stableCoinHome";
@@ -16,20 +14,19 @@ import {
 } from "@/constants/CurrenciesAndBanks";
 import { useDevice } from "@/contexts/DeviceContext";
 import { NavBar } from "@/components/navBar";
+
 export default function Home() {
+  // Constants
   const { isMobile, viewportHeight } = useDevice();
   const {
     paywith,
-    setPaywith,
     currency,
     isConfirming,
     isSuccessful,
-    setIsConfirming,
-    setIsSuccessful,
     stablecoinPaymentMethod,
-    setStablecoinPaymentMethod,
   } = usePaymentLinkMerchantContext();
 
+  // Functions
   const renderContent = () => {
     if (isConfirming) {
       return <LoadingState></LoadingState>;
@@ -55,15 +52,15 @@ export default function Home() {
       return screen;
     }
   };
+
+
+  // Rendering
   if (isMobile) {
     return (
       <div
         className={`w-full bg-black flex flex-grow  `}
         style={{ height: viewportHeight }}
       >
-        {/* Left Panel Pay With */}
-
-        {/* Right Panel  */}
         <PayWithModal>{renderContent()}</PayWithModal>
       </div>
     );

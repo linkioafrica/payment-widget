@@ -4,28 +4,35 @@ import { useDevice } from "@/contexts/DeviceContext";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import Image from "next/image";
 import { useState } from "react";
+import { SkeletonLoader } from "./UI Helper/skeletonLoader";
 export const TokensDropDown = () => {
   const [dropDown, setDropDown] = useState(false);
-  const { setToken, token, setIsSuccessful, setIsConfirming } =
+  const { setToken, token, setIsSuccessful, setIsConfirming, loading } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   if (isMobile) {
     return (
       <div className="relative w-fit select-none">
-        <div
-          className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-2 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
-          onClick={() => setDropDown(!dropDown)}
-        >
-          <Image
-            src={token.image}
-            alt={"flag"}
-            width={20}
-            height={20}
-            priority
-          />
-          <span className="font-medium text-sm">{token.name}</span>
-          <i>{Icons.chevron_down}</i>
-        </div>
+        {loading ? (
+          <div className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-2 flex items-center gap-2 hover:border-black cursor-pointer rounded-md">
+            <SkeletonLoader classes={"w-[80px] rounded h-5"}></SkeletonLoader>
+          </div>
+        ) : (
+          <div
+            className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-2 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
+            onClick={() => setDropDown(!dropDown)}
+          >
+            <Image
+              src={token.image}
+              alt={"flag"}
+              width={20}
+              height={20}
+              priority
+            />
+            <span className="font-medium text-sm">{token.name}</span>
+            <i>{Icons.chevron_down}</i>
+          </div>
+        )}
         {dropDown && (
           <div>
             <div
@@ -73,20 +80,26 @@ export const TokensDropDown = () => {
   } else {
     return (
       <div className="relative w-fit select-none">
-        <div
-          className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-1 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
-          onClick={() => setDropDown(!dropDown)}
-        >
-          <Image
-            src={token.image}
-            alt={"flag"}
-            width={18}
-            height={18}
-            priority
-          />
-          <span className="font-medium text-[11px]">{token.name}</span>
-          <i>{Icons.chevron_down}</i>
-        </div>
+        {loading ? (
+          <div className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-1 flex items-center gap-2 hover:border-black cursor-pointer rounded-md">
+            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
+          </div>
+        ) : (
+          <div
+            className="border-[0.8px] border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-1 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
+            onClick={() => setDropDown(!dropDown)}
+          >
+            <Image
+              src={token.image}
+              alt={"flag"}
+              width={18}
+              height={18}
+              priority
+            />
+            <span className="font-medium text-[11px]">{token.name}</span>
+            <i>{Icons.chevron_down}</i>
+          </div>
+        )}
         {dropDown && (
           <div>
             <div

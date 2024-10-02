@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { useFetchLinkDetails } from "@/hooks/fetchLinkDetails";
 import { Currency } from "@/constants/currencies";
 import { Tokens } from "@/constants/token";
 import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
@@ -7,7 +8,7 @@ import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
 interface PaymentLinkMerchantContextType {
   paywith: string;
   setPaywith: React.Dispatch<React.SetStateAction<string>>;
-  currency: (typeof fiatCurrency)[number]; // Adjust this based on how Currency is structured
+  currency: (typeof fiatCurrency)[number];
   setCurrency: React.Dispatch<
     React.SetStateAction<(typeof fiatCurrency)[number]>
   >;
@@ -21,6 +22,10 @@ interface PaymentLinkMerchantContextType {
   setStablecoinPaymentMethod: React.Dispatch<React.SetStateAction<string>>;
   isDrawerOpen: boolean;
   setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  trx: string | null;
+  data: any;
+  loading: boolean;
+  error: any;
 }
 
 const PaymentLinkMerchantContext = createContext<
@@ -28,17 +33,29 @@ const PaymentLinkMerchantContext = createContext<
 >(undefined);
 
 export const PaymentLinkMerchantProvider = ({ children }: any) => {
-  const [paywith, setPaywith] = useState("transfer");
-  const [token, setToken] = useState(Tokens[0]);
+  const [trx, setTrx] = useState<string | null>(null);
+
+  const { data, loading, error } = useFetchLinkDetails(trx as string);
+
+  const [paywith, setPaywith] = useState("stablecoin");
+  const [token, setToken] = useState(
+    data && data.status == 200 ? Tokens[0] : Tokens[0]
+  );
   const [currency, setCurrency] = useState(
     fiatCurrency.filter((currency) => currency.status == "available")[0]
   );
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const trxValue = searchParams.get("trx");
+      setTrx(trxValue);
+    }
+  }, []);
   return (
     <PaymentLinkMerchantContext.Provider
       value={{
@@ -56,6 +73,10 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setStablecoinPaymentMethod,
         isDrawerOpen,
         setIsDrawerOpen,
+        trx, // Provide trx to the context
+        data, // Provide fetched data to the context
+        loading, // Provide loading state to the context
+        error, // Provide error state to the context
       }}
     >
       {children}
@@ -67,7 +88,7 @@ export const usePaymentLinkMerchantContext = () => {
   const context = useContext(PaymentLinkMerchantContext);
   if (!context) {
     throw new Error(
-      "usePaymentLinkMerchantContext must be used within an PaymentLinkMerchantProvider"
+      "usePaymentLinkMerchantContext must be used within a PaymentLinkMerchantProvider"
     );
   }
   return context;
