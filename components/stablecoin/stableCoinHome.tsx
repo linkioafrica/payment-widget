@@ -180,13 +180,13 @@ export const StableCoinHome = () => {
     return (
       <>
         <div>
-          <div className="w-full flex items-center justify-center mt-3">
+          <div className="w-full flex items-center justify-center mt-8">
             <span className="text-center dark:text-[#F9F9F9] text-black text-lg max-w-[400px] font-medium">
               Select how you would like to pay
             </span>
           </div>
 
-          <div className="w-full min-h-[250px] mt-3 flex flex-col gap-5">
+          <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
               className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
                 selectedMethod === "qrCode"

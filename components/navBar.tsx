@@ -22,7 +22,7 @@ export const NavBar = () => {
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
           <div className="flex flex-col w-full gap-3 ">
             <button
-              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
+              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center opacity-30
         ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 // hover:bg-[#4f4f4f]
@@ -36,7 +36,7 @@ export const NavBar = () => {
               Transfer
             </button>
             <button
-              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
+              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center opacity-30
         ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 // hover:bg-[#4f4f4f]
@@ -51,16 +51,16 @@ export const NavBar = () => {
               <Tag
                 text="Coming soon"
                 bgColor="bg-[#BFD9FF]"
-                textColor="text-[#4f4f4f]"
+                textColor="text-[#162255]"
               ></Tag>
             </button>
-            <button className="w-full  text-start  py-3 px-6  rounded-full cursor-default flex gap-2 items-center text-white">
+            <button className="w-full  text-start  py-3 px-6  rounded-full opacity-30 cursor-default flex gap-2 items-center text-white">
               <i>{Icons.card}</i>
               Card
               <Tag
                 text="Coming soon"
                 bgColor="bg-[#BFD9FF]"
-                textColor="text-[#4f4f4f]"
+                textColor="text-[#162255]"
               ></Tag>
             </button>
             <button
@@ -79,7 +79,7 @@ export const NavBar = () => {
               <Tag
                 text="Fastest"
                 bgColor="bg-[#81F4C3]"
-                textColor="text-[#4f4f4f]"
+                textColor="text-[#03301F]"
                 icon={Icons.fastest}
               ></Tag>
             </button>
@@ -89,14 +89,15 @@ export const NavBar = () => {
           <div className="flex items-center gap-3">
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-sm">
-              For payment inquireies, contact the merchant who shared the link
+              For payment inquiries, contact the merchant who shared the link
               with you.
             </span>
           </div>
           <div className="flex items-center gap-3">
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-sm ">
-              Link expires in: <span className="font-medium ">1:00:00</span>{" "}
+              Link expires in:{" "}
+              <span className="font-medium text-white">1:00:00</span>{" "}
             </span>
           </div>
         </div>
@@ -111,7 +112,7 @@ export const NavBar = () => {
             className={`flex flex-col w-full gap-3 text-sm ${isExpired ? "opacity-30" : ""}`}
           >
             <button
-              className={`w-full text-start py-3 px-6 rounded-full flex gap-2 items-center
+              className={`w-full text-start py-3 px-6 rounded-full flex opacity-30 gap-2 items-center
         ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 // hover:bg-[#4f4f4f]
@@ -124,7 +125,7 @@ export const NavBar = () => {
               Transfer
             </button>
             <button
-              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
+              className={`w-full text-start  py-3 px-6 rounded-full opacity-30 flex gap-2 items-center
         ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 // hover:bg-[#4f4f4f]
@@ -141,7 +142,7 @@ export const NavBar = () => {
                 textColor="text-[#4f4f4f]"
               ></Tag>
             </button>
-            <button className="w-full  text-start  py-3 px-6  rounded-full cursor-default flex gap-2 items-center text-white">
+            <button className="w-full  text-start  py-3 px-6  rounded-full opacity-30  cursor-default flex gap-2 items-center text-white">
               <i>{Icons.card}</i>
               Card
               <Tag
@@ -181,14 +182,15 @@ export const NavBar = () => {
           <div className="flex items-center gap-3">
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-[11px]">
-              For payment inquireies, contact the merchant who shared the link
+              For payment inquiries, contact the merchant who shared the link
               with you.
             </span>
           </div>
           <div className="flex items-center gap-3">
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-[11px]">
-              Link expires in: <span className="font-medium ">1:00:00</span>
+              Link expires in:{" "}
+              <span className="font-medium text-white">1:00:00</span>
             </span>
           </div>
         </div>

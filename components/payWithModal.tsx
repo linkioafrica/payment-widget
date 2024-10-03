@@ -46,8 +46,7 @@ export const PayWithModal = ({ children }: any) => {
           </div>
         </div>
 
-        <hr className="mt-3 dark:border-[#242425]" />
-        <div className="mt-3 flex items-start gap-6">
+        <div className="mt-3 flex items-start gap-5">
           {paywith == "stablecoin" &&
             stablecoinPaymentMethod == "qrCode" &&
             !isConfirming &&
@@ -59,7 +58,7 @@ export const PayWithModal = ({ children }: any) => {
                 <i>{Icons.chevronLeft}</i>
               </button>
             )}
-          <div className="flex flex-col gap-2 ">
+          <div className="flex flex-col gap-4 ">
             {loading ? (
               <SkeletonLoader classes={"h-5 w-[80px] rounded"}></SkeletonLoader>
             ) : (
@@ -71,7 +70,7 @@ export const PayWithModal = ({ children }: any) => {
             )}
             <div className="flex items-center gap-1  font-medium">
               <span className=" text-black dark:text-white text-lg leading-none">
-                Tittle:
+                Title:{"   "}
               </span>
               {loading ? (
                 <SkeletonLoader
@@ -84,20 +83,21 @@ export const PayWithModal = ({ children }: any) => {
               )}
             </div>
             <span className="text-black text-2xl dark:text-white leading-none flex items-center  gap-1">
-              {isSuccessful || isConfirming ? "" : "Pay "}
+              {isSuccessful || isConfirming ? "" : "Pay: "}
               {loading ? (
                 <SkeletonLoader
                   classes={"h-6 w-[100px] rounded"}
                 ></SkeletonLoader>
               ) : (
                 <span className="text-[#0259D6] dark:text-[#4893FF] font-semibold">
-                  {data?.transactions?.currency}
-                  {data?.transactions?.amount}
+                  {" "}
+                  {data?.transactions?.currency} {data?.transactions?.amount}
                 </span>
               )}
             </span>
           </div>
         </div>
+        <hr className="mt-5 dark:border-[#242425]" />
 
         <div>{children}</div>
         {isDrawerOpen && (
@@ -147,7 +147,7 @@ export const PayWithModal = ({ children }: any) => {
           </div>
         </div>
         <div className="flex items-center gap-1 mt-1 font-medium">
-          <span className=" text-black dark:text-white text-sm">Tittle:</span>
+          <span className=" text-black dark:text-white text-sm">Title:</span>
           {loading ? (
             <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
@@ -159,7 +159,7 @@ export const PayWithModal = ({ children }: any) => {
 
         <div className="w-full flex gap-1 mt-1">
           <span className=" text-black dark:text-white">
-            {isConfirming || isSuccessful ? null : "Pay"}
+            {isConfirming || isSuccessful ? null : "Pay:"}
           </span>
           {loading ? (
             <SkeletonLoader classes={"h-6 rounded w-[80px]"}> </SkeletonLoader>
