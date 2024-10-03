@@ -82,7 +82,7 @@ export const PayWithModal = ({ children }: any) => {
                 </span>
               )}
             </div>
-            <span className="text-black text-2xl dark:text-white leading-none flex items-center  gap-1">
+            <span className="text-black text-xl dark:text-white leading-none flex items-center  gap-1">
               {isSuccessful || isConfirming ? "" : "Pay: "}
               {loading ? (
                 <SkeletonLoader
