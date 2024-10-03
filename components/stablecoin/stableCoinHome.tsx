@@ -303,31 +303,31 @@ export const StableCoinHome = () => {
                   {Icons.closeIcon}
                 </button>
               </div>
-              <div className="max-w-[300px] mt-3">
+              <div className="max-w-[300px] my-3">
                 <h2 className=" text-xl font-semibold text-center ">
-                  Connect a wallet on Solana to continue
+                  Connect a Solana Wallet & continue
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
                 {Wallets.map((wallet) => (
                   <div
                     key={wallet.id}
-                    className="w-full flex items-center justify-between p-4 border-b"
+                    className="w-full flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
                       <Image
                         src={wallet.image}
                         alt={wallet.name}
-                        width={30}
-                        height={30}
+                        width={20}
+                        height={20}
                       />
-                      <span className="text-[17px]">{wallet.name}</span>
+                      <span className="text-[15px]">{wallet.name}</span>
                     </div>
                     {connectedWallet === wallet.id ? (
                       <span className="text-green-500">Paying...</span>
                     ) : (
                       <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
                         onClick={() => connectWallet(wallet.id)}
                       >
                         Connect & Pay
@@ -475,14 +475,14 @@ export const StableCoinHome = () => {
               </div>
               <div className="max-w-[300px] mt-3">
                 <h2 className=" text-xl font-semibold text-center ">
-                  Connect a wallet on Solana to continue
+                  Connect a Solana Wallet & continue
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
                 {Wallets.map((wallet) => (
                   <div
                     key={wallet.id}
-                    className="w-full flex items-center justify-between p-4 border-b"
+                    className="w-full flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
                       <Image
@@ -497,7 +497,7 @@ export const StableCoinHome = () => {
                       <span className="text-green-500">Paying...</span>
                     ) : (
                       <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
                         onClick={() => connectWallet(wallet.id)}
                       >
                         Connect & Pay
