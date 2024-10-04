@@ -37,14 +37,13 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
-  const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful, token } =
+  const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful, token, tokenAmount, setTokenAmount } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
-  const [tokenAmount, setTokenAmount] = useState(100); // default amount
 
   const connection = new Connection(clusterApiUrl("devnet")); // Use 'mainnet-beta' for mainnet
 
@@ -180,7 +179,7 @@ const getSwapPrice = async (value:number) => {
 
     const swapPrice = response.data;
     console.log('Swap Price:', swapPrice);
-    var TokenUnit = 10 ^ token.decimals;
+    var TokenUnit = 10 ** token.decimals;
     return swapPrice.outAmount / TokenUnit;
   } catch (error) {
     console.error('Error fetching swap price:', error);
@@ -215,7 +214,7 @@ const getSwapPrice = async (value:number) => {
         <div>
           <div className="w-full flex items-center justify-center mt-8">
             <span className="text-center dark:text-[#F9F9F9] text-black text-lg max-w-[400px] font-medium">
-              Pay {tokenAmount}  {token.name} to the merchant address.
+              Select how you would like to pay
             </span>
           </div>
 
@@ -386,7 +385,7 @@ const getSwapPrice = async (value:number) => {
         <div>
           <div className="w-full flex items-center justify-center mt-5">
             <span className="text-center dark:text-[#F9F9F9] text-black text-[13px] font-medium">
-              Pay {tokenAmount}  {token.name} to the merchant address.
+              Select how you would like to pay
             </span>
           </div>
 
