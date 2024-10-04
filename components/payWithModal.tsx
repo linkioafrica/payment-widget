@@ -15,7 +15,6 @@ export const PayWithModal = ({ children }: any) => {
 
   const { theme, toggleTheme } = useTheme();
   const {
-    token,
     tokenAmount,
     paywith,
     isConfirming,
@@ -104,7 +103,7 @@ export const PayWithModal = ({ children }: any) => {
               </div>
             )}
             <span className="text-black text-xl dark:text-white leading-none flex items-center  gap-1">
-              {isSuccessful || isConfirming ? "" : "Pay: " + token.name + " " + tokenAmount}
+              {isSuccessful || isConfirming ? "" : "Pay:"}
               {loading ? (
                 <SkeletonLoader
                   classes={"h-6 w-[100px] rounded"}
@@ -116,7 +115,7 @@ export const PayWithModal = ({ children }: any) => {
                       You sent:{" "}
                     </span>
                   ) : null}
-                  {data?.transactions?.amount || 0}{" "}
+                  {data?.transactions?.amount || tokenAmount}{" "}
                   {data?.transactions?.currency || token.name}
                 </span>
               )}
@@ -199,7 +198,7 @@ export const PayWithModal = ({ children }: any) => {
 
         <div className="w-full flex gap-1 mt-1">
           <span className=" text-black dark:text-white">
-            {isConfirming || isSuccessful ? null : "Pay: "+ token.name + " " + tokenAmount}
+            {isConfirming || isSuccessful ? null : "Pay:"}
           </span>
           {loading ? (
             <SkeletonLoader classes={"h-6 rounded w-[80px]"}> </SkeletonLoader>
@@ -210,7 +209,7 @@ export const PayWithModal = ({ children }: any) => {
                   You sent:{" "}
                 </span>
               ) : null}
-              {data?.transactions?.amount || 0}{" "}
+              {data?.transactions?.amount || tokenAmount}{" "}
               {data?.transactions?.currency || token.name}
             </span>
           )}
