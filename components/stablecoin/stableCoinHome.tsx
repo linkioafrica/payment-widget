@@ -14,23 +14,28 @@ import {
   Transaction,
   clusterApiUrl,
   sendAndConfirmTransaction,
-} from '@solana/web3.js';
+} from "@solana/web3.js";
 import {
   WalletProvider,
   ConnectionProvider,
   useWallet,
-} from '@solana/wallet-adapter-react';
+} from "@solana/wallet-adapter-react";
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
-  TrustWalletAdapter
+  TrustWalletAdapter,
   // Import any other wallet adapters you need
-} from '@solana/wallet-adapter-wallets';
-import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createTransferInstruction, getAccount, createAssociatedTokenAccountInstruction } from '@solana/spl-token';
+} from "@solana/wallet-adapter-wallets";
+import {
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
+  createTransferInstruction,
+  getAccount,
+  createAssociatedTokenAccountInstruction,
+} from "@solana/spl-token";
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
 
 export const StableCoinHome = () => {
-
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
   const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful, token } =
     usePaymentLinkMerchantContext();
@@ -41,79 +46,83 @@ export const StableCoinHome = () => {
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
   const [tokenAmount, setTokenAmount] = useState(100); // default amount
 
-  const connection = new Connection(clusterApiUrl('devnet')); // Use 'mainnet-beta' for mainnet
+  const connection = new Connection(clusterApiUrl("devnet")); // Use 'mainnet-beta' for mainnet
 
-// Function to send USDC
-const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
-  console.log(walletAddress);
-  console.log(recipientAddress);
+  // Function to send USDC
+  const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
+    console.log(walletAddress);
+    console.log(recipientAddress);
 
-  if (!walletAddress || !recipientAddress) {
-    return alert('Connect wallet and enter recipient address');
-  }
+    if (!walletAddress || !recipientAddress) {
+      return alert("Connect wallet and enter recipient address");
+    }
 
-  try {
-    const senderPublicKey = new PublicKey(walletAddress);
-    const recipientPublicKey = new PublicKey(recipientAddress);
+    try {
+      const senderPublicKey = new PublicKey(walletAddress);
+      const recipientPublicKey = new PublicKey(recipientAddress);
 
-    // Create or get associated token account for the sender
-    const senderTokenAddress = await getAssociatedTokenAddress(
-      new PublicKey(stableCoinInfos.USDC_MINT_ADDRESS),
-      senderPublicKey
-    );
-    console.log(senderTokenAddress);
+      // Create or get associated token account for the sender
+      const senderTokenAddress = await getAssociatedTokenAddress(
+        new PublicKey(stableCoinInfos.USDC_MINT_ADDRESS),
+        senderPublicKey
+      );
+      console.log(senderTokenAddress);
 
-    // Create or get associated token account for the recipient
-    const recipientTokenAddress = await getAssociatedTokenAddress(
-      new PublicKey(stableCoinInfos.USDC_MINT_ADDRESS),
-      recipientPublicKey
-    );
-    console.log(recipientTokenAddress);
+      // Create or get associated token account for the recipient
+      const recipientTokenAddress = await getAssociatedTokenAddress(
+        new PublicKey(stableCoinInfos.USDC_MINT_ADDRESS),
+        recipientPublicKey
+      );
+      console.log(recipientTokenAddress);
 
-    // Create the transfer instruction
-    // const transaction = new Transaction().add(
-    //   createTransferInstruction(
-    //     senderTokenAddress, // Sender's token address
-    //     recipientTokenAddress, // Recipient's token address
-    //     senderPublicKey, // Sender's public key (authority)
-    //     amountToSend * 10 ** stableCoinInfos.USDC_DECIMALS, // Amount in USDC (1 USDC = 10^6 lamports)
-    //     [], // Multisignature authority (if any)
-    //     TOKEN_PROGRAM_ID
-    //   )
-    // );
-    const amountToSend = 0.1; // Amount of SOL to send (in SOL, not lamports)
+      // Create the transfer instruction
+      // const transaction = new Transaction().add(
+      //   createTransferInstruction(
+      //     senderTokenAddress, // Sender's token address
+      //     recipientTokenAddress, // Recipient's token address
+      //     senderPublicKey, // Sender's public key (authority)
+      //     amountToSend * 10 ** stableCoinInfos.USDC_DECIMALS, // Amount in USDC (1 USDC = 10^6 lamports)
+      //     [], // Multisignature authority (if any)
+      //     TOKEN_PROGRAM_ID
+      //   )
+      // );
+      const amountToSend = 0.1; // Amount of SOL to send (in SOL, not lamports)
 
-    // Create the SOL transfer instruction
-    const transaction = new Transaction().add(
+      // Create the SOL transfer instruction
+      const transaction = new Transaction().add(
         SystemProgram.transfer({
-            fromPubkey: senderPublicKey,
-            toPubkey: recipientPublicKey,
-            lamports: amountToSend * 10 ** 9, // Convert SOL to lamports (1 SOL = 10^9 lamports)
+          fromPubkey: senderPublicKey,
+          toPubkey: recipientPublicKey,
+          lamports: amountToSend * 10 ** 9, // Convert SOL to lamports (1 SOL = 10^9 lamports)
         })
-    );
+      );
 
-     // Fetch recent blockhash
-     const { blockhash } = await connection.getLatestBlockhash();
-     transaction.recentBlockhash = blockhash; // Set the recent blockhash
-     transaction.feePayer = senderPublicKey; // Set fee payer
+      // Fetch recent blockhash
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash; // Set the recent blockhash
+      transaction.feePayer = senderPublicKey; // Set fee payer
 
-     // Request signature from the connected wallet
-     const signedTransaction = await window.solana.signAndSendTransaction(transaction);
+      // Request signature from the connected wallet
+      const signedTransaction =
+        await window.solana.signAndSendTransaction(transaction);
 
-     // Wait for confirmation
-     await connection.confirmTransaction(signedTransaction.signature, 'confirmed');
+      // Wait for confirmation
+      await connection.confirmTransaction(
+        signedTransaction.signature,
+        "confirmed"
+      );
 
-     console.log('Transaction confirmed:', signedTransaction.signature);
-     alert('USDC sent successfully!');
-     setIsSuccessful(true);
-     setStablecoinPaymentMethod("")
-  } catch (error) {
-    console.error('Error sending USDC:', error);
-    alert('failed!' + error);
-    setIsSuccessful(false);
-    setStablecoinPaymentMethod("")
-  }
-};
+      console.log("Transaction confirmed:", signedTransaction.signature);
+      alert("USDC sent successfully!");
+      setIsSuccessful(true);
+      setStablecoinPaymentMethod("");
+    } catch (error) {
+      console.error("Error sending USDC:", error);
+      alert("failed!" + error);
+      setIsSuccessful(false);
+      setStablecoinPaymentMethod("");
+    }
+  };
 
   const connectWallet = async (walletId: number) => {
     const wallets = [
@@ -128,27 +137,27 @@ const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
       // If a wallet is already connected, disconnect it first
       if (connected) {
         await disconnect();
-        console.log('Disconnected from previous wallet');
+        console.log("Disconnected from previous wallet");
       }
 
       try {
         await wallet.connect(); // Connect to the selected wallet
         setCurrentWalletId(walletId); // Store the currently connected wallet ID
         setConnectedWallet(walletId);
-        const publicKey = wallet.publicKey?.toString()?? null; // Replace this with the actual public key you receive
+        const publicKey = wallet.publicKey?.toString() ?? null; // Replace this with the actual public key you receive
 
         if (publicKey) {
           setWalletPublicKey(publicKey);
           sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
           console.log(`Connected to wallet: ${publicKey}`);
         } else {
-          alert('Wallet public key is undefined');
+          alert("Wallet public key is undefined");
         }
       } catch (error) {
-        console.error('Failed to connect to wallet:', error);
+        console.error("Failed to connect to wallet:", error);
       }
     } else {
-      console.error('Wallet not found');
+      console.error("Wallet not found");
     }
   };
 
@@ -204,13 +213,13 @@ const getSwapPrice = async (value:number) => {
     return (
       <>
         <div>
-          <div className="w-full flex items-center justify-center mt-3">
+          <div className="w-full flex items-center justify-center mt-8">
             <span className="text-center dark:text-[#F9F9F9] text-black text-lg max-w-[400px] font-medium">
               Pay {tokenAmount}  {token.name} to the merchant address.
             </span>
           </div>
 
-          <div className="w-full min-h-[250px] mt-3 flex flex-col gap-5">
+          <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
               className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
                 selectedMethod === "qrCode"
@@ -327,40 +336,45 @@ const getSwapPrice = async (value:number) => {
                   {Icons.closeIcon}
                 </button>
               </div>
-              <div className="max-w-[300px] mt-3">
+              <div className="max-w-[300px] my-3">
                 <h2 className=" text-xl font-semibold text-center ">
-                  Connect a wallet on Solana to continue
+                  Connect a Solana Wallet & continue
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
-              {Wallets.map((wallet) => (
-                <div
-                  key={wallet.id}
-                  className="w-full flex items-center justify-between p-4 border-b"
-                >
-                  <div className="flex items-center gap-2">
-                    <Image src={wallet.image} alt={wallet.name} width={30} height={30} />
-                    <span className="text-[17px]">{wallet.name}</span>
+                {Wallets.map((wallet) => (
+                  <div
+                    key={wallet.id}
+                    className="w-full flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={wallet.image}
+                        alt={wallet.name}
+                        width={20}
+                        height={20}
+                      />
+                      <span className="text-[15px]">{wallet.name}</span>
+                    </div>
+                    {connectedWallet === wallet.id ? (
+                      <span className="text-green-500">Paying...</span>
+                    ) : (
+                      <button
+                        className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
+                        onClick={() => connectWallet(wallet.id)}
+                      >
+                        Connect & Pay
+                      </button>
+                    )}
                   </div>
-                  {connectedWallet === wallet.id ? (
-                    <span className="text-green-500">Paying...</span>
-                  ) : (
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
-                      onClick={() => connectWallet(wallet.id)}
-                    >
-                      Connect & Pay
-                    </button>
-                  )}
-                </div>
-              ))}
+                ))}
               </div>
-              <div className="w-full flex justify-end mt-8">
+              {/* <div className="w-full flex justify-end mt-8">
                 <button className="flex items-center text-sm gap-3">
                   <span>More Options</span>
                   <i>{Icons.chevron_down}</i>
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
@@ -494,38 +508,43 @@ const getSwapPrice = async (value:number) => {
               </div>
               <div className="max-w-[300px] mt-3">
                 <h2 className=" text-xl font-semibold text-center ">
-                  Connect a wallet on Solana to continue
+                  Connect a Solana Wallet & continue
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
-              {Wallets.map((wallet) => (
-                <div
-                  key={wallet.id}
-                  className="w-full flex items-center justify-between p-4 border-b"
-                >
-                  <div className="flex items-center gap-2">
-                    <Image src={wallet.image} alt={wallet.name} width={30} height={30} />
-                    <span className="text-[17px]">{wallet.name}</span>
+                {Wallets.map((wallet) => (
+                  <div
+                    key={wallet.id}
+                    className="w-full flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={wallet.image}
+                        alt={wallet.name}
+                        width={30}
+                        height={30}
+                      />
+                      <span className="text-[17px]">{wallet.name}</span>
+                    </div>
+                    {connectedWallet === wallet.id ? (
+                      <span className="text-green-500">Paying...</span>
+                    ) : (
+                      <button
+                        className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
+                        onClick={() => connectWallet(wallet.id)}
+                      >
+                        Connect & Pay
+                      </button>
+                    )}
                   </div>
-                  {connectedWallet === wallet.id ? (
-                    <span className="text-green-500">Paying...</span>
-                  ) : (
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
-                      onClick={() => connectWallet(wallet.id)}
-                    >
-                      Connect & Pay
-                    </button>
-                  )}
-                </div>
-              ))}
+                ))}
               </div>
-              <div className="w-full flex justify-end mt-8">
+              {/* <div className="w-full flex justify-end mt-8">
                 <button className="flex items-center text-sm gap-3">
                   <span>More Options</span>
                   <i>{Icons.chevron_down}</i>
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         )}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SuccessAnimation } from "./successAnimation";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
+import { Icons } from "@/app/icons";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);

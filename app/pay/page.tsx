@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Icons } from "./icons";
-import Tag from "@/components/tag";
 import { PayWithModal } from "@/components/payWithModal";
 
 import { StableCoinHome } from "@/components/stablecoin/stableCoinHome";
@@ -16,22 +14,31 @@ import {
 } from "@/constants/CurrenciesAndBanks";
 import { useDevice } from "@/contexts/DeviceContext";
 import { NavBar } from "@/components/navBar";
+import { useRouter } from "next/navigation";
+import { ExpiredState } from "@/components/expiredState";
+
 export default function Home() {
+  // Constants
   const { isMobile, viewportHeight } = useDevice();
   const {
     paywith,
-    setPaywith,
     currency,
     isConfirming,
     isSuccessful,
-    setIsConfirming,
-    setIsSuccessful,
     stablecoinPaymentMethod,
-    setStablecoinPaymentMethod,
+    data,
+    loading,
+    error,
+    setIsExpired,
+    isExpired,
   } = usePaymentLinkMerchantContext();
+  const router = useRouter();
 
+  // Functions
   const renderContent = () => {
-    if (isConfirming) {
+    if (isExpired) {
+      return <ExpiredState></ExpiredState>;
+    } else if (isConfirming) {
       return <LoadingState></LoadingState>;
     } else if (isSuccessful) {
       return <PaymentSuccessfulState></PaymentSuccessfulState>;
@@ -55,15 +62,24 @@ export default function Home() {
       return screen;
     }
   };
+  useEffect(() => {
+    console.log(data);
+    if (!loading) {
+      if (data?.status == 403) {
+        router.push("/error");
+      }
+    }
+    if (data?.transactions?.expired) {
+      setIsExpired(true);
+    }
+  }, [data, error, router, loading]);
+  // Rendering
   if (isMobile) {
     return (
       <div
         className={`w-full bg-black flex flex-grow  `}
         style={{ height: viewportHeight }}
       >
-        {/* Left Panel Pay With */}
-
-        {/* Right Panel  */}
         <PayWithModal>{renderContent()}</PayWithModal>
       </div>
     );
