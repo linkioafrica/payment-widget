@@ -154,7 +154,7 @@ export const NavBar = () => {
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
         ${paywith == "stablecoin" && !isExpired ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
-        ${isExpired ? "" : "hover:bg-[#4f4f4f] cursor-pointer"}
+        ${isExpired ? "opacity-30" : "hover:bg-[#4f4f4f] cursor-pointer"}
         `}
               onClick={
                 isExpired

@@ -62,14 +62,14 @@ export default function Home() {
       return screen;
     }
   };
-  console.log(data);
   useEffect(() => {
+    console.log(data);
     if (!loading) {
       if (data?.status == 403) {
         router.push("/error");
       }
     }
-    if (data && data.expired) {
+    if (data?.transactions?.expired) {
       setIsExpired(true);
     }
   }, [data, error, router, loading]);

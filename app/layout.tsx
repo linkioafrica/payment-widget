@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sora.className} antialiased`}>
+      <body className={`${sora.className}  antialiased`}>
         <DeviceProvider>
           <ThemeProvider>
             <PaymentLinkMerchantProvider>
