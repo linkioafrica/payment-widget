@@ -34,6 +34,7 @@ export default function Home() {
     isExpired,
     isBroken,
     setIsBroken,
+    trx,
   } = usePaymentLinkMerchantContext();
   const router = useRouter();
 
@@ -70,6 +71,9 @@ export default function Home() {
   useEffect(() => {
     if (!loading) {
       if (data?.status == 403) {
+        setIsBroken(true);
+      }
+      if (!trx) {
         setIsBroken(true);
       }
     }

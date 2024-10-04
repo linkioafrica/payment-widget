@@ -4,7 +4,6 @@ import { useFetchLinkDetails } from "@/hooks/fetchLinkDetails";
 import { Currency } from "@/constants/currencies";
 import { Tokens } from "@/constants/token";
 import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
-import { useRouter } from "next/navigation";
 
 interface PaymentLinkMerchantContextType {
   paywith: string;
