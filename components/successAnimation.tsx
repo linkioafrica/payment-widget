@@ -13,6 +13,7 @@ export const SuccessAnimation = ({ classes }: any) => {
 
     return () => clearTimeout(timeout);
   }, []);
+  
   if (isMobile) {
     return (
       <div className={`${classes}`}>

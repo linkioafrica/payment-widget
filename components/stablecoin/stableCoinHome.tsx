@@ -6,6 +6,7 @@ import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantCon
 import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
+import axios from 'axios';
 import {
   Connection,
   PublicKey,
@@ -36,17 +37,14 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
-  const {
-    stablecoinPaymentMethod,
-    setStablecoinPaymentMethod,
-    isSuccessful,
-    setIsSuccessful,
-  } = usePaymentLinkMerchantContext();
+  const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful, token } =
+    usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
+  const [tokenAmount, setTokenAmount] = useState(100); // default amount
 
   const connection = new Connection(clusterApiUrl("devnet")); // Use 'mainnet-beta' for mainnet
 
@@ -162,7 +160,42 @@ export const StableCoinHome = () => {
       console.error("Wallet not found");
     }
   };
+
+  
+  // Function to get swap price
+const getSwapPrice = async (value:number) => {
+  try {
+    if(token.name == 'USDC') return value;
+    const usdcAmountInAtomicUnits = value * 10 ** 6;
+
+    const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
+      params: {
+        inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",// USDC token
+        outputMint: token.mintAddress,
+        amount: usdcAmountInAtomicUnits, // Amount of fromToken you want to swap
+        slippage: 1,              // Optional: Set slippage tolerance (1%)
+        onlyDirectRoutes: true,   // Optional: If you only want direct swap routes (could improve speed)
+      },
+    });
+
+    const swapPrice = response.data;
+    console.log('Swap Price:', swapPrice);
+    var TokenUnit = 10 ^ token.decimals;
+    return swapPrice.outAmount / TokenUnit;
+  } catch (error) {
+    console.error('Error fetching swap price:', error);
+  }
+};
   useEffect(() => {
+    // Simulate an API call or calculation to set the amount
+    const fetchTokenAmount = async () => {
+      setTokenAmount(0);
+      // In a real use case, this would be dynamic based on API or user input
+      var price = await getSwapPrice(5000);
+      setTokenAmount(price); // Example of setting new token amount dynamically
+    };
+    fetchTokenAmount();
+
     if (stablecoinPaymentMethod == "wallet") {
       // Disable scrolling
       document.body.style.overflow = "hidden";
@@ -175,14 +208,14 @@ export const StableCoinHome = () => {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [stablecoinPaymentMethod]);
+  }, [stablecoinPaymentMethod, token]);
   if (isMobile) {
     return (
       <>
         <div>
           <div className="w-full flex items-center justify-center mt-8">
             <span className="text-center dark:text-[#F9F9F9] text-black text-lg max-w-[400px] font-medium">
-              Select how you would like to pay
+              Pay {tokenAmount}  {token.name} to the merchant address.
             </span>
           </div>
 
@@ -353,7 +386,7 @@ export const StableCoinHome = () => {
         <div>
           <div className="w-full flex items-center justify-center mt-5">
             <span className="text-center dark:text-[#F9F9F9] text-black text-[13px] font-medium">
-              Select how you would like to pay
+              Pay {tokenAmount}  {token.name} to the merchant address.
             </span>
           </div>
 
