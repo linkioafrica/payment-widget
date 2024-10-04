@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { PayWithModal } from "@/components/payWithModal";
 
 import { StableCoinHome } from "@/components/stablecoin/stableCoinHome";
-import { LoadingState } from "@/components/loadingState";
-import { PaymentSuccessfulState } from "@/components/paymentSuccessfulState";
+import { LoadingState } from "@/components/states/loadingState";
+import { PaymentSuccessfulState } from "@/components/states/paymentSuccessfulState";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { StableQRCode } from "@/components/stablecoin/stableQRCode";
 import {
@@ -15,7 +15,8 @@ import {
 import { useDevice } from "@/contexts/DeviceContext";
 import { NavBar } from "@/components/navBar";
 import { useRouter } from "next/navigation";
-import { ExpiredState } from "@/components/expiredState";
+import { ExpiredState } from "@/components/states/expiredState";
+import { BrokenState } from "@/components/states/brokenState";
 
 export default function Home() {
   // Constants
@@ -31,12 +32,16 @@ export default function Home() {
     error,
     setIsExpired,
     isExpired,
+    isBroken,
+    setIsBroken,
   } = usePaymentLinkMerchantContext();
   const router = useRouter();
 
   // Functions
   const renderContent = () => {
-    if (isExpired) {
+    if (isBroken) {
+      return <BrokenState></BrokenState>;
+    } else if (isExpired) {
       return <ExpiredState></ExpiredState>;
     } else if (isConfirming) {
       return <LoadingState></LoadingState>;
@@ -63,10 +68,9 @@ export default function Home() {
     }
   };
   useEffect(() => {
-    console.log(data);
     if (!loading) {
       if (data?.status == 403) {
-        router.push("/error");
+        setIsBroken(true);
       }
     }
     if (data?.transactions?.expired) {

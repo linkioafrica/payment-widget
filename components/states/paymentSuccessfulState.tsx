@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { SuccessAnimation } from "./successAnimation";
+import { SuccessAnimation } from "../successAnimation";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
 import { Icons } from "@/app/icons";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
-  const { paywith } = usePaymentLinkMerchantContext();
+  const { paywith, data } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
+
   if (isMobile) {
     return (
       <div>
@@ -24,7 +25,8 @@ export const PaymentSuccessfulState = () => {
                 Payment Successful!
               </h4>
               <span className="text-[#696F79] text-sm dark:text-[#888888] font-medium  text-center max-w-[450px]">
-                You have successfully sent USD 5000.
+                You have successfully sent {data?.transactions?.currency}{" "}
+                {data?.transactions?.amount}.
               </span>
               {paywith == "stablecoin" && (
                 <span className="text-[#0259D6] underline text-sm cursor-pointer">
@@ -62,7 +64,8 @@ export const PaymentSuccessfulState = () => {
                 Payment Successful!
               </h4>
               <span className="text-[#696F79] text-xs dark:text-[#888888] font-medium  text-center max-w-[450px]">
-                You have successfully sent USD 5000.
+                You have successfully sent {data?.transactions?.currency}{" "}
+                {data?.transactions?.amount}
               </span>
               {paywith == "stablecoin" && (
                 <span className="text-[#0259D6] underline text-xs cursor-pointer">
