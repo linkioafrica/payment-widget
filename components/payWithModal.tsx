@@ -8,6 +8,7 @@ import { useDevice } from "@/contexts/DeviceContext";
 import Tag from "./tag";
 import { NavBar } from "./navBar";
 import { SkeletonLoader } from "./UI Helper/skeletonLoader";
+import { spawn } from "child_process";
 
 export const PayWithModal = ({ children }: any) => {
   const { isMobile } = useDevice();
@@ -25,6 +26,7 @@ export const PayWithModal = ({ children }: any) => {
     stablecoinPaymentMethod,
     loading,
     data,
+    token,
   } = usePaymentLinkMerchantContext();
   if (isMobile) {
     return (
@@ -60,30 +62,47 @@ export const PayWithModal = ({ children }: any) => {
                 <i>{Icons.chevronLeft}</i>
               </button>
             )}
-          <div className="flex flex-col gap-4 ">
+          <div className="flex flex-col gap-3 ">
             {loading ? (
               <SkeletonLoader classes={"h-5 w-[80px] rounded"}></SkeletonLoader>
             ) : (
               <span className="text-[#696F79] text-lg leading-none">
-                {isSuccessful || isConfirming
-                  ? "Amount you sent"
-                  : `${data?.transactions?.business_name}`}
+                {isSuccessful || isConfirming ? (
+                  <div className="flex items-center gap-1  font-medium">
+                    <span className=" text-black dark:text-white text-lg leading-none">
+                      Title:{"   "}
+                    </span>
+                    {loading ? (
+                      <SkeletonLoader
+                        classes={"h-5 rounded w-[80px]"}
+                      ></SkeletonLoader>
+                    ) : (
+                      <span className=" text-black dark:text-white text-lg leading-none">
+                        {data?.transactions?.title}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  `${data?.transactions?.business_name || "Not found"}`
+                )}
               </span>
             )}
-            <div className="flex items-center gap-1  font-medium">
-              <span className=" text-black dark:text-white text-lg leading-none">
-                Title:{"   "}
-              </span>
-              {loading ? (
-                <SkeletonLoader
-                  classes={"h-5 rounded w-[80px]"}
-                ></SkeletonLoader>
-              ) : (
+            {isConfirming || isSuccessful ? null : (
+              <div className="flex items-center gap-1  font-medium">
                 <span className=" text-black dark:text-white text-lg leading-none">
-                  {data?.transactions?.title}
+                  Title:{"   "}
                 </span>
-              )}
-            </div>
+                {loading ? (
+                  <SkeletonLoader
+                    classes={"h-5 rounded w-[80px]"}
+                  ></SkeletonLoader>
+                ) : (
+                  <span className=" text-black dark:text-white text-lg leading-none">
+                    {data?.transactions?.title || "Not found"}
+                  </span>
+                )}
+              </div>
+            )}
             <span className="text-black text-xl dark:text-white leading-none flex items-center  gap-1">
               {isSuccessful || isConfirming ? "" : "Pay: " + token.name + " " + tokenAmount}
               {loading ? (
@@ -91,9 +110,14 @@ export const PayWithModal = ({ children }: any) => {
                   classes={"h-6 w-[100px] rounded"}
                 ></SkeletonLoader>
               ) : (
-                <span className="text-[#0259D6] dark:text-[#4893FF] font-semibold">
-                  {" "}
-                  {data?.transactions?.currency} {data?.transactions?.amount}
+                <span className="text-[#0259D6] dark:text-[#4893FF] leading-none font-semibold">
+                  {isSuccessful || isConfirming ? (
+                    <span className="text-black text-lg dark:text-white font-semibold">
+                      You sent:{" "}
+                    </span>
+                  ) : null}
+                  {data?.transactions?.amount || 0}{" "}
+                  {data?.transactions?.currency || token.name}
                 </span>
               )}
             </span>
@@ -123,15 +147,25 @@ export const PayWithModal = ({ children }: any) => {
       <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
         <div className={`flex items-end justify-between`}>
           {isConfirming || isSuccessful ? (
-            <span className=" text-black dark:text-white">
-              {" "}
-              Amount you sent
-            </span>
+            <div className="flex items-center gap-1 mt-1 font-medium">
+              <span className=" text-black dark:text-white text-sm">
+                Title:
+              </span>
+              {loading ? (
+                <SkeletonLoader
+                  classes={"h-5 rounded w-[80px]"}
+                ></SkeletonLoader>
+              ) : (
+                <span className=" text-black dark:text-white text-sm">
+                  {data?.transactions?.title}
+                </span>
+              )}
+            </div>
           ) : loading ? (
             <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
             <h2 className="text-[#696F79] font-medium text-sm">
-              {data?.transactions?.business_name}
+              {data?.transactions?.business_name || "Not found"}
             </h2>
           )}
           <div className="flex gap-4">
@@ -148,16 +182,20 @@ export const PayWithModal = ({ children }: any) => {
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-1 mt-1 font-medium">
-          <span className=" text-black dark:text-white text-sm">Title:</span>
-          {loading ? (
-            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
-          ) : (
-            <span className=" text-black dark:text-white text-sm">
-              {data?.transactions?.title}
-            </span>
-          )}
-        </div>
+        {isConfirming || isSuccessful ? null : (
+          <div className="flex items-center gap-1 mt-1 font-medium">
+            <span className=" text-black dark:text-white text-sm">Title:</span>
+            {loading ? (
+              <SkeletonLoader classes={"h-5 rounded w-[80px]"}>
+                {" "}
+              </SkeletonLoader>
+            ) : (
+              <span className=" text-black dark:text-white text-sm">
+                {data?.transactions?.title || "Not found"}
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="w-full flex gap-1 mt-1">
           <span className=" text-black dark:text-white">
@@ -167,7 +205,13 @@ export const PayWithModal = ({ children }: any) => {
             <SkeletonLoader classes={"h-6 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
             <span className=" text-[#0259D6]  dark:text-[#4893FF] font-semibold">
-              {data?.transactions?.currency} {data?.transactions?.amount}
+              {isSuccessful || isConfirming ? (
+                <span className="text-black  dark:text-white font-semibold">
+                  You sent:{" "}
+                </span>
+              ) : null}
+              {data?.transactions?.amount || 0}{" "}
+              {data?.transactions?.currency || token.name}
             </span>
           )}
         </div>

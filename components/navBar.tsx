@@ -13,6 +13,7 @@ export const NavBar = () => {
     setStablecoinPaymentMethod,
     setIsDrawerOpen,
     isExpired,
+    isBroken,
   } = usePaymentLinkMerchantContext();
 
   if (isMobile) {
@@ -20,7 +21,9 @@ export const NavBar = () => {
       <div className="w-[300px] h-full fixed bg-[#1E1E1E] py-5 flex flex-col justify-between  gap-20 z-10 ">
         <div className={`flex flex-col w-full gap-6 px-5 `}>
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
-          <div className="flex flex-col w-full gap-3 ">
+          <div
+            className={`flex flex-col w-full gap-3 ${isExpired || isBroken ? "opacity-30" : ""}`}
+          >
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center opacity-30
         ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
@@ -65,14 +68,20 @@ export const NavBar = () => {
             </button>
             <button
               className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
-        ${paywith == "stablecoin" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
-              onClick={() => {
-                setPaywith("stablecoin");
-                setIsConfirming(false);
-                setIsSuccessful(false);
-                setStablecoinPaymentMethod("");
-                setIsDrawerOpen(false);
-              }}
+        ${paywith == "stablecoin" && !isBroken && !isExpired ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
+        ${isExpired || isBroken ? "opacity-30" : ""}
+        `}
+              onClick={
+                isExpired || isBroken
+                  ? () => {}
+                  : () => {
+                      setPaywith("stablecoin");
+                      setIsConfirming(false);
+                      setIsSuccessful(false);
+                      setStablecoinPaymentMethod("");
+                      setIsDrawerOpen(false);
+                    }
+              }
             >
               <i>{Icons.stableCoin}</i>
               Stablecoin
@@ -109,7 +118,7 @@ export const NavBar = () => {
         <div className="flex flex-col w-full gap-6 px-5">
           <h1 className="text-white font-medium text-lg">PAY WITH</h1>
           <div
-            className={`flex flex-col w-full gap-3 text-sm ${isExpired ? "opacity-30" : ""}`}
+            className={`flex flex-col w-full gap-3 text-sm ${isExpired || isBroken ? "opacity-30" : ""}`}
           >
             <button
               className={`w-full text-start py-3 px-6 rounded-full flex opacity-30 gap-2 items-center
@@ -153,11 +162,11 @@ export const NavBar = () => {
             </button>
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
-        ${paywith == "stablecoin" && !isExpired ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
-        ${isExpired ? "opacity-30" : "hover:bg-[#4f4f4f] cursor-pointer"}
+        ${paywith == "stablecoin" && !isExpired && !isBroken ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
+        ${isExpired || isBroken ? "opacity-30" : "hover:bg-[#4f4f4f] cursor-pointer"}
         `}
               onClick={
-                isExpired
+                isExpired || isBroken
                   ? () => {}
                   : () => {
                       setPaywith("stablecoin");

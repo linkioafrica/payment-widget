@@ -31,6 +31,8 @@ interface PaymentLinkMerchantContextType {
   error: any;
   isExpired: boolean;
   setIsExpired: React.Dispatch<React.SetStateAction<boolean>>;
+  isBroken: boolean;
+  setIsBroken: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PaymentLinkMerchantContext = createContext<
@@ -54,6 +56,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
+  const [isBroken, setIsBroken] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -92,6 +95,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setIsDrawerOpen,
         isExpired,
         setIsExpired,
+        isBroken,
+        setIsBroken,
         trx, // Provide trx to the context
         data, // Provide fetched data to the context
         loading, // Provide loading state to the context

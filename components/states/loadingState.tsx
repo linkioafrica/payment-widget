@@ -1,4 +1,4 @@
-import { CircularLoader } from "./circularLoader";
+import { CircularLoader } from "../circularLoader";
 import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
