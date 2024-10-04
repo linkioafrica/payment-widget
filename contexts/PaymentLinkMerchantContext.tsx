@@ -18,6 +18,8 @@ interface PaymentLinkMerchantContextType {
   setIsSuccessful: React.Dispatch<React.SetStateAction<boolean>>;
   token: (typeof Tokens)[number];
   setToken: React.Dispatch<React.SetStateAction<(typeof Tokens)[number]>>;
+  tokenAmount: number;
+  setTokenAmount:React.Dispatch<React.SetStateAction<number>>;
   stablecoinPaymentMethod: string;
   setStablecoinPaymentMethod: React.Dispatch<React.SetStateAction<string>>;
   isDrawerOpen: boolean;
@@ -43,6 +45,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
 
   const [paywith, setPaywith] = useState("stablecoin");
   const [token, setToken] = useState(Tokens[0]);
+  const [tokenAmount, setTokenAmount] = useState(0);
   const [currency, setCurrency] = useState(
     fiatCurrency.filter((currency) => currency.status == "available")[0]
   );
@@ -83,6 +86,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setIsSuccessful,
         token,
         setToken,
+        tokenAmount,
+        setTokenAmount,
         stablecoinPaymentMethod,
         setStablecoinPaymentMethod,
         isDrawerOpen,
