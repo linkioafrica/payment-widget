@@ -10,6 +10,7 @@ import { NavBar } from "./navBar";
 import { SkeletonLoader } from "./UI Helper/skeletonLoader";
 import { spawn } from "child_process";
 import axios from "axios";
+import { Tokens } from "@/constants/token";
 
 export const PayWithModal = ({ children }: any) => {
   const { isMobile } = useDevice();
@@ -28,39 +29,66 @@ export const PayWithModal = ({ children }: any) => {
     loading,
     data,
     token,
+    setToken,
   } = usePaymentLinkMerchantContext();
 
   // Function to get swap price
-  const getSwapPrice = async (value: number) => {
+  const setSelectedTokenPrice = async () => {
     try {
-      if (token.name == "USDC") return value;
-      const usdcAmountInAtomicUnits = value * 10 ** 6;
+      var inputPrice = data?.transactions?.amount;
+      var inputTokenName = data?.transactions?.currency;
+      console.log(inputTokenName);
+      if(inputTokenName == token.name){
+        setTokenAmount(inputPrice);
+        return;
+      }
+      var inputUnitNumber = 0;
+      var inputMint = "";
+      Tokens.forEach(element => {
+        if(element.name == inputTokenName) {
+          inputMint = element.mintAddress;
+          inputUnitNumber= element.decimals;
+        }
+      });
+      const inputAmountInAtomicUnits = inputPrice * 10 ** inputUnitNumber;
 
       const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
         params: {
-          inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC token
+          inputMint: inputMint, // USDC token
           outputMint: token.mintAddress,
-          amount: usdcAmountInAtomicUnits, // Amount of fromToken you want to swap
+          amount: inputAmountInAtomicUnits, // Amount of fromToken you want to swap
           slippage: 1, // Optional: Set slippage tolerance (1%)
-          onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
+          // onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
         },
       });
 
       const swapPrice = response.data;
       console.log("Swap Price:", swapPrice);
       var TokenUnit = 10 ** token.decimals;
-      return swapPrice.outAmount / TokenUnit;
+      setTokenAmount(swapPrice.outAmount / TokenUnit); // Example of setting new token amount dynamically
     } catch (error) {
       console.error("Error fetching swap price:", error);
     }
   };
+  useEffect(()=>{
+    var inputPrice = data?.transactions?.amount;
+    console.log("amount=" + inputPrice);
+    setTokenAmount(inputPrice);
+    var inputTokenName = data?.transactions?.currency;
+    console.log("token=" + inputTokenName);
+
+    Tokens.forEach(element => {
+      if(element.name == inputTokenName) {
+        setToken(element);
+      }
+    });
+  },[data]);
+
   useEffect(() => {
     // Simulate an API call or calculation to set the amount
     const fetchTokenAmount = async () => {
       setTokenAmount(0);
-      // In a real use case, this would be dynamic based on API or user input
-      var price = await getSwapPrice(5000);
-      setTokenAmount(price ?? 0); // Example of setting new token amount dynamically
+      await setSelectedTokenPrice();
     };
     fetchTokenAmount();
   }, [token]);
@@ -152,8 +180,8 @@ export const PayWithModal = ({ children }: any) => {
                       You sent:{" "}
                     </span>
                   ) : null}
-                  {data?.transactions?.amount || tokenAmount}{" "}
-                  {data?.transactions?.currency || token.name}
+                  {tokenAmount>0?tokenAmount:"-"}{" "}
+                  {token.name}
                 </span>
               )}
             </span>
@@ -246,8 +274,8 @@ export const PayWithModal = ({ children }: any) => {
                   You sent:{" "}
                 </span>
               ) : null}
-              {data?.transactions?.amount || tokenAmount}{" "}
-              {data?.transactions?.currency || token.name}
+              {tokenAmount>0?tokenAmount:"-"}{" "}
+              {token.name}
             </span>
           )}
         </div>
