@@ -11,7 +11,7 @@ export const Tokens = [
     mintAddress: "HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr",
     decimals: 6,
     image: "/assets/svg/stablecoins/eurc.svg",
-    status: "unavailable",
+    status: "available",
   },
   {
     name: "EUROe",
@@ -39,7 +39,7 @@ export const Tokens = [
     mintAddress: "6zYgzrT7X2wi9a9NeMtUvUWLLmf2a8vBsbYkocYdB9wa",
     decimals: 9,
     image: "/assets/svg/stablecoins/mxne.svg",
-    status: "unavailable",
+    status: "available",
   },
   {
     name: "NGNC",
