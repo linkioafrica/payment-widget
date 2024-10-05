@@ -36,8 +36,13 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
-  const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful, token} =
-    usePaymentLinkMerchantContext();
+  const {
+    stablecoinPaymentMethod,
+    setStablecoinPaymentMethod,
+    isSuccessful,
+    setIsSuccessful,
+    token,
+  } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
@@ -159,7 +164,7 @@ export const StableCoinHome = () => {
     }
   };
 
-  
+ 
   useEffect(() => {
 
     if (stablecoinPaymentMethod == "wallet") {
