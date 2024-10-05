@@ -19,7 +19,7 @@ interface PaymentLinkMerchantContextType {
   token: (typeof Tokens)[number];
   setToken: React.Dispatch<React.SetStateAction<(typeof Tokens)[number]>>;
   tokenAmount: number;
-  setTokenAmount:React.Dispatch<React.SetStateAction<number>>;
+  setTokenAmount: React.Dispatch<React.SetStateAction<number>>;
   stablecoinPaymentMethod: string;
   setStablecoinPaymentMethod: React.Dispatch<React.SetStateAction<string>>;
   isDrawerOpen: boolean;
@@ -72,7 +72,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
       );
       if (token) setToken(token);
     }
-  }, [, data]);
+  }, [data]);
   return (
     <PaymentLinkMerchantContext.Provider
       value={{
