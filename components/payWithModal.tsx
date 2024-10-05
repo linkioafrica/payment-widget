@@ -65,7 +65,10 @@ export const PayWithModal = ({ children }: any) => {
       const swapPrice = response.data;
       console.log("Swap Price:", swapPrice);
       var TokenUnit = 10 ** token.decimals;
-      setTokenAmount(swapPrice.outAmount / TokenUnit); // Example of setting new token amount dynamically
+      var tokenAmount = swapPrice.outAmount / TokenUnit;
+      
+      // Round up to 2 decimal places
+      setTokenAmount(Math.ceil(tokenAmount * 100) / 100);
     } catch (error) {
       console.error("Error fetching swap price:", error);
     }
