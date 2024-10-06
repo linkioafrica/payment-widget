@@ -32,24 +32,26 @@ export const PayWithModal = ({ children }: any) => {
     setToken,
     isBroken,
     conversionLoading,
+    setConversionLoading,
   } = usePaymentLinkMerchantContext();
 
   // Function to get swap price
   const setSelectedTokenPrice = async () => {
     try {
+      setConversionLoading(true);
       var inputPrice = data?.transactions?.amount;
       var inputTokenName = data?.transactions?.currency;
       console.log(inputTokenName);
-      if(inputTokenName == token.name){
+      if (inputTokenName == token.name) {
         setTokenAmount(inputPrice);
         return;
       }
       var inputUnitNumber = 0;
       var inputMint = "";
-      Tokens.forEach(element => {
-        if(element.name == inputTokenName) {
+      Tokens.forEach((element) => {
+        if (element.name == inputTokenName) {
           inputMint = element.mintAddress;
-          inputUnitNumber= element.decimals;
+          inputUnitNumber = element.decimals;
         }
       });
       const inputAmountInAtomicUnits = inputPrice * 10 ** inputUnitNumber;
@@ -68,26 +70,28 @@ export const PayWithModal = ({ children }: any) => {
       console.log("Swap Price:", swapPrice);
       var TokenUnit = 10 ** token.decimals;
       var tokenAmount = swapPrice.outAmount / TokenUnit;
-      
+
       // Round up to 2 decimal places
       setTokenAmount(Math.ceil(tokenAmount * 100) / 100);
     } catch (error) {
       console.error("Error fetching swap price:", error);
+    } finally {
+      setConversionLoading(false);
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     var inputPrice = data?.transactions?.amount;
     console.log("amount=" + inputPrice);
     setTokenAmount(inputPrice);
     var inputTokenName = data?.transactions?.currency;
     console.log("token=" + inputTokenName);
 
-    Tokens.forEach(element => {
-      if(element.name == inputTokenName) {
+    Tokens.forEach((element) => {
+      if (element.name == inputTokenName) {
         setToken(element);
       }
     });
-  },[data]);
+  }, [data]);
 
   useEffect(() => {
     // Simulate an API call or calculation to set the amount
