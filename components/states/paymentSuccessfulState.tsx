@@ -3,6 +3,7 @@ import { SuccessAnimation } from "../successAnimation";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
 import { Icons } from "@/app/icons";
+import { DisconnectWallet } from "../disconnectWallet";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
@@ -36,6 +37,11 @@ export const PaymentSuccessfulState = () => {
             </div>
           )}
         </div>
+        {isDone && (
+          <div className="mt-6">
+            <DisconnectWallet></DisconnectWallet>
+          </div>
+        )}
 
         <div className="w-full">
           <button
@@ -75,7 +81,7 @@ export const PaymentSuccessfulState = () => {
             </div>
           )}
         </div>
-
+        {isDone && <DisconnectWallet></DisconnectWallet>}
         <div className="w-full">
           <button
             disabled={isDone}

@@ -17,17 +17,21 @@ export const useFetchLinkDetails = (checkout_id: any) => {
       } catch (err: any) {
         setError(err);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
 
     if (checkout_id) {
       fetchLinkDetails();
     } else {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
       setError("Checkout Id not found");
     }
   }, [checkout_id]);
 
-  return { loading, data, error };
+  return { data, error, loading };
 };

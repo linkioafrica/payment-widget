@@ -2,6 +2,7 @@ import { Icons } from "@/app/icons";
 import Tag from "./tag";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
+import { useState, useEffect } from "react";
 
 export const NavBar = () => {
   const { isMobile } = useDevice();
@@ -14,7 +15,43 @@ export const NavBar = () => {
     setIsDrawerOpen,
     isExpired,
     isBroken,
+    data,
+    loading,
   } = usePaymentLinkMerchantContext();
+
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    if (loading) return;
+    if (!data || data?.status == 403) {
+      setTimeLeft("00:00:00");
+      return;
+    }
+    // Replace with your API date value
+    const expirationDate = new Date(data?.transactions?.timeout).getTime();
+
+    const updateTimeLeft = () => {
+      const now = new Date().getTime();
+      const difference = expirationDate - now;
+
+      if (difference <= 0) {
+        setTimeLeft("00:00:00");
+        return;
+      }
+
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / (1000 * 60)) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      const formattedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      setTimeLeft(formattedTime);
+    };
+
+    updateTimeLeft(); // Initial call to set the time immediately
+    const timer = setInterval(updateTimeLeft, 1000);
+
+    return () => clearInterval(timer); // Cleanup on component unmount
+  }, [loading, data]);
 
   if (isMobile) {
     return (
@@ -106,7 +143,7 @@ export const NavBar = () => {
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-sm ">
               Link expires in:{" "}
-              <span className="font-medium text-white">1:00:00</span>{" "}
+              <span className="font-medium text-white">{timeLeft}</span>{" "}
             </span>
           </div>
         </div>
@@ -199,7 +236,7 @@ export const NavBar = () => {
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-[11px]">
               Link expires in:{" "}
-              <span className="font-medium text-white">1:00:00</span>
+              <span className="font-medium text-white">{timeLeft}</span>
             </span>
           </div>
         </div>

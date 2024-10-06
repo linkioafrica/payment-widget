@@ -6,7 +6,7 @@ import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantCon
 import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
-import axios from 'axios';
+import axios from "axios";
 import {
   Connection,
   PublicKey,
@@ -37,8 +37,17 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
-  const { stablecoinPaymentMethod, setStablecoinPaymentMethod,  isSuccessful, setIsSuccessful, token, tokenAmount, setTokenAmount } =
-    usePaymentLinkMerchantContext();
+  const {
+    stablecoinPaymentMethod,
+    setStablecoinPaymentMethod,
+    isSuccessful,
+    setIsSuccessful,
+    token,
+    tokenAmount,
+    setTokenAmount,
+    setConversionLoading,
+    conversionLoading,
+  } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
@@ -160,41 +169,44 @@ export const StableCoinHome = () => {
     }
   };
 
-  
   // Function to get swap price
-const getSwapPrice = async (value:number) => {
-  try {
-    if(token.name == 'USDC') return value;
-    const usdcAmountInAtomicUnits = value * 10 ** 6;
+  const getSwapPrice = async (value: number) => {
+    try {
+      setConversionLoading(true);
 
-    const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
-      params: {
-        inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",// USDC token
-        outputMint: token.mintAddress,
-        amount: usdcAmountInAtomicUnits, // Amount of fromToken you want to swap
-        slippage: 1,              // Optional: Set slippage tolerance (1%)
-        onlyDirectRoutes: true,   // Optional: If you only want direct swap routes (could improve speed)
-      },
-    });
+      if (token.name == "USDC") return value;
+      const usdcAmountInAtomicUnits = value * 10 ** 6;
 
-    const swapPrice = response.data;
-    console.log('Swap Price:', swapPrice);
-    var TokenUnit = 10 ** token.decimals;
-    return swapPrice.outAmount / TokenUnit;
-  } catch (error) {
-    console.error('Error fetching swap price:', error);
-  }
-};
+      const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
+        params: {
+          inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC token
+          outputMint: token.mintAddress,
+          amount: usdcAmountInAtomicUnits, // Amount of fromToken you want to swap
+          slippage: 1, // Optional: Set slippage tolerance (1%)
+          onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
+        },
+      });
+
+      const swapPrice = response.data;
+      console.log("Swap Price:", swapPrice);
+      var TokenUnit = 10 ** token.decimals;
+      return swapPrice.outAmount / TokenUnit;
+    } catch (error) {
+      console.error("Error fetching swap price:", error);
+    } finally {
+        setConversionLoading(false);
+
+    }
+  };
   useEffect(() => {
     // Simulate an API call or calculation to set the amount
     const fetchTokenAmount = async () => {
       setTokenAmount(0);
       // In a real use case, this would be dynamic based on API or user input
       var price = await getSwapPrice(5000);
-      setTokenAmount(price); // Example of setting new token amount dynamically
+      setTokenAmount(price as number); // Example of setting new token amount dynamically
     };
     fetchTokenAmount();
-
     if (stablecoinPaymentMethod == "wallet") {
       // Disable scrolling
       document.body.style.overflow = "hidden";
