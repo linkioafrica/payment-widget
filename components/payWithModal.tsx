@@ -9,6 +9,8 @@ import Tag from "./tag";
 import { NavBar } from "./navBar";
 import { SkeletonLoader } from "./UI Helper/skeletonLoader";
 import { spawn } from "child_process";
+import axios from "axios";
+import { Tokens } from "@/constants/token";
 
 export const PayWithModal = ({ children }: any) => {
   const { isMobile } = useDevice();
@@ -16,6 +18,7 @@ export const PayWithModal = ({ children }: any) => {
   const { theme, toggleTheme } = useTheme();
   const {
     tokenAmount,
+    setTokenAmount,
     paywith,
     isConfirming,
     isSuccessful,
@@ -26,9 +29,74 @@ export const PayWithModal = ({ children }: any) => {
     loading,
     data,
     token,
+    setToken,
     isBroken,
     conversionLoading,
   } = usePaymentLinkMerchantContext();
+
+  // Function to get swap price
+  const setSelectedTokenPrice = async () => {
+    try {
+      var inputPrice = data?.transactions?.amount;
+      var inputTokenName = data?.transactions?.currency;
+      console.log(inputTokenName);
+      if(inputTokenName == token.name){
+        setTokenAmount(inputPrice);
+        return;
+      }
+      var inputUnitNumber = 0;
+      var inputMint = "";
+      Tokens.forEach(element => {
+        if(element.name == inputTokenName) {
+          inputMint = element.mintAddress;
+          inputUnitNumber= element.decimals;
+        }
+      });
+      const inputAmountInAtomicUnits = inputPrice * 10 ** inputUnitNumber;
+
+      const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
+        params: {
+          inputMint: inputMint, // USDC token
+          outputMint: token.mintAddress,
+          amount: inputAmountInAtomicUnits, // Amount of fromToken you want to swap
+          slippage: 1, // Optional: Set slippage tolerance (1%)
+          // onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
+        },
+      });
+
+      const swapPrice = response.data;
+      console.log("Swap Price:", swapPrice);
+      var TokenUnit = 10 ** token.decimals;
+      var tokenAmount = swapPrice.outAmount / TokenUnit;
+      
+      // Round up to 2 decimal places
+      setTokenAmount(Math.ceil(tokenAmount * 100) / 100);
+    } catch (error) {
+      console.error("Error fetching swap price:", error);
+    }
+  };
+  useEffect(()=>{
+    var inputPrice = data?.transactions?.amount;
+    console.log("amount=" + inputPrice);
+    setTokenAmount(inputPrice);
+    var inputTokenName = data?.transactions?.currency;
+    console.log("token=" + inputTokenName);
+
+    Tokens.forEach(element => {
+      if(element.name == inputTokenName) {
+        setToken(element);
+      }
+    });
+  },[data]);
+
+  useEffect(() => {
+    // Simulate an API call or calculation to set the amount
+    const fetchTokenAmount = async () => {
+      setTokenAmount(0);
+      await setSelectedTokenPrice();
+    };
+    fetchTokenAmount();
+  }, [token]);
   if (isMobile) {
     return (
       <div className="flex-grow  bg-white dark:bg-[#101113] px-5 pt-6 pb-3 flex-col relative ">

@@ -219,7 +219,7 @@ export const StableCoinHome = () => {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [stablecoinPaymentMethod, token]);
+  }, [stablecoinPaymentMethod]);
   if (isMobile) {
     return (
       <>
