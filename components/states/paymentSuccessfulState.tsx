@@ -27,10 +27,10 @@ export const PaymentSuccessfulState = () => {
                 Payment Successful!
               </h4>
               <span className="text-[#696F79] text-sm dark:text-[#888888] font-medium  text-center max-w-[450px]">
-                You have successfully sent {data?.transactions?.currency}{" "}
-                {data?.transactions?.amount}.
+                You have successfully sent {data?.transactions?.amount}{" "}
+                {data?.transactions?.currency}.
               </span>
-              {paywith == "stablecoin" && (
+              {paywith == "stablecoin" && walletConnected && (
                 <span className="text-[#0259D6] underline text-sm cursor-pointer">
                   View on explorer.
                 </span>
@@ -71,10 +71,10 @@ export const PaymentSuccessfulState = () => {
                 Payment Successful!
               </h4>
               <span className="text-[#696F79] text-xs dark:text-[#888888] font-medium  text-center max-w-[450px]">
-                You have successfully sent {data?.transactions?.currency}{" "}
-                {data?.transactions?.amount}
+                You have successfully {data?.transactions?.amount}{" "}
+                {data?.transactions?.currency}.
               </span>
-              {paywith == "stablecoin" && (
+              {paywith == "stablecoin" && walletConnected && (
                 <span className="text-[#0259D6] underline text-xs cursor-pointer">
                   View on explorer.
                 </span>

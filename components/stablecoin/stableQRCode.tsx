@@ -37,11 +37,6 @@ export const StableQRCode = () => {
             Change payment method
           </button> */}
           <div className="w-full mt-7 flex flex-col gap-4">
-            {walletConnected && (
-              <div>
-                <DisconnectWallet></DisconnectWallet>
-              </div>
-            )}
             <button
               className="w-full text-white bg-[#0E70FD] rounded-lg  text-center py-3 "
               onClick={() => setIsConfirming(true)}
@@ -78,11 +73,6 @@ export const StableQRCode = () => {
             Change payment method
           </button>
           <div className="flex flex-col w-full gap-4 mt-0">
-            {walletConnected && (
-              <div className="">
-                <DisconnectWallet></DisconnectWallet>
-              </div>
-            )}
             <button
               className="w-full text-white bg-[#0E70FD] rounded-lg text-sm text-center py-2"
               onClick={() => setIsConfirming(true)}
