@@ -16,8 +16,8 @@ export const ExpiredState = () => {
               <i>{Icons.expired}</i>
             </div>
             <span className="font-medium  max-w-[300px] text-center text-sm text-black dark:text-[#888888]">
-              Payment link is expired. Please contact the merchant to make a new
-              transaction.
+              Payment link has expired. Please contact the merchant to make a
+              new transaction.
             </span>
           </div>
         </div>
@@ -32,8 +32,8 @@ export const ExpiredState = () => {
               <i>{Icons.expired}</i>
             </div>
             <span className="font-medium  max-w-[300px] text-center text-xs text-black dark:text-[#888888]">
-              Payment link is expired. Please contact the merchant to make a new
-              transaction.
+              Payment link has expired. Please contact the merchant to make a
+              new transaction.
             </span>
           </div>
         </div>

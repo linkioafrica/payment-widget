@@ -15,7 +15,7 @@ export const BrokenState = () => {
               <i>{Icons.expired}</i>
             </div>
             <span className="font-medium  max-w-[300px] text-center text-sm text-black dark:text-[#888888]">
-              Payment link is broken. Please contact the merchant to make a new
+              Payment link has broken. Please contact the merchant to make a new
               transaction.
             </span>
           </div>
@@ -31,7 +31,7 @@ export const BrokenState = () => {
               <i>{Icons.expired}</i>
             </div>
             <span className="font-medium  max-w-[300px] text-center text-xs text-black dark:text-[#888888]">
-              Payment link is broken. Please contact the merchant to make a new
+              Payment link has broken. Please contact the merchant to make a new
               transaction.
             </span>
           </div>
