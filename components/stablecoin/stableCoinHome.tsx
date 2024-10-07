@@ -34,6 +34,8 @@ import {
   createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
+import { DisconnectWallet } from "../disconnectWallet";
+import { useWallet as walletContext } from "@/contexts/WalletContext";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
@@ -53,7 +55,7 @@ export const StableCoinHome = () => {
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
-
+  const { walletConnected } = walletContext();
   const connection = new Connection(clusterApiUrl("devnet")); // Use 'mainnet-beta' for mainnet
 
   // Function to send USDC
@@ -314,7 +316,12 @@ export const StableCoinHome = () => {
               </div>
             </label>
           </div>
-          <div className="w-full flex flex-col items-center mt-6 gap-8">
+          <div className="w-full flex flex-col items-center mt-6 gap-4">
+            {walletConnected && (
+              <div className="">
+                <DisconnectWallet></DisconnectWallet>
+              </div>
+            )}
             <button
               className="w-full text-white bg-[#0E70FD]  rounded-lg text-center  py-3"
               onClick={
@@ -401,7 +408,7 @@ export const StableCoinHome = () => {
             </span>
           </div>
 
-          <div className="w-full min-h-[170px] mt-5 flex flex-col gap-5">
+          <div className="w-full min-h-[150px] mt-5 flex flex-col gap-5">
             <label
               className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
                 selectedMethod === "qrCode"
@@ -485,7 +492,12 @@ export const StableCoinHome = () => {
               </div>
             </label>
           </div>
-          <div className="w-full flex flex-col items-center mt-6 gap-8">
+          <div className="w-full flex flex-col items-center mt-6 gap-4">
+            {walletConnected && (
+              <div className="">
+                <DisconnectWallet></DisconnectWallet>
+              </div>
+            )}
             <button
               className="w-full text-white bg-[#0E70FD] text-sm rounded-lg text-center  py-2"
               onClick={

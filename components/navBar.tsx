@@ -24,7 +24,7 @@ export const NavBar = () => {
   useEffect(() => {
     if (loading) return;
     if (!data || data?.status == 403) {
-      setTimeLeft("00:00:00");
+      setTimeLeft("——");
       return;
     }
     // Replace with your API date value
@@ -35,7 +35,7 @@ export const NavBar = () => {
       const difference = expirationDate - now;
 
       if (difference <= 0) {
-        setTimeLeft("00:00:00");
+        setTimeLeft("——");
         return;
       }
 

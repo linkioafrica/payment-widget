@@ -225,34 +225,18 @@ export const PayWithModal = ({ children }: any) => {
   } else {
     return (
       <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
-        {isConfirming || isSuccessful ? (
-          <h2 className="text-[#696F79] font-medium text-sm">
-            {data?.transactions?.business_name}
-          </h2>
-        ) : null}
         <div className={`flex items-end justify-between`}>
-          {isConfirming || isSuccessful ? (
-            <div className="flex items-center gap-1 mt-1 font-medium">
-              <span className=" text-black dark:text-white text-sm">
-                Title:
-              </span>
-              {loading ? (
-                <SkeletonLoader
-                  classes={"h-5 rounded w-[80px]"}
-                ></SkeletonLoader>
-              ) : (
-                <span className=" text-black dark:text-white text-sm">
-                  {data?.transactions?.title}
-                </span>
-              )}
-            </div>
-          ) : loading ? (
-            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
+      
+          {loading ? (
+            <SkeletonLoader classes={"h-5 rounded w-[80px]"}>
+              {" "}
+            </SkeletonLoader>
           ) : (
             <h2 className="text-[#696F79] font-medium text-sm">
               {data?.transactions?.business_name}
             </h2>
           )}
+      
           <div className="flex gap-4">
             {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
               <TokensDropDown disabled={isBroken}></TokensDropDown>
@@ -267,20 +251,17 @@ export const PayWithModal = ({ children }: any) => {
             </button>
           </div>
         </div>
-        {isConfirming || isSuccessful ? null : (
-          <div className="flex items-center gap-1 mt-1 font-medium">
-            <span className=" text-black dark:text-white text-sm">Title:</span>
-            {loading ? (
-              <SkeletonLoader classes={"h-5 rounded w-[80px]"}>
-                {" "}
-              </SkeletonLoader>
-            ) : (
-              <span className=" text-black dark:text-white text-sm">
-                {data?.transactions?.title || "--"}
-              </span>
-            )}
-          </div>
-        )}
+
+        <div className="flex items-center gap-1 mt-1 font-medium">
+          <span className=" text-black dark:text-white text-sm">Title:</span>
+          {loading ? (
+            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
+          ) : (
+            <span className=" text-black dark:text-white text-sm">
+              {data?.transactions?.title || "--"}
+            </span>
+          )}
+        </div>
 
         <div className="w-full flex gap-1 mt-1">
           <span className=" text-black dark:text-white">

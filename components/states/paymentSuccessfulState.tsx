@@ -4,12 +4,13 @@ import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantCon
 import { useDevice } from "@/contexts/DeviceContext";
 import { Icons } from "@/app/icons";
 import { DisconnectWallet } from "../disconnectWallet";
+import { useWallet } from "@/contexts/WalletContext";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
   const { paywith, data } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
-
+  const { walletConnected } = useWallet();
   if (isMobile) {
     return (
       <div>
@@ -37,16 +38,16 @@ export const PaymentSuccessfulState = () => {
             </div>
           )}
         </div>
-        {isDone && (
-          <div className="mt-6">
-            <DisconnectWallet></DisconnectWallet>
-          </div>
-        )}
 
-        <div className="w-full">
+        <div className="w-full  mt-10">
+          {walletConnected && (
+            <div className="mt-6 mb-6">
+              <DisconnectWallet></DisconnectWallet>
+            </div>
+          )}
           <button
             disabled={isDone}
-            className={`w-full text-white bg-[#0E70FD]  rounded-lg  text-center mt-16 py-3 ${isDone ? "opacity-0" : ""}`}
+            className={`w-full text-white bg-[#0E70FD]  rounded-lg  text-center py-3 ${isDone ? "opacity-0" : ""}`}
             onClick={() => setIsDone(true)}
           >
             Done
@@ -81,7 +82,12 @@ export const PaymentSuccessfulState = () => {
             </div>
           )}
         </div>
-        {isDone && <DisconnectWallet></DisconnectWallet>}
+        {walletConnected && (
+          <div className="mt-6 mb-4">
+            <DisconnectWallet></DisconnectWallet>
+          </div>
+        )}
+
         <div className="w-full">
           <button
             disabled={isDone}

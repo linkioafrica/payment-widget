@@ -12,8 +12,7 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState<string>("light");
-  const [walletConnected, setWalletConnected] = useState(false);
+  const [walletConnected, setWalletConnected] = useState(true);
   const [walletAddress, setWalletAddress] = useState(
     "asdkasdskhHHKFHBJ)(!#Jl;jdajsdkasdjk"
   );
