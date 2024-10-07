@@ -147,9 +147,6 @@ export const PayWithModal = ({ children }: any) => {
               <span className="text-[#696F79] text-lg leading-none">
                 {isSuccessful || isConfirming ? (
                   <div className="flex items-center gap-1  font-medium">
-                    <span className=" text-black dark:text-white text-lg leading-none">
-                      Title:{"   "}
-                    </span>
                     {loading ? (
                       <SkeletonLoader
                         classes={"h-5 rounded w-[80px]"}
@@ -167,9 +164,6 @@ export const PayWithModal = ({ children }: any) => {
             )}
             {isConfirming || isSuccessful ? null : (
               <div className="flex items-center gap-1  font-medium">
-                <span className=" text-black dark:text-white text-lg leading-none">
-                  Title:{"   "}
-                </span>
                 {loading ? (
                   <SkeletonLoader
                     classes={"h-5 rounded w-[80px]"}
@@ -250,7 +244,6 @@ export const PayWithModal = ({ children }: any) => {
         </div>
 
         <div className="flex items-center gap-1 mt-1 font-medium">
-          <span className=" text-black dark:text-white text-sm">Title:</span>
           {loading ? (
             <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
