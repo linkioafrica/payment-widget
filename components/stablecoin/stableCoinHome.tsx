@@ -340,7 +340,7 @@ export const StableCoinHome = () => {
               className="w-full h-full bg-black absolute opacity-20"
               onClick={() => setStablecoinPaymentMethod("")}
             ></div>
-            <div className="w-[350px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-4 items-center">
+            <div className="w-[300px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-6 items-center">
               <div className="w-full flex items-end justify-end">
                 <button
                   className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
@@ -376,7 +376,7 @@ export const StableCoinHome = () => {
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
                         onClick={() => connectWallet(wallet.id)}
                       >
-                        Connect & Pay
+                        Connect
                       </button>
                     )}
                   </div>
@@ -551,7 +551,7 @@ export const StableCoinHome = () => {
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
                         onClick={() => connectWallet(wallet.id)}
                       >
-                        Connect & Pay
+                        Connect
                       </button>
                     )}
                   </div>
