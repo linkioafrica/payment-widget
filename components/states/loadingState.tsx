@@ -6,7 +6,7 @@ import { useWallet } from "@/contexts/WalletContext";
 import { DisconnectWallet } from "../disconnectWallet";
 
 export const LoadingState = () => {
-  const { setIsConfirming, setIsSuccessful, isConfirming, isSuccessful } =
+  const { setIsConfirming, setIsSuccessful, stablecoinPaymentMethod } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const [secondsRemaining, setSecondsRemaining] = useState(14 * 60 + 59); // 14:59 in seconds
@@ -50,7 +50,7 @@ export const LoadingState = () => {
               {formatTime(secondsRemaining)}
             </span>
           </span>
-          {walletConnected && (
+          {walletConnected && stablecoinPaymentMethod == "wallet" && (
             <div className="mt-4">
               <DisconnectWallet></DisconnectWallet>
             </div>
@@ -73,7 +73,7 @@ export const LoadingState = () => {
               {formatTime(secondsRemaining)}
             </span>
           </span>
-          {walletConnected && (
+          {walletConnected && stablecoinPaymentMethod == "wallet" && (
             <div className="mt-4">
               <DisconnectWallet></DisconnectWallet>
             </div>

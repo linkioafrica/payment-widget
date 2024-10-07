@@ -1,16 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SuccessAnimation } from "../successAnimation";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
 import { Icons } from "@/app/icons";
 import { DisconnectWallet } from "../disconnectWallet";
 import { useWallet } from "@/contexts/WalletContext";
+import { UpdateTrxDetails } from "@/www";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
-  const { paywith, data } = usePaymentLinkMerchantContext();
+  const { paywith, data, stablecoinPaymentMethod, trx } =
+    usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { walletConnected } = useWallet();
+
+  useEffect(() => {
+    onPaymentComplete();
+  }, []);
+  const onPaymentComplete = async () => {
+    await updatePaymentLink();
+  };
+  const updatePaymentLink = async () => {
+    if (!trx) return;
+    const url = UpdateTrxDetails;
+    const requestBody = {
+      checkout_id: trx,
+      payment_status: "delivered",
+      expired: true,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+      console.log("API Response:", data);
+    } catch (error) {
+      console.error("Error calling API:", error);
+    } finally {
+      console.log("API call completed");
+    }
+  };
   if (isMobile) {
     return (
       <div>
@@ -40,7 +75,7 @@ export const PaymentSuccessfulState = () => {
         </div>
 
         <div className="w-full  mt-10">
-          {walletConnected && (
+          {walletConnected && stablecoinPaymentMethod == "wallet" && (
             <div className="mt-6 mb-6">
               <DisconnectWallet></DisconnectWallet>
             </div>
@@ -82,7 +117,7 @@ export const PaymentSuccessfulState = () => {
             </div>
           )}
         </div>
-        {walletConnected && (
+        {walletConnected && stablecoinPaymentMethod == "wallet" && (
           <div className="mt-6 mb-4">
             <DisconnectWallet></DisconnectWallet>
           </div>

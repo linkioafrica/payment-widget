@@ -226,17 +226,14 @@ export const PayWithModal = ({ children }: any) => {
     return (
       <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
         <div className={`flex items-end justify-between`}>
-      
           {loading ? (
-            <SkeletonLoader classes={"h-5 rounded w-[80px]"}>
-              {" "}
-            </SkeletonLoader>
+            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
             <h2 className="text-[#696F79] font-medium text-sm">
               {data?.transactions?.business_name}
             </h2>
           )}
-      
+
           <div className="flex gap-4">
             {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
               <TokensDropDown disabled={isBroken}></TokensDropDown>

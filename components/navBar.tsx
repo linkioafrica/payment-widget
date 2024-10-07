@@ -3,6 +3,7 @@ import Tag from "./tag";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
 import { useState, useEffect } from "react";
+import { UpdateTrxDetails } from "@/www";
 
 export const NavBar = () => {
   const { isMobile } = useDevice();
@@ -13,11 +14,13 @@ export const NavBar = () => {
     setIsSuccessful,
     setStablecoinPaymentMethod,
     setIsDrawerOpen,
+    setIsExpired,
     isExpired,
     isBroken,
     data,
     loading,
     isSuccessful,
+    trx,
   } = usePaymentLinkMerchantContext();
 
   const [timeLeft, setTimeLeft] = useState<string>("");
@@ -37,6 +40,8 @@ export const NavBar = () => {
 
       if (difference <= 0) {
         setTimeLeft("00:00:00");
+        handleTimeEnd();
+        setIsExpired(true);
         return;
       }
 
@@ -53,6 +58,36 @@ export const NavBar = () => {
 
     return () => clearInterval(timer); // Cleanup on component unmount
   }, [loading, data]);
+  const handleTimeEnd = async () => {
+    await updatePaymentLink();
+  };
+  const updatePaymentLink = async () => {
+    if (!trx) return;
+    const url = UpdateTrxDetails;
+    console.log("called");
+    const requestBody = {
+      checkout_id: trx,
+      payment_status: "failed",
+      expired: true,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+      console.log("API Response:", data);
+    } catch (error) {
+      console.error("Error calling API:", error);
+    } finally {
+      console.log("API call completed");
+    }
+  };
 
   if (isMobile) {
     return (
@@ -105,12 +140,12 @@ export const NavBar = () => {
               ></Tag>
             </button>
             <button
-              className={`w-full text-start hover:bg-[#4f4f4f] py-3 px-6 rounded-full flex gap-2 items-center
-        ${paywith == "stablecoin" && !isBroken && !isExpired ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
-        ${isExpired || isBroken ? "opacity-30" : ""}
+              className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
+        ${paywith == "stablecoin" && !isBroken && !isExpired && !isSuccessful ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
+        ${isExpired || isBroken || isSuccessful ? "opacity-30" : "hover:bg-[#4f4f4f]"}
         `}
               onClick={
-                isExpired || isBroken
+                isExpired || isBroken || isSuccessful
                   ? () => {}
                   : () => {
                       setPaywith("stablecoin");
@@ -145,7 +180,7 @@ export const NavBar = () => {
             <span className="text-[#9F9F9F] text-sm ">
               Link expires in:{" "}
               <span className="font-medium text-white">
-                {isSuccessful ? "——" : timeLeft}
+                {isSuccessful || isExpired || isBroken ? "——" : timeLeft}
               </span>
             </span>
           </div>
@@ -202,11 +237,11 @@ export const NavBar = () => {
             </button>
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
-        ${paywith == "stablecoin" && !isExpired && !isBroken ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
-        ${isExpired || isBroken ? "opacity-30" : "hover:bg-[#4f4f4f] cursor-pointer"}
+        ${paywith == "stablecoin" && !isExpired && !isBroken && !isSuccessful ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
+        ${isExpired || isBroken || isSuccessful ? "opacity-30" : "hover:bg-[#4f4f4f] cursor-pointer"}
         `}
               onClick={
-                isExpired || isBroken
+                isExpired || isBroken || isSuccessful
                   ? () => {}
                   : () => {
                       setPaywith("stablecoin");
@@ -240,7 +275,7 @@ export const NavBar = () => {
             <span className="text-[#9F9F9F] text-[11px]">
               Link expires in:{" "}
               <span className="font-medium text-white">
-                {isSuccessful ? "——" : timeLeft}
+                {isSuccessful || isExpired || isBroken ? "——" : timeLeft}
               </span>
             </span>
           </div>

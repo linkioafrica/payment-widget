@@ -42,13 +42,8 @@ export const StableCoinHome = () => {
   const {
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
-    isSuccessful,
+
     setIsSuccessful,
-    token,
-    tokenAmount,
-    setTokenAmount,
-    setConversionLoading,
-    conversionLoading,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
@@ -317,7 +312,7 @@ export const StableCoinHome = () => {
             </label>
           </div>
           <div className="w-full flex flex-col items-center mt-6 gap-4">
-            {walletConnected && (
+            {walletConnected && stablecoinPaymentMethod == "wallet" && (
               <div className="">
                 <DisconnectWallet></DisconnectWallet>
               </div>
@@ -493,7 +488,7 @@ export const StableCoinHome = () => {
             </label>
           </div>
           <div className="w-full flex flex-col items-center mt-6 gap-4">
-            {walletConnected && (
+            {walletConnected && stablecoinPaymentMethod == "wallet" && (
               <div className="">
                 <DisconnectWallet></DisconnectWallet>
               </div>
