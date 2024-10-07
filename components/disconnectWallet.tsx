@@ -9,6 +9,16 @@ export const DisconnectWallet = () => {
   const [isAcitve, setIsActive] = useState(false);
   const { isMobile } = useDevice();
   const { walletConnected, walletAddress } = useWallet();
+  const [isCopied, setIsCopied] = useState(false);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   if (isMobile) {
     return (
       <div className="w-full items-center justify-center flex">
@@ -36,19 +46,19 @@ export const DisconnectWallet = () => {
                   {Icons.closeIcon}
                 </button>
               </div>
-              <div className="h-full flex flex-col justify-between">
+              <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
                   <Image
                     src={"/assets/icons/walletDisconnect.svg"}
                     alt="Disconnect Logo"
-                    width={50}
-                    height={50}
+                    width={75}
+                    height={75}
                   ></Image>
                   <h3 className="text-white font-semibold">
                     {truncateMiddle(walletAddress, 5, 5)}
                   </h3>
                 </div>
-                <div className="flex gap-4 text-sm ">
+                <div className="flex gap-4 text-sm  w-full">
                   <button
                     className="w-full border text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-4 rounded-lg"
                     onClick={() => setIsActive(false)}
@@ -57,11 +67,21 @@ export const DisconnectWallet = () => {
                     <span>Disconnect</span>
                   </button>
                   <button
-                    className="w-full border whitespace-nowrap text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-4 rounded-lg"
-                    onClick={() => setIsActive(false)}
+                    className="w-full border whitespace-nowrap text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-2 rounded-lg"
+                    onClick={
+                      isCopied
+                        ? () => {}
+                        : () => {
+                            setIsCopied(true);
+                            copyToClipboard(walletAddress);
+                            setTimeout(() => {
+                              setIsCopied(false);
+                            }, 750);
+                          }
+                    }
                   >
                     {Icons.copyOutlined}
-                    <span>Copy Address</span>
+                    <span>{isCopied ? "Copied" : "Copy Address"}</span>
                   </button>
                 </div>
               </div>
@@ -97,32 +117,42 @@ export const DisconnectWallet = () => {
                   {Icons.closeIcon}
                 </button>
               </div>
-              <div className="h-full flex flex-col justify-between">
+              <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
                   <Image
                     src={"/assets/icons/walletDisconnect.svg"}
-                    alt="Discconect Logo"
-                    width={50}
-                    height={50}
+                    alt="Disconnect Logo"
+                    width={75}
+                    height={75}
                   ></Image>
                   <h3 className="text-white font-semibold">
                     {truncateMiddle(walletAddress, 5, 5)}
                   </h3>
                 </div>
-                <div className="flex gap-4 text-sm ">
+                <div className="flex gap-2 text-sm w-full ">
                   <button
-                    className="w-full border text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-4 rounded-lg"
+                    className="w-full border text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-2 rounded-lg"
                     onClick={() => setIsActive(false)}
                   >
                     {Icons.disconnect}
                     <span>Disconnect</span>
                   </button>
                   <button
-                    className="w-full border whitespace-nowrap text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-4 rounded-lg"
-                    onClick={() => setIsActive(false)}
+                    className="w-full border whitespace-nowrap text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-2 rounded-lg"
+                    onClick={
+                      isCopied
+                        ? () => {}
+                        : () => {
+                            setIsCopied(true);
+                            copyToClipboard(walletAddress);
+                            setTimeout(() => {
+                              setIsCopied(false);
+                            }, 750);
+                          }
+                    }
                   >
                     {Icons.copyOutlined}
-                    <span>Copy Address</span>
+                    <span>{isCopied ? "Copied" : "Copy Address"}</span>
                   </button>
                 </div>
               </div>

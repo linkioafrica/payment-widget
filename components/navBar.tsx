@@ -17,6 +17,7 @@ export const NavBar = () => {
     isBroken,
     data,
     loading,
+    isSuccessful,
   } = usePaymentLinkMerchantContext();
 
   const [timeLeft, setTimeLeft] = useState<string>("");
@@ -24,7 +25,7 @@ export const NavBar = () => {
   useEffect(() => {
     if (loading) return;
     if (!data || data?.status == 403) {
-      setTimeLeft("——");
+      setTimeLeft("00:00:00");
       return;
     }
     // Replace with your API date value
@@ -35,7 +36,7 @@ export const NavBar = () => {
       const difference = expirationDate - now;
 
       if (difference <= 0) {
-        setTimeLeft("——");
+        setTimeLeft("00:00:00");
         return;
       }
 
@@ -143,7 +144,9 @@ export const NavBar = () => {
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-sm ">
               Link expires in:{" "}
-              <span className="font-medium text-white">{timeLeft}</span>{" "}
+              <span className="font-medium text-white">
+                {isSuccessful ? "——" : timeLeft}
+              </span>
             </span>
           </div>
         </div>
@@ -236,7 +239,9 @@ export const NavBar = () => {
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-[11px]">
               Link expires in:{" "}
-              <span className="font-medium text-white">{timeLeft}</span>
+              <span className="font-medium text-white">
+                {isSuccessful ? "——" : timeLeft}
+              </span>
             </span>
           </div>
         </div>
