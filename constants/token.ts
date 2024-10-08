@@ -109,6 +109,6 @@ export const Tokens = [
     mintAddress: "8v8aBHR7EXFZDwaqaRjAStEcmCj6VZi5iGq1YDtyTok6",
     decimals: 6,
     image: "/assets/svg/stablecoins/zarp.svg",
-    status: "unavailable",
+    status: "available",
   },
 ];
