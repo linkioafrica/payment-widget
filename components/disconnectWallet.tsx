@@ -28,7 +28,7 @@ export const DisconnectWallet = () => {
 
   const onClickDisconnect = () => {
     if (walletConnected && wallet) {
-      console.log(wallet);
+      // console.log(wallet);
       wallet.disconnect();
       setWalletConnected(false);
       setConnectedWalletIndex(null);
@@ -52,7 +52,7 @@ export const DisconnectWallet = () => {
     ];
     if (connectedWalletIndex != null) {
       setWallet(wallets[connectedWalletIndex]);
-      console.log(wallet);
+      // console.log(wallet);
     }
   }, []);
   if (isMobile) {
