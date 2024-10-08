@@ -3,6 +3,8 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
+import { useActiveWallet as walletContext } from "@/contexts/WalletContext";
+
 import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
@@ -35,14 +37,12 @@ import {
 } from "@solana/spl-token";
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
 import { DisconnectWallet } from "../disconnectWallet";
-import { useWallet as walletContext } from "@/contexts/WalletContext";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("qrCode");
   const {
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
-
     setIsSuccessful,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
@@ -50,8 +50,9 @@ export const StableCoinHome = () => {
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
-  const { walletConnected } = walletContext();
-  const connection = new Connection(clusterApiUrl("devnet")); // Use 'mainnet-beta' for mainnet
+  const { walletConnected, setWalletAddress, setWalletConnected } =
+    walletContext();
+  const connection = new Connection(clusterApiUrl("mainnet-beta")); // Use 'mainnet-beta' for mainnet
 
   // Function to send USDC
   const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
@@ -153,7 +154,9 @@ export const StableCoinHome = () => {
 
         if (publicKey) {
           setWalletPublicKey(publicKey);
-          sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
+          setWalletAddress(publicKey);
+          setWalletConnected(true);
+          // sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
           console.log(`Connected to wallet: ${publicKey}`);
         } else {
           alert("Wallet public key is undefined");
@@ -545,7 +548,7 @@ export const StableCoinHome = () => {
                       <span className="text-[17px]">{wallet.name}</span>
                     </div>
                     {connectedWallet === wallet.id ? (
-                      <span className="text-green-500">Paying...</span>
+                      <span className="text-green-500">connecting...</span>
                     ) : (
                       <button
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
