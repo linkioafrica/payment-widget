@@ -7,6 +7,8 @@ interface WalletContextType {
   setWalletConnected: React.Dispatch<React.SetStateAction<boolean>>;
   walletAddress: string;
   setWalletAddress: React.Dispatch<React.SetStateAction<string>>;
+  connectedWalletIndex: number | null;
+  setConnectedWalletIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -14,6 +16,9 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState(" ");
+  const [connectedWalletIndex, setConnectedWalletIndex] = useState<
+    number | null
+  >(null);
 
   // On mount, read the preferred theme from localStorage
   return (
@@ -23,6 +28,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         setWalletAddress,
         setWalletConnected,
         walletAddress,
+        connectedWalletIndex,
+        setConnectedWalletIndex,
       }}
     >
       {children}

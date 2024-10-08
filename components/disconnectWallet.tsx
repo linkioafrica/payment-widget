@@ -1,17 +1,47 @@
 import { Icons } from "@/app/icons";
 import { useDevice } from "@/contexts/DeviceContext";
-import { useWallet } from "@/contexts/WalletContext";
 import { useWallet as walletContext } from "@/contexts/WalletContext";
 import { truncateMiddle } from "@/functions";
+import { useWallet } from "@solana/wallet-adapter-react";
+import {
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+  TrustWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
 import Image from "next/image";
 import { useState } from "react";
 
 export const DisconnectWallet = () => {
   const [isAcitve, setIsActive] = useState(false);
   const { isMobile } = useDevice();
-  const { walletConnected, walletAddress } = walletContext();
-  // const { connected, disconnect } = useWallet(); // Get the wallet status
+  const {
+    walletConnected,
+    setWalletConnected,
+    setWalletAddress,
+    walletAddress,
+    connectedWalletIndex,
+    setConnectedWalletIndex,
+  } = walletContext();
+  const { connected, disconnect } = useWallet(); // Get the wallet status
   const [isCopied, setIsCopied] = useState(false);
+
+  const onClickDisconnect = () => {
+    const wallets = [
+      new PhantomWalletAdapter(), // Ensure you import your wallet adapters
+      new SolflareWalletAdapter(), // Ensure you import your wallet adapters
+      new TrustWalletAdapter(), // Ensure you import your wallet adapters
+    ];
+
+    console.log(connected, "This is connection");
+    if (walletConnected && connectedWalletIndex != null) {
+      const wallet = wallets[connectedWalletIndex];
+      wallet.disconnect();
+      setWalletConnected(false);
+      setConnectedWalletIndex(null);
+      setWalletAddress("");
+    }
+    setIsActive(false);
+  };
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -43,7 +73,7 @@ export const DisconnectWallet = () => {
               <div className="w-full flex items-end justify-end">
                 <button
                   className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
-                  onClick={() => setIsActive(false)}
+                  onClick={onClickDisconnect}
                 >
                   {Icons.closeIcon}
                 </button>
@@ -63,7 +93,17 @@ export const DisconnectWallet = () => {
                 <div className="flex gap-4 text-sm  w-full">
                   <button
                     className="w-full border text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-4 rounded-lg"
-                    onClick={() => setIsActive(false)}
+                    onClick={async () => {
+                      console.log(connected, "");
+                      if (connected) {
+                        await disconnect();
+                        console.log("Disconnected from previous wallet");
+                        setWalletConnected(false);
+                        setWalletAddress("");
+                      }
+
+                      setIsActive(false);
+                    }}
                   >
                     {Icons.disconnect}
                     <span>Disconnect</span>
@@ -134,7 +174,7 @@ export const DisconnectWallet = () => {
                 <div className="flex gap-2 text-sm w-full ">
                   <button
                     className="w-full border text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-2 rounded-lg"
-                    onClick={() => setIsActive(false)}
+                    onClick={onClickDisconnect}
                   >
                     {Icons.disconnect}
                     <span>Disconnect</span>

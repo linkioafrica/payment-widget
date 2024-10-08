@@ -55,6 +55,8 @@ export const StableCoinHome = () => {
     walletAddress,
     setWalletAddress,
     setWalletConnected,
+    setConnectedWalletIndex,
+    connectedWalletIndex,
   } = walletContext();
   const connection = new Connection(clusterApiUrl("mainnet-beta")); // Use 'mainnet-beta' for mainnet
 
@@ -162,6 +164,7 @@ export const StableCoinHome = () => {
           setWalletPublicKey(publicKey);
           setWalletAddress(publicKey);
           setWalletConnected(true);
+          setConnectedWalletIndex(walletId);
           // sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
           console.log(`Connected to wallet: ${publicKey}`);
           console.log(walletConnected, walletAddress);
@@ -396,12 +399,14 @@ export const StableCoinHome = () => {
                       />
                       <span className="text-[15px]">{wallet.name}</span>
                     </div>
-                    {connectedWallet === wallet.id ? (
+                    {connectedWalletIndex === wallet.id ? (
                       <span className="text-green-500">Connecting...</span>
                     ) : (
                       <button
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
-                        onClick={() => connectWallet(wallet.id)}
+                        onClick={() => {
+                          connectWallet(wallet.id);
+                        }}
                       >
                         Connect
                       </button>
@@ -581,7 +586,7 @@ export const StableCoinHome = () => {
                       />
                       <span className="text-[17px]">{wallet.name}</span>
                     </div>
-                    {connectedWallet === wallet.id ? (
+                    {connectedWalletIndex === wallet.id ? (
                       <span className="text-green-500">connecting...</span>
                     ) : (
                       <button
