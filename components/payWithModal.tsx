@@ -81,10 +81,10 @@ export const PayWithModal = ({ children }: any) => {
   };
   useEffect(() => {
     var inputPrice = data?.transactions?.amount;
-    console.log("amount=" + inputPrice);
+    // console.log("amount=" + inputPrice);
     setTokenAmount(inputPrice);
     var inputTokenName = data?.transactions?.currency;
-    console.log("token=" + inputTokenName);
+    // console.log("token=" + inputTokenName);
 
     Tokens.forEach((element) => {
       if (element.name == inputTokenName) {

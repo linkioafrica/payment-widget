@@ -58,7 +58,7 @@ export const StableCoinHome = () => {
   } = walletContext();
   const connection = new Connection(clusterApiUrl("mainnet-beta")); // Use 'mainnet-beta' for mainnet
 
-  console.log(walletConnected, walletAddress);
+  // console.log(walletConnected, walletAddress);
 
   // Function to send USDC
   const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
