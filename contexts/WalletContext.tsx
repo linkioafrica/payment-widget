@@ -34,7 +34,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Custom hook to use the ThemeContext
-export const useActiveWallet = () => {
+export const useWallet = () => {
   const context = useContext(WalletContext);
   if (!context) {
     throw new Error("useWallet must be used within a WalletProvider");

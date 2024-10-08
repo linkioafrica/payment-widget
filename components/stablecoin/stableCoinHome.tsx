@@ -3,7 +3,7 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
-import { useActiveWallet as walletContext } from "@/contexts/WalletContext";
+import { useWallet as walletContext } from "@/contexts/WalletContext";
 
 import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
