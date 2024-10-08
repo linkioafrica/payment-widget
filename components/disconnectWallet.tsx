@@ -32,7 +32,7 @@ export const DisconnectWallet = () => {
       new TrustWalletAdapter(), // Ensure you import your wallet adapters
     ];
 
-    console.log(connected, "This is connection");
+    // console.log(connected, "This is connection");
     if (walletConnected && connectedWalletIndex != null) {
       const wallet = wallets[connectedWalletIndex];
       wallet.disconnect();
