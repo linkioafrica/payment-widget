@@ -13,12 +13,9 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [walletConnected, setWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState(
-    "asdkasdskhHHKFHBJ)(!#Jl;jdajsdkasdjk"
-  );
+  const [walletAddress, setWalletAddress] = useState(" ");
 
   // On mount, read the preferred theme from localStorage
-
   return (
     <WalletContext.Provider
       value={{
