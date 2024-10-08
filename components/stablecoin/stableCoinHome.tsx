@@ -60,7 +60,7 @@ export const StableCoinHome = () => {
   } = walletContext();
   const connection = new Connection(clusterApiUrl("mainnet-beta")); // Use 'mainnet-beta' for mainnet
 
-  console.log(walletConnected, walletAddress);
+  // console.log(walletConnected, walletAddress);
 
   // Function to send USDC
   const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
@@ -165,10 +165,10 @@ export const StableCoinHome = () => {
           setWalletAddress(publicKey);
           setWalletConnected(true);
           setConnectedWalletIndex(walletId);
-          // sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
-          console.log(`Connected to wallet: ${publicKey}`);
-          console.log(walletConnected, walletAddress);
+          // console.log(`Connected to wallet: ${publicKey}`);
+          // console.log(walletConnected, walletAddress);
           setStablecoinPaymentMethod("");
+          // sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
         } else {
           alert("Wallet public key is undefined");
         }
