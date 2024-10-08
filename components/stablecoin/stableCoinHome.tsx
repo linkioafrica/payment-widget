@@ -50,9 +50,15 @@ export const StableCoinHome = () => {
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
-  const { walletConnected, setWalletAddress, setWalletConnected } =
-    walletContext();
+  const {
+    walletConnected,
+    walletAddress,
+    setWalletAddress,
+    setWalletConnected,
+  } = walletContext();
   const connection = new Connection(clusterApiUrl("mainnet-beta")); // Use 'mainnet-beta' for mainnet
+
+  console.log(walletConnected, walletAddress);
 
   // Function to send USDC
   const sendUSDC = async (walletAddress: string, recipientAddress: string) => {
@@ -158,6 +164,7 @@ export const StableCoinHome = () => {
           setWalletConnected(true);
           // sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
           console.log(`Connected to wallet: ${publicKey}`);
+          console.log(walletConnected, walletAddress);
         } else {
           alert("Wallet public key is undefined");
         }
@@ -378,7 +385,7 @@ export const StableCoinHome = () => {
                       <span className="text-[15px]">{wallet.name}</span>
                     </div>
                     {connectedWallet === wallet.id ? (
-                      <span className="text-green-500">Paying...</span>
+                      <span className="text-green-500">Connecting...</span>
                     ) : (
                       <button
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
