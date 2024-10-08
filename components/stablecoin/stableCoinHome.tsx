@@ -165,6 +165,7 @@ export const StableCoinHome = () => {
           // sendUSDC(publicKey, stableCoinInfos.merchantUSDCaddress);
           console.log(`Connected to wallet: ${publicKey}`);
           console.log(walletConnected, walletAddress);
+          setStablecoinPaymentMethod("");
         } else {
           alert("Wallet public key is undefined");
         }
@@ -327,7 +328,7 @@ export const StableCoinHome = () => {
             </label>
           </div>
           <div className="w-full flex flex-col items-center mt-6 gap-4">
-            {walletConnected && stablecoinPaymentMethod == "wallet" && (
+            {walletConnected && (
               <div className="">
                 <DisconnectWallet></DisconnectWallet>
               </div>
@@ -339,12 +340,23 @@ export const StableCoinHome = () => {
                   ? () => {
                       setStablecoinPaymentMethod("qrCode");
                     }
-                  : () => {
-                      setStablecoinPaymentMethod("wallet");
-                    }
+                  : walletConnected
+                    ? () => {
+                        sendUSDC(
+                          walletAddress,
+                          stableCoinInfos.merchantUSDCaddress
+                        );
+                      }
+                    : () => {
+                        setStablecoinPaymentMethod("wallet");
+                      }
               }
             >
-              {selectedMethod == "qrCode" ? "Continue" : "Select Wallet"}
+              {selectedMethod == "qrCode"
+                ? "Continue"
+                : walletConnected
+                  ? "Pay now"
+                  : "Select Wallet"}
             </button>
             <ChangePaymentMethod></ChangePaymentMethod>
           </div>
@@ -502,7 +514,7 @@ export const StableCoinHome = () => {
             </label>
           </div>
           <div className="w-full flex flex-col items-center mt-6 gap-4">
-            {walletConnected && stablecoinPaymentMethod == "wallet" && (
+            {walletConnected && (
               <div className="">
                 <DisconnectWallet></DisconnectWallet>
               </div>
@@ -514,12 +526,23 @@ export const StableCoinHome = () => {
                   ? () => {
                       setStablecoinPaymentMethod("qrCode");
                     }
-                  : () => {
-                      setStablecoinPaymentMethod("wallet");
-                    }
+                  : walletConnected
+                    ? () => {
+                        sendUSDC(
+                          walletAddress,
+                          stableCoinInfos.merchantUSDCaddress
+                        );
+                      }
+                    : () => {
+                        setStablecoinPaymentMethod("wallet");
+                      }
               }
             >
-              {selectedMethod == "qrCode" ? "Continue" : "Select Wallet"}
+              {selectedMethod == "qrCode"
+                ? "Continue"
+                : walletConnected
+                  ? "Pay now"
+                  : "Select Wallet"}
             </button>
           </div>
         </div>
