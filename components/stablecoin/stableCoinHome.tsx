@@ -147,7 +147,6 @@ export const StableCoinHome = () => {
 
     const wallet = wallets[walletId];
     setConnectedWalletIndex(walletId);
-    console.log(connectedWalletIndex, "index");
     if (wallet) {
       // If a wallet is already connected, disconnect it first
       if (connected) {

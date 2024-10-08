@@ -77,7 +77,7 @@ export const DisconnectWallet = () => {
               <div className="w-full flex items-end justify-end">
                 <button
                   className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
-                  onClick={onClickDisconnect}
+                  onClick={() => setIsActive(false)}
                 >
                   {Icons.closeIcon}
                 </button>
@@ -97,17 +97,7 @@ export const DisconnectWallet = () => {
                 <div className="flex gap-4 text-sm  w-full">
                   <button
                     className="w-full border text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-4 rounded-lg"
-                    onClick={async () => {
-                      console.log(connected, "");
-                      if (connected) {
-                        await disconnect();
-                        console.log("Disconnected from previous wallet");
-                        setWalletConnected(false);
-                        setWalletAddress("");
-                      }
-
-                      setIsActive(false);
-                    }}
+                    onClick={onClickDisconnect}
                   >
                     {Icons.disconnect}
                     <span>Disconnect</span>
