@@ -2,7 +2,6 @@ import { Icons } from "@/app/icons";
 import Image from "next/image";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
-import { ChangePaymentMethod } from "../changePaymentMethod";
 
 export const BrokenState = () => {
   const { isMobile } = useDevice();

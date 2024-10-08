@@ -39,7 +39,7 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 import { DisconnectWallet } from "../disconnectWallet";
 
 export const StableCoinHome = () => {
-  const [selectedMethod, setSelectedMethod] = useState("qrCode");
+  const [selectedMethod, setSelectedMethod] = useState("wallet");
   const {
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
@@ -232,12 +232,15 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
+              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
                 selectedMethod === "qrCode"
                   ? "border-black dark:border-[#9F9F9F]"
                   : ""
               }`}
-              onClick={() => setSelectedMethod("qrCode")}
+              onClick={() => {
+                // setSelectedMethod("qrCode")
+                // dark:hover:border-[#9F9F9F] hover:border-black
+              }}
             >
               <div className="flex items-center gap-2 ">
                 <div className="h-7 w-7 flex items-center justify-center rounded-full bg-transparent dark:bg-[#ABABAB]">
@@ -252,7 +255,9 @@ export const StableCoinHome = () => {
                   type="radio"
                   name="paymentMethod"
                   checked={selectedMethod === "qrCode"}
-                  onChange={() => setSelectedMethod("qrCode")}
+                  onChange={() => {
+                    // setSelectedMethod("qrCode")
+                  }}
                   className="hidden"
                 />
                 {/* Custom radio button styling */}
@@ -385,12 +390,6 @@ export const StableCoinHome = () => {
                   </div>
                 ))}
               </div>
-              {/* <div className="w-full flex justify-end mt-8">
-                <button className="flex items-center text-sm gap-3">
-                  <span>More Options</span>
-                  <i>{Icons.chevron_down}</i>
-                </button>
-              </div> */}
             </div>
           </div>
         )}
@@ -408,12 +407,15 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[150px] mt-5 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
+              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
                 selectedMethod === "qrCode"
                   ? "border-black dark:border-[#9F9F9F]"
                   : ""
               }`}
-              onClick={() => setSelectedMethod("qrCode")}
+              onClick={() => {
+                // setSelectedMethod("qrCode")
+                // dark:hover:border-[#9F9F9F] hover:border-black
+              }}
             >
               <div className="flex items-center gap-2 ">
                 <div className="h-7 w-7 flex items-center justify-center rounded-full bg-transparent dark:bg-[#ABABAB]">
@@ -428,7 +430,9 @@ export const StableCoinHome = () => {
                   type="radio"
                   name="paymentMethod"
                   checked={selectedMethod === "qrCode"}
-                  onChange={() => setSelectedMethod("qrCode")}
+                  onChange={() => {
+                    // setSelectedMethod("qrCode")
+                  }}
                   className="hidden"
                 />
                 {/* Custom radio button styling */}
@@ -447,7 +451,7 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
+              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
                 selectedMethod === "wallet"
                   ? "border-black dark:border-[#9F9F9F]"
                   : ""
