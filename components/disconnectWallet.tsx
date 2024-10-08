@@ -1,6 +1,7 @@
 import { Icons } from "@/app/icons";
 import { useDevice } from "@/contexts/DeviceContext";
 import { useWallet } from "@/contexts/WalletContext";
+import { useWallet as walletContext } from "@/contexts/WalletContext";
 import { truncateMiddle } from "@/functions";
 import Image from "next/image";
 import { useState } from "react";
@@ -8,7 +9,8 @@ import { useState } from "react";
 export const DisconnectWallet = () => {
   const [isAcitve, setIsActive] = useState(false);
   const { isMobile } = useDevice();
-  const { walletConnected, walletAddress } = useWallet();
+  const { walletConnected, walletAddress } = walletContext();
+  // const { connected, disconnect } = useWallet(); // Get the wallet status
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async (text: string) => {
