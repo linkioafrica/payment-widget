@@ -67,7 +67,7 @@ export const NavBar = () => {
     console.log("called");
     const requestBody = {
       checkout_id: trx,
-      payment_status: "failed",
+      payment_status: "expired",
       expired: true,
     };
 
