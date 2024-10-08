@@ -155,7 +155,7 @@ export const StableCoinHome = () => {
       try {
         await wallet.connect(); // Connect to the selected wallet
         setCurrentWalletId(walletId); // Store the currently connected wallet ID
-        setConnectedWallet(walletId);
+        // setConnectedWallet(walletId);
         const publicKey = wallet.publicKey?.toString() ?? null; // Replace this with the actual public key you receive
 
         if (publicKey) {
@@ -384,7 +384,7 @@ export const StableCoinHome = () => {
                       />
                       <span className="text-[15px]">{wallet.name}</span>
                     </div>
-                    {connectedWallet === wallet.id ? (
+                    {walletConnected === true ? (
                       <span className="text-green-500">Connecting...</span>
                     ) : (
                       <button
@@ -558,7 +558,7 @@ export const StableCoinHome = () => {
                       />
                       <span className="text-[17px]">{wallet.name}</span>
                     </div>
-                    {connectedWallet === wallet.id ? (
+                    {walletConnected === true ? (
                       <span className="text-green-500">connecting...</span>
                     ) : (
                       <button
