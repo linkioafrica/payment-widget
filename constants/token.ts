@@ -35,6 +35,13 @@ export const Tokens = [
     status: "available",
   },
   {
+    name: "ISKT",
+    mintAddress: "isktkk27QaTpoRUhwwS5n9YUoYf8ydCuoTz5R2tFEKu",
+    decimals: 6,
+    image: "/assets/svg/stablecoins/iskt.svg",
+    status: "available",
+  },
+  {
     name: "MXNe",
     mintAddress: "6zYgzrT7X2wi9a9NeMtUvUWLLmf2a8vBsbYkocYdB9wa",
     decimals: 9,
