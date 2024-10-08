@@ -9,7 +9,7 @@ import {
   TrustWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const DisconnectWallet = () => {
   const [isAcitve, setIsActive] = useState(false);
@@ -24,17 +24,11 @@ export const DisconnectWallet = () => {
   } = walletContext();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [isCopied, setIsCopied] = useState(false);
+  const [wallet, setWallet] = useState<any>();
 
   const onClickDisconnect = () => {
-    const wallets = [
-      new PhantomWalletAdapter(), // Ensure you import your wallet adapters
-      new SolflareWalletAdapter(), // Ensure you import your wallet adapters
-      new TrustWalletAdapter(), // Ensure you import your wallet adapters
-    ];
-
-    console.log(connected, "This is connection");
-    if (walletConnected && connectedWalletIndex != null) {
-      const wallet = wallets[connectedWalletIndex];
+    if (walletConnected && wallet) {
+      console.log(wallet);
       wallet.disconnect();
       setWalletConnected(false);
       setConnectedWalletIndex(null);
@@ -50,7 +44,17 @@ export const DisconnectWallet = () => {
       console.error("Failed to copy text: ", err);
     }
   };
-
+  useEffect(() => {
+    const wallets = [
+      new PhantomWalletAdapter(), // Ensure you import your wallet adapters
+      new SolflareWalletAdapter(), // Ensure you import your wallet adapters
+      new TrustWalletAdapter(), // Ensure you import your wallet adapters
+    ];
+    if (connectedWalletIndex != null) {
+      setWallet(wallets[connectedWalletIndex]);
+      console.log(wallet);
+    }
+  }, []);
   if (isMobile) {
     return (
       <div className="w-full items-center justify-center flex">
@@ -81,7 +85,7 @@ export const DisconnectWallet = () => {
               <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
                   <Image
-                    src={"/assets/icons/walletDisconnect.svg"}
+                    src={wallet.icon}
                     alt="Disconnect Logo"
                     width={75}
                     height={75}
@@ -162,7 +166,7 @@ export const DisconnectWallet = () => {
               <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
                   <Image
-                    src={"/assets/icons/walletDisconnect.svg"}
+                    src={wallet.icon}
                     alt="Disconnect Logo"
                     width={75}
                     height={75}

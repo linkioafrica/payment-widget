@@ -361,7 +361,7 @@ export const StableCoinHome = () => {
                   ? "Pay now"
                   : "Select Wallet"}
             </button>
-            <ChangePaymentMethod></ChangePaymentMethod>
+            {/* <ChangePaymentMethod></ChangePaymentMethod> */}
           </div>
         </div>
         {stablecoinPaymentMethod == "wallet" && (
