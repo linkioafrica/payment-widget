@@ -58,7 +58,7 @@ export const StableQRCode = () => {
 
         <div className="w-full flex flex-col items-center mt-4 gap-4">
           <Image
-            src={"/assets/icons/qrCode.svg"}
+            src={"/assets/icons/solana_qr_code.svg"}
             alt="QR code"
             width={120}
             height={120}
