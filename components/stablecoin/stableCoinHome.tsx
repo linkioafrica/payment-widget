@@ -100,7 +100,7 @@ export const StableCoinHome = () => {
       //     TOKEN_PROGRAM_ID
       //   )
       // );
-      const amountToSend = 0.1; // Amount of SOL to send (in SOL, not lamports)
+      const amountToSend = 0.001; // Amount of SOL to send (in SOL, not lamports)
 
       // Create the SOL transfer instruction
       const transaction = new Transaction().add(
