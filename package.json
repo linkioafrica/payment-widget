@@ -12,6 +12,9 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "@jup-ag/common": "^6.1.0",
+    "@jup-ag/core": "^4.0.0-beta.21",
+    "@project-serum/anchor": "^0.26.0",
     "@solana/spl-token": "^0.4.8",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
@@ -19,6 +22,7 @@
     "@solana/web3.js": "^1.95.3",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
+    "bn.js": "^5.2.1",
     "encoding": "^0.1.13",
     "jsonwebtoken": "^9.0.1",
     "lottie-react": "^2.4.0",
@@ -28,10 +32,12 @@
     "next": "13.5.4",
     "next-auth": "^4.22.4",
     "next-qrcode": "^2.5.1",
+    "next-transpile-modules": "^10.0.1",
     "node-fetch": "^3.3.2",
     "pino-pretty": "^11.2.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "rpc-websockets": "^9.0.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.2",

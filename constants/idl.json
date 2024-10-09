@@ -1,0 +1,14 @@
+{
+  "version": "0.1.0",
+  "name": "solana_send",
+  "instructions": [
+    {
+      "name": "sendSol",
+      "accounts": [
+        { "name": "sender", "isMut": true, "isSigner": true },
+        { "name": "recipient", "isMut": true, "isSigner": false }
+      ],
+      "args": [{ "name": "amount", "type": "u64" }]
+    }
+  ]
+}
