@@ -32,6 +32,8 @@ interface PaymentLinkMerchantContextType {
   setIsExpired: React.Dispatch<React.SetStateAction<boolean>>;
   isBroken: boolean;
   setIsBroken: React.Dispatch<React.SetStateAction<boolean>>;
+  conversionLoading: boolean;
+  setConversionLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PaymentLinkMerchantContext = createContext<
@@ -44,6 +46,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const { data, loading, error } = useFetchLinkDetails(trx);
 
   const [paywith, setPaywith] = useState("stablecoin");
+  const [conversionLoading, setConversionLoading] = useState(false);
   const [token, setToken] = useState(Tokens[0]);
   const [tokenAmount, setTokenAmount] = useState(0);
   const [currency, setCurrency] = useState(
@@ -96,6 +99,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setIsExpired,
         isBroken,
         setIsBroken,
+        conversionLoading,
+        setConversionLoading,
         trx, // Provide trx to the context
         data, // Provide fetched data to the context
         loading, // Provide loading state to the context

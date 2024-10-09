@@ -3,11 +3,14 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
+import { useWallet } from "@/contexts/WalletContext";
+import { DisconnectWallet } from "../disconnectWallet";
 
 export const StableQRCode = () => {
   const { setIsConfirming, setStablecoinPaymentMethod } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
+  const { walletConnected } = useWallet();
   if (isMobile) {
     return (
       <div>
@@ -33,12 +36,14 @@ export const StableQRCode = () => {
             <i className="">{Icons.change}</i>
             Change payment method
           </button> */}
-          <button
-            className="w-full mt-10 text-white bg-[#0E70FD] rounded-lg  text-center py-3 "
-            onClick={() => setIsConfirming(true)}
-          >
-            I've sent the money
-          </button>
+          <div className="w-full mt-7 flex flex-col gap-4">
+            <button
+              className="w-full text-white bg-[#0E70FD] rounded-lg  text-center py-3 "
+              onClick={() => setIsConfirming(true)}
+            >
+              I've sent the money
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -51,9 +56,9 @@ export const StableQRCode = () => {
           </span>
         </div>
 
-        <div className="w-full flex flex-col items-center mt-4 gap-6">
+        <div className="w-full flex flex-col items-center mt-4 gap-4">
           <Image
-            src={"/assets/icons/qrCode.svg"}
+            src={"/assets/icons/solana_qr_code.svg"}
             alt="QR code"
             width={120}
             height={120}
@@ -67,12 +72,14 @@ export const StableQRCode = () => {
             <i className="">{Icons.change}</i>
             Change payment method
           </button>
-          <button
-            className="w-full mt-5 text-white bg-[#0E70FD] rounded-lg text-sm text-center py-2"
-            onClick={() => setIsConfirming(true)}
-          >
-            I've sent the money
-          </button>
+          <div className="flex flex-col w-full gap-4 mt-0">
+            <button
+              className="w-full text-white bg-[#0E70FD] rounded-lg text-sm text-center py-2"
+              onClick={() => setIsConfirming(true)}
+            >
+              I've sent the money
+            </button>
+          </div>
         </div>
       </div>
     );

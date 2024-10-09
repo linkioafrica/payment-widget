@@ -3,9 +3,12 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
+import { useWallet as walletContext } from "@/contexts/WalletContext";
+
 import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
+import axios from "axios";
 import {
   Connection,
   LAMPORTS_PER_SOL,
@@ -35,22 +38,28 @@ import {
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
-import { WalletAdapter } from "@solana/wallet-adapter-base";
+import { DisconnectWallet } from "../disconnectWallet";
 
 export const StableCoinHome = () => {
-  const [selectedMethod, setSelectedMethod] = useState("qrCode");
+  const [selectedMethod, setSelectedMethod] = useState("wallet");
   const {
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
-    isSuccessful,
     setIsSuccessful,
-    token,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
+  const {
+    walletConnected,
+    walletAddress,
+    setWalletAddress,
+    setWalletConnected,
+    setConnectedWalletIndex,
+    connectedWalletIndex,
+  } = walletContext();
 
   // Dynamic cluster (devnet or mainnet)
   // const isMainnet = true;
@@ -173,7 +182,7 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
     ];
 
     const wallet = wallets[walletId];
-
+    setConnectedWalletIndex(walletId);
     if (wallet) {
         try {
             await wallet.connect();
@@ -194,22 +203,58 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
         console.error("Wallet not found");
     }
   };
- 
-  useEffect(() => {
 
-    if (stablecoinPaymentMethod == "wallet") {
-      // Disable scrolling
-      document.body.style.overflow = "hidden";
-    } else {
-      // Enable scrolling
-      document.body.style.overflow = "auto";
-    }
+  // Function to get swap price
+  // const getSwapPrice = async (value: number) => {
+  //   try {
+  //     setConversionLoading(true);
 
-    // Cleanup when the component is unmounted or menu closes
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [stablecoinPaymentMethod]);
+  //     if (token.name == "USDC") return value;
+  //     const usdcAmountInAtomicUnits = value * 10 ** 6;
+
+  //     const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
+  //       params: {
+  //         inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC token
+  //         outputMint: token.mintAddress,
+  //         amount: usdcAmountInAtomicUnits, // Amount of fromToken you want to swap
+  //         slippage: 1, // Optional: Set slippage tolerance (1%)
+  //         onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
+  //       },
+  //     });
+
+  //     const swapPrice = response.data;
+  //     console.log("Swap Price:", swapPrice);
+  //     var TokenUnit = 10 ** token.decimals;
+  //     return swapPrice.outAmount / TokenUnit;
+  //   } catch (error) {
+  //     console.error("Error fetching swap price:", error);
+  //   } finally {
+  //       setConversionLoading(false);
+
+  //   }
+  // };
+  // useEffect(() => {
+  //   // Simulate an API call or calculation to set the amount
+  //   const fetchTokenAmount = async () => {
+  //     setTokenAmount(0);
+  //     // In a real use case, this would be dynamic based on API or user input
+  //     var price = await getSwapPrice(5000);
+  //     setTokenAmount(price as number); // Example of setting new token amount dynamically
+  //   };
+  //   fetchTokenAmount();
+  //   if (stablecoinPaymentMethod == "wallet") {
+  //     // Disable scrolling
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     // Enable scrolling
+  //     document.body.style.overflow = "auto";
+  //   }
+
+  //   // Cleanup when the component is unmounted or menu closes
+  //   return () => {
+  //     document.body.style.overflow = "auto";
+  //   };
+  // }, [stablecoinPaymentMethod]);
   if (isMobile) {
     return (
       <>
@@ -222,12 +267,15 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
 
           <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
+              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
                 selectedMethod === "qrCode"
                   ? "border-black dark:border-[#9F9F9F]"
                   : ""
               }`}
-              onClick={() => setSelectedMethod("qrCode")}
+              onClick={() => {
+                // setSelectedMethod("qrCode")
+                // dark:hover:border-[#9F9F9F] hover:border-black
+              }}
             >
               <div className="flex items-center gap-2 ">
                 <div className="h-7 w-7 flex items-center justify-center rounded-full bg-transparent dark:bg-[#ABABAB]">
@@ -242,7 +290,9 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
                   type="radio"
                   name="paymentMethod"
                   checked={selectedMethod === "qrCode"}
-                  onChange={() => setSelectedMethod("qrCode")}
+                  onChange={() => {
+                    // setSelectedMethod("qrCode")
+                  }}
                   className="hidden"
                 />
                 {/* Custom radio button styling */}
@@ -304,7 +354,12 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
               </div>
             </label>
           </div>
-          <div className="w-full flex flex-col items-center mt-6 gap-8">
+          <div className="w-full flex flex-col items-center mt-6 gap-4">
+            {walletConnected && (
+              <div className="">
+                <DisconnectWallet></DisconnectWallet>
+              </div>
+            )}
             <button
               className="w-full text-white bg-[#0E70FD]  rounded-lg text-center  py-3"
               onClick={
@@ -312,14 +367,25 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
                   ? () => {
                       setStablecoinPaymentMethod("qrCode");
                     }
-                  : () => {
-                      setStablecoinPaymentMethod("wallet");
-                    }
+                  : walletConnected
+                    ? () => {
+                        sendUSDC(
+                          walletAddress,
+                          stableCoinInfos.merchantUSDCaddress
+                        );
+                      }
+                    : () => {
+                        setStablecoinPaymentMethod("wallet");
+                      }
               }
             >
-              {selectedMethod == "qrCode" ? "Continue" : "Select Wallet"}
+              {selectedMethod == "qrCode"
+                ? "Continue"
+                : walletConnected
+                  ? "Pay now"
+                  : "Select Wallet"}
             </button>
-            <ChangePaymentMethod></ChangePaymentMethod>
+            {/* <ChangePaymentMethod></ChangePaymentMethod> */}
           </div>
         </div>
         {stablecoinPaymentMethod == "wallet" && (
@@ -328,7 +394,7 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
               className="w-full h-full bg-black absolute opacity-20"
               onClick={() => setStablecoinPaymentMethod("")}
             ></div>
-            <div className="w-[350px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-4 items-center">
+            <div className="w-[300px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-6 items-center">
               <div className="w-full flex items-end justify-end">
                 <button
                   className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
@@ -357,25 +423,21 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
                       />
                       <span className="text-[15px]">{wallet.name}</span>
                     </div>
-                    {connectedWallet === wallet.id ? (
-                      <span className="text-green-500">Paying...</span>
+                    {connectedWalletIndex === wallet.id ? (
+                      <span className="text-green-500">Connecting...</span>
                     ) : (
                       <button
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
-                        onClick={() => connectWallet(wallet.id)}
+                        onClick={() => {
+                          connectWallet(wallet.id);
+                        }}
                       >
-                        Connect & Pay
+                        Connect
                       </button>
                     )}
                   </div>
                 ))}
               </div>
-              {/* <div className="w-full flex justify-end mt-8">
-                <button className="flex items-center text-sm gap-3">
-                  <span>More Options</span>
-                  <i>{Icons.chevron_down}</i>
-                </button>
-              </div> */}
             </div>
           </div>
         )}
@@ -391,14 +453,17 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
             </span>
           </div>
 
-          <div className="w-full min-h-[170px] mt-5 flex flex-col gap-5">
+          <div className="w-full min-h-[150px] mt-5 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black dark:hover:border-[#9F9F9F] hover:border-black ${
+              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
                 selectedMethod === "qrCode"
                   ? "border-black dark:border-[#9F9F9F]"
                   : ""
               }`}
-              onClick={() => setSelectedMethod("qrCode")}
+              onClick={() => {
+                // setSelectedMethod("qrCode")
+                // dark:hover:border-[#9F9F9F] hover:border-black
+              }}
             >
               <div className="flex items-center gap-2 ">
                 <div className="h-7 w-7 flex items-center justify-center rounded-full bg-transparent dark:bg-[#ABABAB]">
@@ -413,7 +478,9 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
                   type="radio"
                   name="paymentMethod"
                   checked={selectedMethod === "qrCode"}
-                  onChange={() => setSelectedMethod("qrCode")}
+                  onChange={() => {
+                    // setSelectedMethod("qrCode")
+                  }}
                   className="hidden"
                 />
                 {/* Custom radio button styling */}
@@ -432,7 +499,7 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
             </label>
 
             <label
-              className={`flex flex-row h-[50px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
+              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
                 selectedMethod === "wallet"
                   ? "border-black dark:border-[#9F9F9F]"
                   : ""
@@ -475,7 +542,12 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
               </div>
             </label>
           </div>
-          <div className="w-full flex flex-col items-center mt-6 gap-8">
+          <div className="w-full flex flex-col items-center mt-6 gap-4">
+            {walletConnected && (
+              <div className="">
+                <DisconnectWallet></DisconnectWallet>
+              </div>
+            )}
             <button
               className="w-full text-white bg-[#0E70FD] text-sm rounded-lg text-center  py-2"
               onClick={
@@ -483,12 +555,23 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
                   ? () => {
                       setStablecoinPaymentMethod("qrCode");
                     }
-                  : () => {
-                      setStablecoinPaymentMethod("wallet");
-                    }
+                  : walletConnected
+                    ? () => {
+                        sendUSDC(
+                          walletAddress,
+                          stableCoinInfos.merchantUSDCaddress
+                        );
+                      }
+                    : () => {
+                        setStablecoinPaymentMethod("wallet");
+                      }
               }
             >
-              {selectedMethod == "qrCode" ? "Continue" : "Select Wallet"}
+              {selectedMethod == "qrCode"
+                ? "Continue"
+                : walletConnected
+                  ? "Pay now"
+                  : "Select Wallet"}
             </button>
           </div>
         </div>
@@ -527,14 +610,14 @@ const sendTransaction = async (swapTransaction: string, walletAdapter: WalletAda
                       />
                       <span className="text-[17px]">{wallet.name}</span>
                     </div>
-                    {connectedWallet === wallet.id ? (
-                      <span className="text-green-500">Paying...</span>
+                    {connectedWalletIndex === wallet.id ? (
+                      <span className="text-green-500">connecting...</span>
                     ) : (
                       <button
                         className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
                         onClick={() => connectWallet(wallet.id)}
                       >
-                        Connect & Pay
+                        Connect
                       </button>
                     )}
                   </div>

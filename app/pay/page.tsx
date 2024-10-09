@@ -92,6 +92,7 @@ export default function Home() {
       </div>
     );
   } else {
+    
     return (
       <div
         className={`w-full h-screen bg-black flex items-center justify-center `}

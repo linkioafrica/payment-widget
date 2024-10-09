@@ -6,6 +6,7 @@ import "./globals.css";
 import { PaymentLinkMerchantProvider } from "@/contexts/PaymentLinkMerchantContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DeviceProvider } from "@/contexts/DeviceContext";
+import { WalletProvider } from "@/contexts/WalletContext";
 
 const sora = Sora({ subsets: ["latin"] });
 
@@ -24,9 +25,11 @@ export default function RootLayout({
       <body className={`${sora.className}  antialiased`}>
         <DeviceProvider>
           <ThemeProvider>
-            <PaymentLinkMerchantProvider>
-              {children}
-            </PaymentLinkMerchantProvider>
+            <WalletProvider>
+              <PaymentLinkMerchantProvider>
+                {children}
+              </PaymentLinkMerchantProvider>
+            </WalletProvider>
           </ThemeProvider>
         </DeviceProvider>
       </body>

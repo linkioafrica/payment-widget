@@ -7,7 +7,7 @@ export const Wallets = [
   {
     id: 1,
     name: "Solflare",
-    image: "/assets/images/wallets/okX.svg",
+    image: "/assets/images/wallets/solflare.svg",
   },
   {
     id: 2,

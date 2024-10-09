@@ -30,24 +30,28 @@ export const PayWithModal = ({ children }: any) => {
     data,
     token,
     setToken,
+    isBroken,
+    conversionLoading,
+    setConversionLoading,
   } = usePaymentLinkMerchantContext();
 
   // Function to get swap price
   const setSelectedTokenPrice = async () => {
     try {
+      setConversionLoading(true);
       var inputPrice = data?.transactions?.amount;
       var inputTokenName = data?.transactions?.currency;
       console.log(inputTokenName);
-      if(inputTokenName == token.name){
+      if (inputTokenName == token.name) {
         setTokenAmount(inputPrice);
         return;
       }
       var inputUnitNumber = 0;
       var inputMint = "";
-      Tokens.forEach(element => {
-        if(element.name == inputTokenName) {
+      Tokens.forEach((element) => {
+        if (element.name == inputTokenName) {
           inputMint = element.mintAddress;
-          inputUnitNumber= element.decimals;
+          inputUnitNumber = element.decimals;
         }
       });
       const inputAmountInAtomicUnits = inputPrice * 10 ** inputUnitNumber;
@@ -66,26 +70,28 @@ export const PayWithModal = ({ children }: any) => {
       console.log("Swap Price:", swapPrice);
       var TokenUnit = 10 ** token.decimals;
       var tokenAmount = swapPrice.outAmount / TokenUnit;
-      
+
       // Round up to 2 decimal places
       setTokenAmount(Math.ceil(tokenAmount * 100) / 100);
     } catch (error) {
       console.error("Error fetching swap price:", error);
+    } finally {
+      setConversionLoading(false);
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     var inputPrice = data?.transactions?.amount;
-    console.log("amount=" + inputPrice);
+    // console.log("amount=" + inputPrice);
     setTokenAmount(inputPrice);
     var inputTokenName = data?.transactions?.currency;
-    console.log("token=" + inputTokenName);
+    // console.log("token=" + inputTokenName);
 
-    Tokens.forEach(element => {
-      if(element.name == inputTokenName) {
+    Tokens.forEach((element) => {
+      if (element.name == inputTokenName) {
         setToken(element);
       }
     });
-  },[data]);
+  }, [data]);
 
   useEffect(() => {
     // Simulate an API call or calculation to set the amount
@@ -104,7 +110,7 @@ export const PayWithModal = ({ children }: any) => {
           </button>
           <div className="flex gap-4">
             {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
-              <TokensDropDown></TokensDropDown>
+              <TokensDropDown disabled={isBroken}></TokensDropDown>
             ) : (
               <CurrencyDropDown></CurrencyDropDown>
             )}
@@ -130,15 +136,17 @@ export const PayWithModal = ({ children }: any) => {
               </button>
             )}
           <div className="flex flex-col gap-3 ">
+            {isSuccessful || isConfirming ? (
+              <span className="text-[#696F79] text-lg leading-none">
+                {data?.transactions?.business_name || ""}
+              </span>
+            ) : null}
             {loading ? (
               <SkeletonLoader classes={"h-5 w-[80px] rounded"}></SkeletonLoader>
             ) : (
               <span className="text-[#696F79] text-lg leading-none">
                 {isSuccessful || isConfirming ? (
                   <div className="flex items-center gap-1  font-medium">
-                    <span className=" text-black dark:text-white text-lg leading-none">
-                      Title:{"   "}
-                    </span>
                     {loading ? (
                       <SkeletonLoader
                         classes={"h-5 rounded w-[80px]"}
@@ -150,29 +158,26 @@ export const PayWithModal = ({ children }: any) => {
                     )}
                   </div>
                 ) : (
-                  `${data?.transactions?.business_name || "Not found"}`
+                  `${data?.transactions?.business_name || ""}`
                 )}
               </span>
             )}
             {isConfirming || isSuccessful ? null : (
               <div className="flex items-center gap-1  font-medium">
-                <span className=" text-black dark:text-white text-lg leading-none">
-                  Title:{"   "}
-                </span>
                 {loading ? (
                   <SkeletonLoader
                     classes={"h-5 rounded w-[80px]"}
                   ></SkeletonLoader>
                 ) : (
                   <span className=" text-black dark:text-white text-lg leading-none">
-                    {data?.transactions?.title || "Not found"}
+                    {data?.transactions?.title || "--"}
                   </span>
                 )}
               </div>
             )}
             <span className="text-black text-xl dark:text-white leading-none flex items-center  gap-1">
-              {isSuccessful || isConfirming ? "" : "Pay:"}
-              {loading ? (
+              {isSuccessful || isConfirming ? "" : "Pay: "}
+              {loading || conversionLoading ? (
                 <SkeletonLoader
                   classes={"h-6 w-[100px] rounded"}
                 ></SkeletonLoader>
@@ -183,8 +188,10 @@ export const PayWithModal = ({ children }: any) => {
                       You sent:{" "}
                     </span>
                   ) : null}
-                  {tokenAmount>0?tokenAmount:"-"}{" "}
-                  {token.name}
+                  {isBroken
+                    ? "--"
+                    : `${tokenAmount || 0}
+                ${token.name} `}
                 </span>
               )}
             </span>
@@ -213,31 +220,17 @@ export const PayWithModal = ({ children }: any) => {
     return (
       <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
         <div className={`flex items-end justify-between`}>
-          {isConfirming || isSuccessful ? (
-            <div className="flex items-center gap-1 mt-1 font-medium">
-              <span className=" text-black dark:text-white text-sm">
-                Title:
-              </span>
-              {loading ? (
-                <SkeletonLoader
-                  classes={"h-5 rounded w-[80px]"}
-                ></SkeletonLoader>
-              ) : (
-                <span className=" text-black dark:text-white text-sm">
-                  {data?.transactions?.title}
-                </span>
-              )}
-            </div>
-          ) : loading ? (
+          {loading ? (
             <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
             <h2 className="text-[#696F79] font-medium text-sm">
-              {data?.transactions?.business_name || "Not found"}
+              {data?.transactions?.business_name}
             </h2>
           )}
+
           <div className="flex gap-4">
             {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
-              <TokensDropDown></TokensDropDown>
+              <TokensDropDown disabled={isBroken}></TokensDropDown>
             ) : (
               <CurrencyDropDown></CurrencyDropDown>
             )}
@@ -249,26 +242,22 @@ export const PayWithModal = ({ children }: any) => {
             </button>
           </div>
         </div>
-        {isConfirming || isSuccessful ? null : (
-          <div className="flex items-center gap-1 mt-1 font-medium">
-            <span className=" text-black dark:text-white text-sm">Title:</span>
-            {loading ? (
-              <SkeletonLoader classes={"h-5 rounded w-[80px]"}>
-                {" "}
-              </SkeletonLoader>
-            ) : (
-              <span className=" text-black dark:text-white text-sm">
-                {data?.transactions?.title || "Not found"}
-              </span>
-            )}
-          </div>
-        )}
+
+        <div className="flex items-center gap-1 mt-1 font-medium">
+          {loading ? (
+            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
+          ) : (
+            <span className=" text-black dark:text-white text-sm">
+              {data?.transactions?.title || "--"}
+            </span>
+          )}
+        </div>
 
         <div className="w-full flex gap-1 mt-1">
           <span className=" text-black dark:text-white">
-            {isConfirming || isSuccessful ? null : "Pay:"}
+            {isConfirming || isSuccessful ? null : "Pay: "}
           </span>
-          {loading ? (
+          {loading || conversionLoading ? (
             <SkeletonLoader classes={"h-6 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
             <span className=" text-[#0259D6]  dark:text-[#4893FF] font-semibold">
@@ -277,8 +266,11 @@ export const PayWithModal = ({ children }: any) => {
                   You sent:{" "}
                 </span>
               ) : null}
-              {tokenAmount>0?tokenAmount:"-"}{" "}
-              {token.name}
+
+              {isBroken
+                ? "--"
+                : `${tokenAmount || 0}
+                ${token.name} `}
             </span>
           )}
         </div>

@@ -5,7 +5,7 @@ import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantCon
 import Image from "next/image";
 import { useState } from "react";
 import { SkeletonLoader } from "./UI Helper/skeletonLoader";
-export const TokensDropDown = () => {
+export const TokensDropDown = ({ disabled }: any) => {
   const [dropDown, setDropDown] = useState(false);
   const { setToken, token, setIsSuccessful, setIsConfirming, loading } =
     usePaymentLinkMerchantContext();
@@ -19,7 +19,8 @@ export const TokensDropDown = () => {
           </div>
         ) : (
           <div
-            className="border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-2 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
+            className={`border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] px-2 py-2 flex items-center gap-2  rounded-md 
+              ${disabled ? "cursor-default" : "cursor-pointer hover:border-black dark:hover:border-white"}`}
             onClick={() => setDropDown(!dropDown)}
           >
             <Image
@@ -33,13 +34,17 @@ export const TokensDropDown = () => {
             <i>{Icons.chevron_down}</i>
           </div>
         )}
-        {dropDown && (
+        {dropDown && !disabled && (
           <div>
             <div
               className="bg-black w-screen h-screen fixed top-0 left-0 opacity-0"
               onClick={() => setDropDown(false)}
             ></div>
-            <div className="absolute left-0 w-full -bottom-1 pt-1 drop-shadow-xl z-10 border dark:bg-[#101113] dark:border-[#242425] border-[#E2E3E7] translate-y-full bg-white max-h-[200px] overflow-y-auto rounded-md">
+            <div
+              className={`absolute left-0 w-full -bottom-1 pt-1 drop-shadow-xl z-10 border dark:bg-[#101113] dark:border-[#242425] border-[#E2E3E7] translate-y-full bg-white max-h-[200px] overflow-y-auto rounded-md
+              
+              `}
+            >
               {Tokens.sort((a, b) =>
                 a.status === "available" ? -1 : b.status === "available" ? 1 : 0
               ).map((tok, index) => (
@@ -86,7 +91,7 @@ export const TokensDropDown = () => {
           </div>
         ) : (
           <div
-            className="border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-1 flex items-center gap-2 hover:border-black cursor-pointer rounded-md"
+            className={`border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425]  px-2 py-1 flex items-center gap-2  rounded-md ${disabled ? "cursor-default" : "cursor-pointer hover:border-black dark:hover:border-white"}`}
             onClick={() => setDropDown(!dropDown)}
           >
             <Image
@@ -100,7 +105,7 @@ export const TokensDropDown = () => {
             <i>{Icons.chevron_down}</i>
           </div>
         )}
-        {dropDown && (
+        {dropDown && !disabled && (
           <div>
             <div
               className="bg-black w-screen h-screen fixed top-0 left-0 opacity-0"

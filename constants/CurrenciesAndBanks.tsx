@@ -170,8 +170,8 @@ export const fiatCurrency = [
     status: "unavailable",
   },
 ];
-// LIST OF VENDOR DETAILS FOR EACH CURRENCY(THOSE WE ARE USING NOW AND LATER)
 
+// LIST OF VENDOR DETAILS FOR EACH CURRENCY(THOSE WE ARE USING NOW AND LATER)
 export const AllCurrencyBanks = [
   {
     currency: "NGN",
