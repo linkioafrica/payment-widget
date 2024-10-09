@@ -192,6 +192,7 @@ export const StableCoinHome = () => {
 
       try {
         await wallet.connect();
+        if(wallet.publicKey == null) return;
         console.log("Connected to wallet:", wallet.publicKey.toString());
         const publicKey = wallet.publicKey;
 
