@@ -129,7 +129,7 @@ export const StableCoinHome = () => {
       var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
       console.log(transaction);
 
-//      const signedTransaction = await walletAdapter.signTransaction(transaction);
+      //const signedTransaction = await walletAdapter.signTransaction(transaction);
 
      // get the latest block hash
       const latestBlockHash = await connection.getLatestBlockhash();
@@ -149,7 +149,7 @@ export const StableCoinHome = () => {
       console.log(`https://solscan.io/tx/${txid}`);
     } catch (error) {
         console.error('Error during transaction:', error);
-        alert(`Transaction failed: ${error.message}`);
+        //alert(`Transaction failed: ${error.message}`);
     }
   };
 
@@ -178,7 +178,7 @@ export const StableCoinHome = () => {
         console.log('Swap and send transaction completed successfully.');
     } catch (error) {
         console.error('Error during swap and send:', error);
-        alert("Failed! " + error.message);
+        //alert("Failed! " + error.message);
     }
   };
   const payCoin = async () => {
@@ -187,6 +187,7 @@ export const StableCoinHome = () => {
       new SolflareWalletAdapter(),
       new TrustWalletAdapter(),
     ];
+    if(connectedWalletIndex == null) return;
     const wallet = wallets[connectedWalletIndex];
 
       try {
