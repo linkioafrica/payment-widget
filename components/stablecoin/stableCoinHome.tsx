@@ -129,7 +129,7 @@ export const StableCoinHome = () => {
       var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
       console.log(transaction);
 
-      const signedTransaction = await walletAdapter.signTransaction(transaction);
+//      const signedTransaction = await walletAdapter.signTransaction(transaction);
 
      // get the latest block hash
       const latestBlockHash = await connection.getLatestBlockhash();
