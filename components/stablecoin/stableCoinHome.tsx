@@ -99,9 +99,11 @@ export const StableCoinHome = () => {
 
     const requestBody = {
         userPublicKey: walletAddress.toBase58(),
-        wrapAndUnwrapSol: true,
-        // destinationTokenAccount: recipientAddress,
+        destinationTokenAccount: recipientAddress,
+        useSharedAccounts: true,
         quoteResponse: swapInfo.quoteResponse,
+        skipUserAccountsRpcCalls: true,
+
     };
 
     const response = await fetch(JUPITER_SWAP_API, {
@@ -122,48 +124,29 @@ export const StableCoinHome = () => {
   // Step 3: Send transaction to Solana blockchain
   const sendTransaction = async (swapTransaction: string, recipientAddress: string, amount: number, walletAdapter: WalletAdapter) => {
     try {
-        // Step 1: Deserialize the swap transaction
-        const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
-        const swapTransactionInstance = VersionedTransaction.deserialize(swapTransactionBuf);
+      // deserialize the transaction
+      const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
+      var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+      console.log(transaction);
 
-      // Step 2: Create a transfer instruction
-      const transferInstruction = new TransactionInstruction({
-        keys: [
-            { pubkey: walletAdapter.publicKey, isSigner: true, isWritable: true }, // Sender's public key
-            { pubkey: recipientAddress, isSigner: false, isWritable: true }, // Merchant's address
-        ],
-        programId: SystemProgram.programId, // Program ID for the transfer
-        data: SystemProgram.transfer({ lamports: amount }).data // Using the transfer method to get the correct data
-      });
+      const signedTransaction = await walletAdapter.signTransaction(transaction);
 
-      // Step 3: Create a new VersionedTransaction with the swap transaction instructions and the transfer instruction
-      const newTransaction = new VersionedTransaction({
-          feePayer: walletAdapter.publicKey,
-          recentBlockhash: swapTransactionInstance.recentBlockhash,
-          instructions: [...swapTransactionInstance.instructions, transferInstruction], // Combine the instructions
-      });
-
-      // Step 4: Sign the new transaction
-      const signedTransaction = await walletAdapter.signTransaction(newTransaction);
-
-      // Step 5: Serialize the transaction
-      const rawTransaction = signedTransaction.serialize();
-
-      // Step 6: Send the transaction
-      const txid = await connection.sendRawTransaction(rawTransaction, {
-          skipPreflight: true,
-          maxRetries: 2
-      });
-      console.log(`Transaction ID: ${txid}`);
-
-      // Step 7: Confirm the transaction
+     // get the latest block hash
       const latestBlockHash = await connection.getLatestBlockhash();
-      await connection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: txid
+
+      // Execute the transaction
+      const rawTransaction = transaction.serialize()
+      const txid = await connection.sendRawTransaction(rawTransaction, {
+        skipPreflight: true,
+        maxRetries: 2
       });
-      console.log(`Transaction confirmed: https://solscan.io/tx/${txid}`);
+      console.log(`https://solscan.io/tx/${txid}`);
+      await connection.confirmTransaction({
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature: txid
+      });
+      console.log(`https://solscan.io/tx/${txid}`);
     } catch (error) {
         console.error('Error during transaction:', error);
         alert(`Transaction failed: ${error.message}`);
