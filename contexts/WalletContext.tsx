@@ -9,6 +9,8 @@ interface WalletContextType {
   setWalletAddress: React.Dispatch<React.SetStateAction<string>>;
   connectedWalletIndex: number | null;
   setConnectedWalletIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  walletAdapter: any | null;
+  setWalletAdapter: React.Dispatch<React.SetStateAction<any | null>>;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -16,6 +18,8 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState(" ");
+  const [walletAdapter, setWalletAdapter] = useState();
+
   const [connectedWalletIndex, setConnectedWalletIndex] = useState<
     number | null
   >(null);
@@ -30,6 +34,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         walletAddress,
         connectedWalletIndex,
         setConnectedWalletIndex,
+        walletAdapter,
+        setWalletAdapter,
       }}
     >
       {children}

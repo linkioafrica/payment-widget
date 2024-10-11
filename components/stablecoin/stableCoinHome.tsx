@@ -36,6 +36,7 @@ import {
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
+  createTransferInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
@@ -57,6 +58,8 @@ export const StableCoinHome = () => {
   const {
     walletConnected,
     walletAddress,
+    walletAdapter,
+    setWalletAdapter,
     setWalletAddress,
     setWalletConnected,
     setConnectedWalletIndex,
@@ -99,10 +102,11 @@ export const StableCoinHome = () => {
 
     const requestBody = {
         userPublicKey: walletAddress.toBase58(),
-        destinationTokenAccount: recipientAddress,
-        useSharedAccounts: true,
+        // destinationTokenAccount: recipientAddress,
+        // useSharedAccounts: true,
         quoteResponse: swapInfo.quoteResponse,
         skipUserAccountsRpcCalls: true,
+        wrapAndUnwrapSol : false
 
     };
 
@@ -122,16 +126,14 @@ export const StableCoinHome = () => {
   };
 
   // Step 3: Send transaction to Solana blockchain
-  const sendTransaction = async (swapTransaction: string, recipientAddress: string, amount: number, walletAdapter: WalletAdapter) => {
-    try {
+  const sendTransaction = async (swapTransaction: string,  walletAdapter: WalletAdapter) => {
       // deserialize the transaction
       const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
       var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
       console.log(transaction);
 
       const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
-
-     // get the latest block hash
+      // get the latest block hash
       const latestBlockHash = await connection.getLatestBlockhash();
 
       // Execute the transaction
@@ -147,10 +149,6 @@ export const StableCoinHome = () => {
         signature: txid
       });
       console.log(`https://solscan.io/tx/${txid}`);
-    } catch (error) {
-        console.error('Error during transaction:', error);
-        //alert(`Transaction failed: ${error.message}`);
-    }
   };
 
   // Step 4: Main function to swap and send token
@@ -171,7 +169,7 @@ export const StableCoinHome = () => {
         const { swapTransaction, lastValidBlockHeight } = await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
         console.log(swapTransaction);
         // Step 3: Send the transaction to the blockchain
-        await sendTransaction(swapTransaction, recipientAddress, amount, walletAdapter);
+        await sendTransaction(swapTransaction,  walletAdapter);
 
         alert("USDC sent successfully!");
 
@@ -182,38 +180,41 @@ export const StableCoinHome = () => {
     }
   };
   const payCoin = async () => {
+
+
+    await swapAndSendToken(
+        walletAdapter,
+        "ANJt85VAVGhknPAhKBaS2qWVZUWW59rkQSbAg4sW4dFA", // Merchant's USDC address
+        "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // Input mint address
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // Output mint address
+        0.1 * 1000000 // Example: 0.1 USDC in micro-lamports
+    );
+
+  }
+  // Function to connect to the wallet
+  const connectWallet = async (walletId: number) => {
     const wallets = [
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
       new TrustWalletAdapter(),
     ];
-    if(connectedWalletIndex == null) return;
-    const wallet = wallets[connectedWalletIndex];
+    const wallet = wallets[walletId];
 
       try {
         await wallet.connect();
         if(wallet.publicKey == null) return;
+        setWalletAddress(wallet.publicKey.toString())
         console.log("Connected to wallet:", wallet.publicKey.toString());
         const publicKey = wallet.publicKey;
-
-        await swapAndSendToken(
-            wallet,
-            "ANJt85VAVGhknPAhKBaS2qWVZUWW59rkQSbAg4sW4dFA", // Merchant's USDC address
-            "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // Input mint address
-            "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // Output mint address
-            0.1 * 1000000 // Example: 0.1 USDC in micro-lamports
-        );
+        setWalletAdapter(wallet);
+        setConnectedWalletIndex(walletId);
+        setWalletConnected(true);
+        setStablecoinPaymentMethod("");
     } catch (error) {
         console.error("Failed to connect to wallet:", error);
     }
-  }
-  // Function to connect to the wallet
-  const connectWallet = async (walletId: number) => {
 
 
-    setConnectedWalletIndex(walletId);
-    setWalletConnected(true);
-    setStablecoinPaymentMethod("");
   };
 
   // Function to get swap price

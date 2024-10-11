@@ -21,15 +21,15 @@ export const DisconnectWallet = () => {
     walletAddress,
     connectedWalletIndex,
     setConnectedWalletIndex,
+    walletAdapter,
   } = walletContext();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [isCopied, setIsCopied] = useState(false);
-  const [wallet, setWallet] = useState<any>();
 
   const onClickDisconnect = () => {
-    if (walletConnected && wallet) {
+    if (walletConnected && walletAdapter) {
       // console.log(wallet);
-      wallet.disconnect();
+      walletAdapter.disconnect();
       setWalletConnected(false);
       setConnectedWalletIndex(null);
       setWalletAddress("");
@@ -44,17 +44,7 @@ export const DisconnectWallet = () => {
       console.error("Failed to copy text: ", err);
     }
   };
-  useEffect(() => {
-    const wallets = [
-      new PhantomWalletAdapter(), // Ensure you import your wallet adapters
-      new SolflareWalletAdapter(), // Ensure you import your wallet adapters
-      new TrustWalletAdapter(), // Ensure you import your wallet adapters
-    ];
-    if (connectedWalletIndex != null) {
-      setWallet(wallets[connectedWalletIndex]);
-      // console.log(wallet);
-    }
-  }, []);
+
   if (isMobile) {
     return (
       <div className="w-full items-center justify-center flex">
@@ -85,7 +75,7 @@ export const DisconnectWallet = () => {
               <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
                   <Image
-                    src={wallet.icon}
+                    src={walletAdapter.icon}
                     alt="Disconnect Logo"
                     width={75}
                     height={75}
@@ -156,7 +146,7 @@ export const DisconnectWallet = () => {
               <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
                   <Image
-                    src={wallet.icon}
+                    src={walletAdapter.icon}
                     alt="Disconnect Logo"
                     width={75}
                     height={75}
