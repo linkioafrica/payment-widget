@@ -42,6 +42,7 @@ import {
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
 import { DisconnectWallet } from "../disconnectWallet";
 import { WalletAdapter } from "@solana/wallet-adapter-base";
+import { Tokens } from "@/constants/token";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("wallet");
@@ -49,12 +50,17 @@ export const StableCoinHome = () => {
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
     setIsSuccessful,
+    tokenAmount,
+    token,
+    data,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [currentWalletId, setCurrentWalletId] = useState<number | null>(null);
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
   const {
     walletConnected,
     walletAddress,
@@ -76,7 +82,6 @@ export const StableCoinHome = () => {
   // Replace with the Jupiter API endpoint
   const JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6/quote';
   const JUPITER_SWAP_API = 'https://quote-api.jup.ag/v6/swap';
-  const JUPITER_TRANSACTION_API = 'https://api.jup.ag/swap/v6/transaction';
 
 
   // Step 1: Fetch swap info from Jupiter
@@ -181,28 +186,49 @@ export const StableCoinHome = () => {
         console.error('Error during swap and send:', error);
         //alert("Failed! " + error.message);
     }
+
   };
   const payCoin = async () => {
+    if(isProcessing) return;
+    setIsProcessing(true);
 
-    //the public solana address
-    const accountPublicKey = new PublicKey(
-      "ANJt85VAVGhknPAhKBaS2qWVZUWW59rkQSbAg4sW4dFA"
-    );
+    const inputToken = token;
+    var targetTokenName = data?.transactions?.currency;    
+    if(inputToken.name == targetTokenName)
+    {
+      alert("direct token send, coming soon!")
+    }
+    else {
+      var targetUnitNumber = 0;
+      var targetMint = "";
+      Tokens.forEach((element) => {
+        if (element.name == targetTokenName) {
+          targetMint = element.mintAddress;
+          targetUnitNumber = element.decimals;
+        }
+      });
+      var merchant_address = data?.transactions?.merchant_address
+      //the public solana address
+      const accountPublicKey = new PublicKey(
+        merchant_address
+      );
+  
+      //mintAccount = the token mint address
+      const mintAccount = new PublicKey(
+        targetMint
+      );
+      const account = await connection.getTokenAccountsByOwner(accountPublicKey, {
+        mint: mintAccount});
+      await swapAndSendToken(
+          walletAdapter,
+          account.value[0].pubkey.toString(), // Merchant's USDC address
+          inputToken.mintAddress, // Input mint address
+          targetMint, // Output mint address
+          tokenAmount * (10 ** inputToken.decimals) // Example: 0.1 USDC in micro-lamports
+      );
 
-    //mintAccount = the token mint address
-    const mintAccount = new PublicKey(
-      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-    );
-    const account = await connection.getTokenAccountsByOwner(accountPublicKey, {
-      mint: mintAccount});
-    await swapAndSendToken(
-        walletAdapter,
-        account.value[0].pubkey.toString(), // Merchant's USDC address
-        "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // Input mint address
-        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // Output mint address
-        0.1 * 1000000 // Example: 0.1 USDC in micro-lamports
-    );
-
+    }
+    setIsProcessing(false);
   }
   // Function to connect to the wallet
   const connectWallet = async (walletId: number) => {
@@ -355,7 +381,9 @@ export const StableCoinHome = () => {
               {selectedMethod == "qrCode"
                 ? "Continue"
                 : walletConnected
-                  ? "Pay now"
+                  ? isProcessing
+                    ? "Processing"
+                    :"Pay now"
                   : "Select Wallet"}
             </button>
             {/* <ChangePaymentMethod></ChangePaymentMethod> */}
@@ -540,7 +568,9 @@ export const StableCoinHome = () => {
               {selectedMethod == "qrCode"
                 ? "Continue"
                 : walletConnected
-                  ? "Pay now"
+                  ? isProcessing
+                    ? "Processing"
+                    :"Pay now"
                   : "Select Wallet"}
             </button>
           </div>

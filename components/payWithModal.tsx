@@ -42,6 +42,7 @@ export const PayWithModal = ({ children }: any) => {
       var inputPrice = data?.transactions?.amount;
       var inputTokenName = data?.transactions?.currency;
       console.log(inputTokenName);
+      if(inputTokenName == undefined ||  inputTokenName == "") return;
       if (inputTokenName == token.name) {
         setTokenAmount(inputPrice);
         return;
