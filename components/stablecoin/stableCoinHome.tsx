@@ -76,11 +76,12 @@ export const StableCoinHome = () => {
   // Replace with the Jupiter API endpoint
   const JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6/quote';
   const JUPITER_SWAP_API = 'https://quote-api.jup.ag/v6/swap';
+  const JUPITER_TRANSACTION_API = 'https://api.jup.ag/swap/v6/transaction';
 
 
   // Step 1: Fetch swap info from Jupiter
   const fetchSwapInfo = async (inputMint: string, outputMint: string, amount: number) => {
-    const url = `${JUPITER_QUOTE_API}?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&swapMode=ExactOut&slippageBps=50`;
+    const url = `${JUPITER_QUOTE_API}?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}`;
     const response = await fetch(url);
     const data = await response.json();
     return {
@@ -102,8 +103,8 @@ export const StableCoinHome = () => {
 
     const requestBody = {
         userPublicKey: walletAddress.toBase58(),
-        // destinationTokenAccount: recipientAddress,
-        // useSharedAccounts: true,
+        destinationTokenAccount: recipientAddress,
+        useSharedAccounts: true,
         quoteResponse: swapInfo.quoteResponse,
         skipUserAccountsRpcCalls: true,
         wrapAndUnwrapSol : false
@@ -124,6 +125,7 @@ export const StableCoinHome = () => {
     const { swapTransaction, lastValidBlockHeight } = await response.json();
     return { swapTransaction, lastValidBlockHeight };
   };
+  // Function to find the fee account and get serialized transactions for the swap
 
   // Step 3: Send transaction to Solana blockchain
   const sendTransaction = async (swapTransaction: string,  walletAdapter: WalletAdapter) => {
@@ -132,9 +134,10 @@ export const StableCoinHome = () => {
       var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
       console.log(transaction);
 
-      const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
       // get the latest block hash
       const latestBlockHash = await connection.getLatestBlockhash();
+
+      const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
 
       // Execute the transaction
       const rawTransaction = transaction.serialize()
@@ -181,10 +184,20 @@ export const StableCoinHome = () => {
   };
   const payCoin = async () => {
 
+    //the public solana address
+    const accountPublicKey = new PublicKey(
+      "ANJt85VAVGhknPAhKBaS2qWVZUWW59rkQSbAg4sW4dFA"
+    );
 
+    //mintAccount = the token mint address
+    const mintAccount = new PublicKey(
+      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+    );
+    const account = await connection.getTokenAccountsByOwner(accountPublicKey, {
+      mint: mintAccount});
     await swapAndSendToken(
         walletAdapter,
-        "ANJt85VAVGhknPAhKBaS2qWVZUWW59rkQSbAg4sW4dFA", // Merchant's USDC address
+        account.value[0].pubkey.toString(), // Merchant's USDC address
         "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // Input mint address
         "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // Output mint address
         0.1 * 1000000 // Example: 0.1 USDC in micro-lamports
@@ -217,57 +230,7 @@ export const StableCoinHome = () => {
 
   };
 
-  // Function to get swap price
-  // const getSwapPrice = async (value: number) => {
-  //   try {
-  //     setConversionLoading(true);
-
-  //     if (token.name == "USDC") return value;
-  //     const usdcAmountInAtomicUnits = value * 10 ** 6;
-
-  //     const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
-  //       params: {
-  //         inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC token
-  //         outputMint: token.mintAddress,
-  //         amount: usdcAmountInAtomicUnits, // Amount of fromToken you want to swap
-  //         slippage: 1, // Optional: Set slippage tolerance (1%)
-  //         onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
-  //       },
-  //     });
-
-  //     const swapPrice = response.data;
-  //     console.log("Swap Price:", swapPrice);
-  //     var TokenUnit = 10 ** token.decimals;
-  //     return swapPrice.outAmount / TokenUnit;
-  //   } catch (error) {
-  //     console.error("Error fetching swap price:", error);
-  //   } finally {
-  //       setConversionLoading(false);
-
-  //   }
-  // };
-  // useEffect(() => {
-  //   // Simulate an API call or calculation to set the amount
-  //   const fetchTokenAmount = async () => {
-  //     setTokenAmount(0);
-  //     // In a real use case, this would be dynamic based on API or user input
-  //     var price = await getSwapPrice(5000);
-  //     setTokenAmount(price as number); // Example of setting new token amount dynamically
-  //   };
-  //   fetchTokenAmount();
-  //   if (stablecoinPaymentMethod == "wallet") {
-  //     // Disable scrolling
-  //     document.body.style.overflow = "hidden";
-  //   } else {
-  //     // Enable scrolling
-  //     document.body.style.overflow = "auto";
-  //   }
-
-  //   // Cleanup when the component is unmounted or menu closes
-  //   return () => {
-  //     document.body.style.overflow = "auto";
-  //   };
-  // }, [stablecoinPaymentMethod]);
+  
   if (isMobile) {
     return (
       <>
