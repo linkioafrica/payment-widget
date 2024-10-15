@@ -157,6 +157,7 @@ export const StableCoinHome = () => {
         signature: txid
       });
       console.log(`https://solscan.io/tx/${txid}`);
+      return txid;
   };
 
   // Step 4: Main function to swap and send token
@@ -177,9 +178,9 @@ export const StableCoinHome = () => {
         const { swapTransaction, lastValidBlockHeight } = await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
         console.log(swapTransaction);
         // Step 3: Send the transaction to the blockchain
-        await sendTransaction(swapTransaction,  walletAdapter);
+        let txid = await sendTransaction(swapTransaction,  walletAdapter);
 
-        alert("USDC sent successfully!");
+        alert('$ sent successfully!\n https://solscan.io/tx/' + txid);
 
         console.log('Swap and send transaction completed successfully.');
     } catch (error) {
@@ -382,7 +383,7 @@ export const StableCoinHome = () => {
                 ? "Continue"
                 : walletConnected
                   ? isProcessing
-                    ? "Processing"
+                    ? "Processing..."
                     :"Pay now"
                   : "Select Wallet"}
             </button>
@@ -569,7 +570,7 @@ export const StableCoinHome = () => {
                 ? "Continue"
                 : walletConnected
                   ? isProcessing
-                    ? "Processing"
+                    ? "Processing..."
                     :"Pay now"
                   : "Select Wallet"}
             </button>
