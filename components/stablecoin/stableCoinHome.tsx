@@ -111,8 +111,8 @@ export const StableCoinHome = () => {
         destinationTokenAccount: recipientAddress,
         useSharedAccounts: true,
         quoteResponse: swapInfo.quoteResponse,
-        skipUserAccountsRpcCalls: true,
-        wrapAndUnwrapSol : false
+        prioritizationFeeLamports: 'auto', // or custom lamports: 1000
+        dynamicComputeUnitLimit: true, // allow dynamic compute limit instead of max 1,400,000
 
     };
 
@@ -139,8 +139,7 @@ export const StableCoinHome = () => {
       var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
       console.log(transaction);
 
-      // get the latest block hash
-      const latestBlockHash = await connection.getLatestBlockhash();
+
 
       const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
 
@@ -150,6 +149,8 @@ export const StableCoinHome = () => {
         skipPreflight: true,
         maxRetries: 2
       });
+      // get the latest block hash
+      const latestBlockHash = await connection.getLatestBlockhash();
       console.log(`https://solscan.io/tx/${txid}`);
       await connection.confirmTransaction({
         blockhash: latestBlockHash.blockhash,
