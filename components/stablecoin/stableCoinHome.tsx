@@ -181,9 +181,10 @@ export const StableCoinHome = () => {
         // Step 3: Send the transaction to the blockchain
         let txid = await sendTransaction(swapTransaction,  walletAdapter);
 
-        alert('$ sent successfully!\n https://solscan.io/tx/' + txid);
+        console.log('$ sent successfully!\n https://solscan.io/tx/' + txid);
 
         console.log('Swap and send transaction completed successfully.');
+        setIsSuccessful(true);
     } catch (error) {
         console.error('Error during swap and send:', error);
         //alert("Failed! " + error.message);
