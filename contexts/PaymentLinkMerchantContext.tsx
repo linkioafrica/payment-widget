@@ -22,6 +22,8 @@ interface PaymentLinkMerchantContextType {
   setTokenAmount: React.Dispatch<React.SetStateAction<number>>;
   stablecoinPaymentMethod: string;
   setStablecoinPaymentMethod: React.Dispatch<React.SetStateAction<string>>;
+  transactionLink: string;
+  setTransactionLink: React.Dispatch<React.SetStateAction<string>>;
   isDrawerOpen: boolean;
   setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
   trx: string | null;
@@ -56,6 +58,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [stablecoinPaymentMethod, setStablecoinPaymentMethod] = useState("");
+  const [transactionLink, setTransactionLink] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
   const [isBroken, setIsBroken] = useState(false);
@@ -101,6 +104,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setIsBroken,
         conversionLoading,
         setConversionLoading,
+        transactionLink,
+        setTransactionLink,
         trx, // Provide trx to the context
         data, // Provide fetched data to the context
         loading, // Provide loading state to the context

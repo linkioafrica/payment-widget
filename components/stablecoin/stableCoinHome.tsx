@@ -50,6 +50,7 @@ export const StableCoinHome = () => {
     stablecoinPaymentMethod,
     setStablecoinPaymentMethod,
     setIsSuccessful,
+    setTransactionLink,
     tokenAmount,
     token,
     data,
@@ -157,6 +158,7 @@ export const StableCoinHome = () => {
         lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
         signature: txid
       });
+      setTransactionLink(`https://solscan.io/tx/${txid}`);
       console.log(`https://solscan.io/tx/${txid}`);
       return txid;
   };

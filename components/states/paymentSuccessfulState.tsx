@@ -9,7 +9,7 @@ import { UpdateTrxDetails } from "@/www";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
-  const { paywith, data, stablecoinPaymentMethod, trx } =
+  const { paywith, data, stablecoinPaymentMethod, trx, transactionLink } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { walletConnected } = useWallet();
@@ -66,9 +66,9 @@ export const PaymentSuccessfulState = () => {
                 {data?.transactions?.currency}.
               </span>
               {paywith == "stablecoin" && walletConnected && (
-                <span className="text-[#0259D6] underline text-sm cursor-pointer">
+                <a className="text-[#0259D6] underline text-sm cursor-pointer" href={transactionLink}>
                   View on explorer.
-                </span>
+                </a>
               )}
             </div>
           )}
@@ -110,9 +110,9 @@ export const PaymentSuccessfulState = () => {
                 {data?.transactions?.currency}.
               </span>
               {paywith == "stablecoin" && walletConnected && (
-                <span className="text-[#0259D6] underline text-xs cursor-pointer">
+                <a className="text-[#0259D6] underline text-xs cursor-pointer" href={transactionLink}>
                   View on explorer.
-                </span>
+                </a>
               )}
             </div>
           )}
