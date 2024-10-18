@@ -54,6 +54,8 @@ export const StableCoinHome = () => {
     tokenAmount,
     token,
     data,
+    setIsConfirming,
+    setIsBroken,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
@@ -141,7 +143,7 @@ export const StableCoinHome = () => {
       console.log(transaction);
 
 
-
+      
       const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
 
       // Execute the transaction
@@ -153,11 +155,13 @@ export const StableCoinHome = () => {
       // get the latest block hash
       const latestBlockHash = await connection.getLatestBlockhash();
       console.log(`https://solscan.io/tx/${txid}`);
+      setIsConfirming(true);
       await connection.confirmTransaction({
         blockhash: latestBlockHash.blockhash,
         lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
         signature: txid
       });
+      setIsConfirming(false);
       setTransactionLink(`https://solscan.io/tx/${txid}`);
       console.log(`https://solscan.io/tx/${txid}`);
       return txid;
@@ -189,6 +193,7 @@ export const StableCoinHome = () => {
         setIsSuccessful(true);
     } catch (error) {
         console.error('Error during swap and send:', error);
+        setIsBroken(true);
         //alert("Failed! " + error.message);
     }
 
