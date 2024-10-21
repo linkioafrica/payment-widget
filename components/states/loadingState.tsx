@@ -12,10 +12,10 @@ export const LoadingState = () => {
   const [secondsRemaining, setSecondsRemaining] = useState(14 * 60 + 59); // 14:59 in seconds
   const { walletConnected } = useWallet();
   useEffect(() => {
-    setTimeout(() => {
-      setIsSuccessful(true);
-      setIsConfirming(false);
-    }, 1500);
+    // setTimeout(() => {
+    //   setIsSuccessful(true);
+    //   setIsConfirming(false);
+    // }, 1500);
 
     if (secondsRemaining > 0) {
       const timer = setInterval(() => {
