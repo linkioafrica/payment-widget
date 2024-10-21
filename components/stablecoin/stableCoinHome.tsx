@@ -79,7 +79,7 @@ export const StableCoinHome = () => {
   // const isMainnet = true;
   // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
   // const customRpcUrl = 'https://neat-lively-voice.solana-mainnet.quiknode.pro/5948cc9447d9f5b1a516be7adf618ccbdffa7e99';
-  const customRpcUrl = 'https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/';
+  const customRpcUrl = 'https://omniscient-indulgent-patron.solana-mainnet.quiknode.pro/c9f5264cc114d6d752811992bb05793fd1991317/';
   const connection = new Connection(customRpcUrl, 'finalized');
 
   // Replace with the Jupiter API endpoint
@@ -137,23 +137,27 @@ export const StableCoinHome = () => {
 
   // Step 3: Send transaction to Solana blockchain
   const sendTransaction = async (swapTransaction: string,  walletAdapter: WalletAdapter) => {
+      let  latestBlockHash = await connection.getLatestBlockhash();
+
       // deserialize the transaction
       const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
       var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
       console.log(transaction);
 
-
+      // Set the recent blockhash
+      transaction.message.recentBlockhash = latestBlockHash.blockhash;
       
       const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
 
       // Execute the transaction
       const rawTransaction = transaction.serialize()
+
+      latestBlockHash = await connection.getLatestBlockhash();
       const txid = await connection.sendRawTransaction(rawTransaction, {
-        skipPreflight: true,
-        maxRetries: 2
+        skipPreflight: false,
+        maxRetries: 5
       });
       // get the latest block hash
-      const latestBlockHash = await connection.getLatestBlockhash();
       console.log(`https://solscan.io/tx/${txid}`);
       setIsConfirming(true);
       await connection.confirmTransaction({
