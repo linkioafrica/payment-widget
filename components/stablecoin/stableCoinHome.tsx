@@ -155,7 +155,7 @@ export const StableCoinHome = () => {
       latestBlockHash = await connection.getLatestBlockhash();
       const txid = await connection.sendRawTransaction(rawTransaction, {
         skipPreflight: false,
-        maxRetries: 5
+        maxRetries: 5,
       });
       // get the latest block hash
       console.log(`https://solscan.io/tx/${txid}`);
@@ -233,13 +233,18 @@ export const StableCoinHome = () => {
       );
       const account = await connection.getTokenAccountsByOwner(accountPublicKey, {
         mint: mintAccount});
-      await swapAndSendToken(
+      if(account.value.length==0) {
+        alert("can not find merchant account address for this spl token!");
+      }
+      else {
+        await swapAndSendToken(
           walletAdapter,
           account.value[0].pubkey.toString(), // Merchant's USDC address
           inputToken.mintAddress, // Input mint address
           targetMint, // Output mint address
           tokenAmount * (10 ** inputToken.decimals) // Example: 0.1 USDC in micro-lamports
-      );
+        );
+      }
 
     }
     setIsProcessing(false);
