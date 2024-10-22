@@ -114,7 +114,7 @@ export const StableCoinHome = () => {
         destinationTokenAccount: recipientAddress,
         useSharedAccounts: true,
         quoteResponse: swapInfo.quoteResponse,
-        prioritizationFeeLamports: 5000000, // or custom lamports: 1000
+        prioritizationFeeLamports: 'auto', // or custom lamports: 1000
         dynamicComputeUnitLimit: true, // allow dynamic compute limit instead of max 1,400,000
 
     };
