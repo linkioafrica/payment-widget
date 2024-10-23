@@ -10,12 +10,14 @@ import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
 import axios from "axios";
 import {
+  ComputeBudgetProgram,
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
   Transaction,
   TransactionInstruction,
+  TransactionMessage,
   VersionedMessage,
   VersionedTransaction,
   clusterApiUrl,
@@ -173,7 +175,7 @@ export const StableCoinHome = () => {
         blockhash: latestBlockHash.blockhash,
         lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
         signature: txid
-      });
+      },"confirmed");
       setIsConfirming(false);
       setTransactionLink(`https://solscan.io/tx/${txid}`);
       console.log(`https://solscan.io/tx/${txid}`);
@@ -214,36 +216,36 @@ export const StableCoinHome = () => {
 
   const sendDirectToken = async (walletAdapter: WalletAdapter, sourceAccount: any, destinationAccount: any, numberDecimals: number, transferAmount: number) => {
     try {
-      const tx = new Transaction();
-    
+      // transferAmount = 0.1;
       // Ensure sourceAccount and destinationAccount are PublicKey instances
       const sourcePubKey = new PublicKey(sourceAccount.value[0].pubkey); // Wrap in PublicKey
       const destPubKey = new PublicKey(destinationAccount.value[0].pubkey); // Wrap in PublicKey
       const walletPubKey = walletAdapter.publicKey as PublicKey;
     
-      // Set the fee payer (usually the wallet signing the transaction)
-      tx.feePayer = walletPubKey;
-    
       // Create transfer instruction
-      tx.add(createTransferInstruction(
+      const transferInstruction = createTransferInstruction(
         sourcePubKey,
         destPubKey,
         walletPubKey,
         transferAmount * Math.pow(10, numberDecimals)
-      ));
+      );
     
       // Get latest blockhash
-      const latestBlockHash = await connection.getLatestBlockhash('confirmed');
-      tx.recentBlockhash = latestBlockHash.blockhash;
-    
+      let latestBlockhash = await connection.getLatestBlockhash("confirmed");
+      console.log(latestBlockhash);
+      const messageV0 = new TransactionMessage({
+        payerKey: walletPubKey,
+        recentBlockhash: latestBlockhash.blockhash,
+        instructions: [ComputeBudgetProgram.setComputeUnitPrice({microLamports: 12345}), transferInstruction],
+      }).compileToV0Message();
+      const versionedTransaction = new VersionedTransaction(messageV0);
+  
       // Sign the transaction
-      const signedTransaction = await (walletAdapter as any).signTransaction(tx);
-      const rawTransaction = signedTransaction.serialize(); // Serialize the signed transaction
-    
+      const signedTransaction = await (walletAdapter as any).signTransaction(versionedTransaction);
+          
       // Send the raw transaction
-      const txid = await connection.sendRawTransaction(rawTransaction, {
-        skipPreflight: false,
-        maxRetries: 5,
+      const txid = await connection.sendTransaction(signedTransaction, {
+        maxRetries: 20,
       });
     
       console.log(`https://solscan.io/tx/${txid}`);
@@ -251,10 +253,10 @@ export const StableCoinHome = () => {
     
       // Confirm the transaction
       await connection.confirmTransaction({
-        blockhash: latestBlockHash.blockhash,
-        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        blockhash: latestBlockhash.blockhash,
+        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
         signature: txid
-      });
+      }, "confirmed" );
       setIsConfirming(false);
       setTransactionLink(`https://solscan.io/tx/${txid}`);
       console.log(`https://solscan.io/tx/${txid}`);
