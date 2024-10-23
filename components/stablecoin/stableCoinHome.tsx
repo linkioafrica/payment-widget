@@ -244,8 +244,10 @@ export const StableCoinHome = () => {
       const signedTransaction = await (walletAdapter as any).signTransaction(versionedTransaction);
           
       // Send the raw transaction
+      
       const txid = await connection.sendTransaction(signedTransaction, {
-        maxRetries: 20,
+        maxRetries: 5,
+        skipPreflight: true
       });
     
       console.log(`https://solscan.io/tx/${txid}`);
