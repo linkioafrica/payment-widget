@@ -85,7 +85,6 @@ export const StableCoinHome = () => {
   // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
   const customRpcUrl =
     "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
-
   // const customRpcUrl = 'https://omniscient-indulgent-patron.solana-mainnet.quiknode.pro/c9f5264cc114d6d752811992bb05793fd1991317/';
   const connection = new Connection(customRpcUrl, "finalized");
 
