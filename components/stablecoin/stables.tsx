@@ -12,10 +12,10 @@ import axios from "axios";
 import {
   ComputeBudgetProgram,
   Connection,
-  PublicKey,
-  Transaction,
-  SystemProgram,
   LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
   TransactionInstruction,
   TransactionMessage,
   VersionedMessage,
@@ -23,7 +23,6 @@ import {
   clusterApiUrl,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
-
 import {
   WalletProvider,
   ConnectionProvider,
@@ -39,9 +38,9 @@ import {
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
 import { stableCoinInfos } from "@/constants/stableCoinInfos";
 import { DisconnectWallet } from "../disconnectWallet";
@@ -60,7 +59,6 @@ export const StableCoinHome = () => {
     data,
     setIsConfirming,
     setIsBroken,
-    setPaywith,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
@@ -152,8 +150,8 @@ export const StableCoinHome = () => {
     const { swapTransaction, lastValidBlockHeight } = await response.json();
     return { swapTransaction, lastValidBlockHeight };
   };
-
   // Function to find the fee account and get serialized transactions for the swap
+
   // Step 3: Send transaction to Solana blockchain
   const sendTransaction = async (
     swapTransaction: string,
@@ -234,54 +232,51 @@ export const StableCoinHome = () => {
     walletAdapter: WalletAdapter,
     sourceAccount: any,
     destinationAccount: any,
+    numberDecimals: number,
     transferAmount: number
   ) => {
     try {
+      // transferAmount = 0.1;
       // Ensure sourceAccount and destinationAccount are PublicKey instances
       const sourcePubKey = new PublicKey(sourceAccount.value[0].pubkey); // Wrap in PublicKey
       const destPubKey = new PublicKey(destinationAccount.value[0].pubkey); // Wrap in PublicKey
       const walletPubKey = walletAdapter.publicKey as PublicKey;
 
-      // const tx = new Transaction();
-      const tx = createTransferInstruction(
+      // Create transfer instruction
+      const transferInstruction = createTransferInstruction(
         sourcePubKey,
         destPubKey,
         walletPubKey,
-        transferAmount
+        transferAmount * Math.pow(10, numberDecimals)
       );
 
       // Get latest blockhash
       let latestBlockhash = await connection.getLatestBlockhash("confirmed");
-      console.log("latest block", latestBlockhash);
-
+      console.log(latestBlockhash);
       const messageV0 = new TransactionMessage({
         payerKey: walletPubKey,
         recentBlockhash: latestBlockhash.blockhash,
         instructions: [
           ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 12345 }),
-          tx,
+          transferInstruction,
         ],
       }).compileToV0Message();
-      console.log("V0 message", messageV0);
-
       const versionedTransaction = new VersionedTransaction(messageV0);
-      console.log("VersionTransaction", versionedTransaction);
 
       // Sign the transaction
       const signedTransaction = await (walletAdapter as any).signTransaction(
         versionedTransaction
       );
 
-      setIsConfirming(true);
-      setIsProcessing(false);
-
       // Send the raw transaction
+
       const txid = await connection.sendTransaction(signedTransaction, {
         maxRetries: 5,
         skipPreflight: true,
       });
-      // console.log(txid)
+
       console.log(`https://solscan.io/tx/${txid}`);
+      setIsConfirming(true);
 
       // Confirm the transaction
       await connection.confirmTransaction(
@@ -294,14 +289,12 @@ export const StableCoinHome = () => {
       );
       setIsConfirming(false);
       setTransactionLink(`https://solscan.io/tx/${txid}`);
+      console.log(`https://solscan.io/tx/${txid}`);
       setIsSuccessful(true);
     } catch (error) {
-      // console.error("Error during swap and send:", error);
-      // setIsBroken(true);
-      setPaywith("stablecoin");
-      setIsProcessing(false);
-      setIsConfirming(false);
-      alert("Failed! Transaction failed. Please try again.");
+      console.error("Error during swap and send:", error);
+      setIsBroken(true);
+      //alert("Failed! " + error.message);
     }
   };
 
@@ -309,92 +302,61 @@ export const StableCoinHome = () => {
     if (isProcessing) return;
     setIsProcessing(true);
 
-    // Current token  selected from dropdown
-    let selectedPayToken = token;
-    console.log(selectedPayToken);
+    const inputToken = token;
+    var targetTokenName = data?.transactions?.currency;
+    var targetUnitNumber = 0;
+    var targetMint = "";
+    Tokens.forEach((element) => {
+      if (element.name == targetTokenName) {
+        targetMint = element.mintAddress;
+        targetUnitNumber = element.decimals;
+      }
+    });
 
-    // Checkout Merchant address
-    let merchant_address = data?.transactions?.merchant_address;
-    let amount = data?.transactions?.amount;
-    // console.log(merchant_address);
-
-    // Token in which merchants wants to be paid details
-    let targetTokenName = data?.transactions?.currency;
-    // console.log(targetTokenName);
-
-    // map over token list and get mint (target token)
-    const selectedToken: any = Tokens.find(
-      (token) => token.name === targetTokenName
-    );
-
-    // The mint address and decimal of target token
-    let mintTokenDecimal = selectedToken?.decimals;
-    let mintTokenAddress = selectedToken?.mintAddress;
-
-    // Get Public Key data of merchant address
-    const merchantPublicKey = new PublicKey(merchant_address);
-    console.log(merchantPublicKey);
-
-    // Get Public Key data of target min address
-    const mintTokenPublicKey = new PublicKey(mintTokenAddress);
-    console.log(mintTokenPublicKey);
-
+    var merchant_address = data?.transactions?.merchant_address;
+    const targetaccountPublicKey = new PublicKey(merchant_address);
+    const targetmintAccount = new PublicKey(targetMint);
     const targetAccount = await connection.getTokenAccountsByOwner(
-      merchantPublicKey,
-      { mint: mintTokenPublicKey }
+      targetaccountPublicKey,
+      {
+        mint: targetmintAccount,
+      }
     );
-    console.log("Target Account", targetAccount);
 
     if (targetAccount.value.length == 0) {
       alert("can not find merchant account address for this spl token!");
     }
-
-    // Get Public Key data of Customer address
-    const customerPublicKey = new PublicKey(walletAdapter.publicKey);
-    console.log(customerPublicKey);
-
-    const mintSourceAccount = new PublicKey(selectedPayToken.mintAddress);
-
+    const srcaccountPublicKey = new PublicKey(walletAdapter.publicKey);
+    const srcmintAccount = new PublicKey(inputToken.mintAddress);
     const srcAccount = await connection.getTokenAccountsByOwner(
-      customerPublicKey,
-      { mint: mintSourceAccount }
+      srcaccountPublicKey,
+      {
+        mint: srcmintAccount,
+      }
     );
-    console.log("Source Account", srcAccount);
 
-    let transferAmount: any = amount * Math.pow(10, mintTokenDecimal);
-    console.log("Transaction amount", transferAmount);
-
-    const fromTokenAccount = await getAssociatedTokenAddress(
-      mintTokenPublicKey,
-      customerPublicKey,
-      false,
-      TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID
-    );
-    console.log(`source account: ${fromTokenAccount}`);
-
-    let toTokenAccount = await getAssociatedTokenAddress(
-      mintTokenPublicKey,
-      merchantPublicKey,
-      true,
-      TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID
-    );
-    console.log(`destination account: ${toTokenAccount}`);
-
-    if (selectedPayToken.name == targetTokenName) {
-      sendDirectToken(walletAdapter, srcAccount, targetAccount, transferAmount);
+    if (srcAccount.value.length == 0) {
+      alert("can not find source account address for this spl token!");
+    }
+    if (inputToken.name == targetTokenName) {
+      sendDirectToken(
+        walletAdapter,
+        srcAccount,
+        targetAccount,
+        inputToken.decimals,
+        tokenAmount
+      );
     } else {
       await swapAndSendToken(
         walletAdapter,
         targetAccount.value[0].pubkey.toString(), // Merchant's USDC address
-        selectedPayToken.mintAddress, // Input mint address
-        mintTokenAddress, // Output mint address
-        tokenAmount * 10 ** selectedPayToken.decimals // Example: 0.1 USDC in micro-lamports
+        inputToken.mintAddress, // Input mint address
+        targetMint, // Output mint address
+        tokenAmount * 10 ** inputToken.decimals // Example: 0.1 USDC in micro-lamports
       );
     }
+    setIsProcessing(false);
   };
-
   // Function to connect to the wallet
   const connectWallet = async (walletId: number) => {
     const wallets = [
@@ -413,7 +375,7 @@ export const StableCoinHome = () => {
       setWalletAdapter(wallet);
       setConnectedWalletIndex(walletId);
       setWalletConnected(true);
-      setStablecoinPaymentMethod("wallet");
+      setStablecoinPaymentMethod("");
     } catch (error) {
       console.error("Failed to connect to wallet:", error);
     }

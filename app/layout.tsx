@@ -11,7 +11,7 @@ import { WalletProvider } from "@/contexts/WalletContext";
 const sora = Sora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Checkout",
+  title: "Checkout by LINK",
   description: "Merchant checkout",
 };
 

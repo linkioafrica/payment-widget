@@ -9,10 +9,19 @@ import { UpdateTrxDetails } from "@/www";
 
 export const PaymentSuccessfulState = () => {
   const [isDone, setIsDone] = useState(false);
-  const { paywith, data, stablecoinPaymentMethod, trx, transactionLink } =
-    usePaymentLinkMerchantContext();
+  const {
+    paywith,
+    data,
+    stablecoinPaymentMethod,
+    trx,
+    transactionLink,
+    setStablecoinPaymentMethod,
+  } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { walletConnected } = useWallet();
+  setStablecoinPaymentMethod("wallet");
+
+  console.log(walletConnected, stablecoinPaymentMethod);
 
   useEffect(() => {
     onPaymentComplete();
@@ -66,7 +75,11 @@ export const PaymentSuccessfulState = () => {
                 {data?.transactions?.currency}.
               </span>
               {paywith == "stablecoin" && walletConnected && (
-                <a className="text-[#0259D6] underline text-sm cursor-pointer" href={transactionLink}>
+                <a
+                  className="text-[#0259D6] underline text-sm cursor-pointer"
+                  target="_blank"
+                  href={transactionLink}
+                >
                   View on explorer.
                 </a>
               )}
@@ -106,11 +119,15 @@ export const PaymentSuccessfulState = () => {
                 Payment Successful!
               </h4>
               <span className="text-[#696F79] text-xs dark:text-[#888888] font-medium  text-center max-w-[450px]">
-                You have successfully {data?.transactions?.amount}{" "}
+                You have successfully sent {data?.transactions?.amount}{" "}
                 {data?.transactions?.currency}.
               </span>
               {paywith == "stablecoin" && walletConnected && (
-                <a className="text-[#0259D6] underline text-xs cursor-pointer" href={transactionLink}>
+                <a
+                  className="text-[#0259D6] underline text-xs cursor-pointer"
+                  target="_blank"
+                  href={transactionLink}
+                >
                   View on explorer.
                 </a>
               )}

@@ -81,9 +81,9 @@ export const NavBar = () => {
       });
 
       const data = await response.json();
-      console.log("API Response:", data);
+      // console.log("API Response:", data);
     } catch (error) {
-      console.error("Error calling API:", error);
+      // console.error("Error calling API:", error);
     } finally {
       console.log("API call completed");
     }
