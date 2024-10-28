@@ -252,7 +252,7 @@ export const StableCoinHome = () => {
 
       // Get latest blockhash
       let latestBlockhash = await connection.getLatestBlockhash("confirmed");
-      console.log("latest block", latestBlockhash);
+      // console.log("latest block", latestBlockhash);
 
       const messageV0 = new TransactionMessage({
         payerKey: walletPubKey,
@@ -262,10 +262,10 @@ export const StableCoinHome = () => {
           tx,
         ],
       }).compileToV0Message();
-      console.log("V0 message", messageV0);
+      // console.log("V0 message", messageV0);
 
       const versionedTransaction = new VersionedTransaction(messageV0);
-      console.log("VersionTransaction", versionedTransaction);
+      // console.log("VersionTransaction", versionedTransaction);
 
       // Sign the transaction
       const signedTransaction = await (walletAdapter as any).signTransaction(
@@ -281,7 +281,7 @@ export const StableCoinHome = () => {
         skipPreflight: true,
       });
       // console.log(txid)
-      console.log(`https://solscan.io/tx/${txid}`);
+      // console.log(`https://solscan.io/tx/${txid}`);
 
       // Confirm the transaction
       await connection.confirmTransaction(
@@ -311,7 +311,7 @@ export const StableCoinHome = () => {
 
     // Current token  selected from dropdown
     let selectedPayToken = token;
-    console.log(selectedPayToken);
+    // console.log(selectedPayToken);
 
     // Checkout Merchant address
     let merchant_address = data?.transactions?.merchant_address;
@@ -333,17 +333,17 @@ export const StableCoinHome = () => {
 
     // Get Public Key data of merchant address
     const merchantPublicKey = new PublicKey(merchant_address);
-    console.log(merchantPublicKey);
+    // console.log(merchantPublicKey);
 
     // Get Public Key data of target min address
     const mintTokenPublicKey = new PublicKey(mintTokenAddress);
-    console.log(mintTokenPublicKey);
+    // console.log(mintTokenPublicKey);
 
     const targetAccount = await connection.getTokenAccountsByOwner(
       merchantPublicKey,
       { mint: mintTokenPublicKey }
     );
-    console.log("Target Account", targetAccount);
+    // console.log("Target Account", targetAccount);
 
     if (targetAccount.value.length == 0) {
       alert("can not find merchant account address for this spl token!");
@@ -351,7 +351,7 @@ export const StableCoinHome = () => {
 
     // Get Public Key data of Customer address
     const customerPublicKey = new PublicKey(walletAdapter.publicKey);
-    console.log(customerPublicKey);
+    // console.log(customerPublicKey);
 
     const mintSourceAccount = new PublicKey(selectedPayToken.mintAddress);
 
@@ -359,10 +359,10 @@ export const StableCoinHome = () => {
       customerPublicKey,
       { mint: mintSourceAccount }
     );
-    console.log("Source Account", srcAccount);
+    // console.log("Source Account", srcAccount);
 
     let transferAmount: any = amount * Math.pow(10, mintTokenDecimal);
-    console.log("Transaction amount", transferAmount);
+    // console.log("Transaction amount", transferAmount);
 
     const fromTokenAccount = await getAssociatedTokenAddress(
       mintTokenPublicKey,
@@ -371,7 +371,7 @@ export const StableCoinHome = () => {
       TOKEN_PROGRAM_ID,
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
-    console.log(`source account: ${fromTokenAccount}`);
+    // console.log(`source account: ${fromTokenAccount}`);
 
     let toTokenAccount = await getAssociatedTokenAddress(
       mintTokenPublicKey,
@@ -380,18 +380,19 @@ export const StableCoinHome = () => {
       TOKEN_PROGRAM_ID,
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
-    console.log(`destination account: ${toTokenAccount}`);
+    // console.log(`destination account: ${toTokenAccount}`);
 
     if (selectedPayToken.name == targetTokenName) {
       sendDirectToken(walletAdapter, srcAccount, targetAccount, transferAmount);
     } else {
-      await swapAndSendToken(
-        walletAdapter,
-        targetAccount.value[0].pubkey.toString(), // Merchant's USDC address
-        selectedPayToken.mintAddress, // Input mint address
-        mintTokenAddress, // Output mint address
-        tokenAmount * 10 ** selectedPayToken.decimals // Example: 0.1 USDC in micro-lamports
-      );
+      alert("Token swap is not supported yet!");
+      // await swapAndSendToken(
+      //   walletAdapter,
+      //   targetAccount.value[0].pubkey.toString(), // Merchant's USDC address
+      //   selectedPayToken.mintAddress, // Input mint address
+      //   mintTokenAddress, // Output mint address
+      //   tokenAmount * 10 ** selectedPayToken.decimals // Example: 0.1 USDC in micro-lamports
+      // );
     }
   };
 
