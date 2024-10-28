@@ -414,7 +414,7 @@ export const StableCoinHome = () => {
       setWalletAdapter(wallet);
       setConnectedWalletIndex(walletId);
       setWalletConnected(true);
-      setStablecoinPaymentMethod("wallet");
+      setStablecoinPaymentMethod("");
     } catch (error) {
       console.error("Failed to connect to wallet:", error);
     }
