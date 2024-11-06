@@ -88,6 +88,7 @@ export const StableCoinHome = () => {
   // const customRpcUrl = 'https://omniscient-indulgent-patron.solana-mainnet.quiknode.pro/c9f5264cc114d6d752811992bb05793fd1991317/';
   const connection = new Connection(customRpcUrl, "finalized");
 
+  /////////////////////////////Function for token swap and transfer starts here ////////////////
   // Replace with the Jupiter API endpoint
   const JUPITER_QUOTE_API = "https://quote-api.jup.ag/v6/quote";
   const JUPITER_SWAP_API = "https://quote-api.jup.ag/v6/swap";
@@ -229,7 +230,11 @@ export const StableCoinHome = () => {
       //alert("Failed! " + error.message);
     }
   };
+  ///////////////////////////// Function for token swap and transfer ends here ////////////////
 
+  // You can delete the whole function above 👆🏾👆🏾 and redo it or twick it to your taste.
+
+  // Function to send token directly
   const sendDirectToken = async (
     walletAdapter: WalletAdapter,
     sourceAccount: any,
@@ -305,6 +310,7 @@ export const StableCoinHome = () => {
     }
   };
 
+  // This function is called when the user clicks the "Pay now" button
   const payCoin = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
@@ -383,8 +389,10 @@ export const StableCoinHome = () => {
     // console.log(`destination account: ${toTokenAccount}`);
 
     if (selectedPayToken.name == targetTokenName) {
+      // This is direct token transfer function
       sendDirectToken(walletAdapter, srcAccount, targetAccount, transferAmount);
     } else {
+      // This is token swap and transfer function
       alert("Token swap is not supported yet!");
       // await swapAndSendToken(
       //   walletAdapter,
