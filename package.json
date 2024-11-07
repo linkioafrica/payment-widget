@@ -27,14 +27,15 @@
     "material-icons": "^1.13.9",
     "material-symbols": "^0.10.3",
     "moment": "^2.29.4",
-    "next": "13.5.4",
+    "next": "^13.5.4",
     "next-auth": "^4.22.4",
     "next-qrcode": "^2.5.1",
     "next-transpile-modules": "^10.0.1",
     "node-fetch": "^3.3.2",
     "pino-pretty": "^11.2.2",
-    "react": "^18",
-    "react-dom": "^18",
+    "punycode": "^2.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rpc-websockets": "^9.0.4"
   },
   "devDependencies": {

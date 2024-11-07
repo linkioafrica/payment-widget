@@ -153,50 +153,128 @@ export const StableCoinHome = () => {
   // Function to find the fee account and get serialized transactions for the swap
 
   // Step 3: Send transaction to Solana blockchain
+  // const sendTransaction = async (
+  //   swapTransaction: string,
+  //   walletAdapter: WalletAdapter
+  // ) => {
+  //   let latestBlockHash = await connection.getLatestBlockhash();
+
+  //   // deserialize the transaction
+  //   const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
+  //   var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+  //   console.log(transaction);
+
+  //   // Set the recent blockhash
+  //   transaction.message.recentBlockhash = latestBlockHash.blockhash;
+
+  //   const signedTransaction = await (walletAdapter as any).signTransaction(
+  //     transaction
+  //   );
+
+  //   // Execute the transaction
+  //   const rawTransaction = transaction.serialize();
+
+  //   latestBlockHash = await connection.getLatestBlockhash();
+  //   const txid = await connection.sendRawTransaction(rawTransaction, {
+  //     skipPreflight: false,
+  //     maxRetries: 5,
+  //   });
+  //   // get the latest block hash
+  //   console.log(`https://solscan.io/tx/${txid}`);
+  //   setIsConfirming(true);
+  //   await connection.confirmTransaction(
+  //     {
+  //       blockhash: latestBlockHash.blockhash,
+  //       lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+  //       signature: txid,
+  //     },
+  //     "confirmed"
+  //   );
+  //   setIsConfirming(false);
+  //   setTransactionLink(`https://solscan.io/tx/${txid}`);
+  //   console.log(`https://solscan.io/tx/${txid}`);
+  //   return txid;
+  // };
+
+
   const sendTransaction = async (
     swapTransaction: string,
-    walletAdapter: WalletAdapter
+    walletAdapter: WalletAdapter,
+    lastValidBlockHeight: number
   ) => {
     let latestBlockHash = await connection.getLatestBlockhash();
 
-    // deserialize the transaction
-    const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
+    const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
     var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-    console.log(transaction);
-
-    // Set the recent blockhash
     transaction.message.recentBlockhash = latestBlockHash.blockhash;
 
-    const signedTransaction = await (walletAdapter as any).signTransaction(
-      transaction
-    );
+    const signedTransaction = await (walletAdapter as any).signTransaction(transaction);
 
-    // Execute the transaction
     const rawTransaction = transaction.serialize();
+    let txid;
+    let retries = 0;
 
-    latestBlockHash = await connection.getLatestBlockhash();
-    const txid = await connection.sendRawTransaction(rawTransaction, {
-      skipPreflight: false,
-      maxRetries: 5,
-    });
-    // get the latest block hash
-    console.log(`https://solscan.io/tx/${txid}`);
-    setIsConfirming(true);
-    await connection.confirmTransaction(
-      {
-        blockhash: latestBlockHash.blockhash,
-        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-        signature: txid,
-      },
-      "confirmed"
-    );
-    setIsConfirming(false);
-    setTransactionLink(`https://solscan.io/tx/${txid}`);
-    console.log(`https://solscan.io/tx/${txid}`);
-    return txid;
+    while (retries < 3) {  // Retry up to 3 times
+      try {
+        latestBlockHash = await connection.getLatestBlockhash();
+        txid = await connection.sendRawTransaction(rawTransaction, {
+          skipPreflight: false,
+          maxRetries: 5,
+        });
+
+        await connection.confirmTransaction({
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: lastValidBlockHeight, // Use Jupiter-provided last valid block height
+          signature: txid
+        });
+
+        console.log(`https://solscan.io/tx/${txid}`);
+        setTransactionLink(`https://solscan.io/tx/${txid}`);
+        setIsConfirming(false);
+        return txid;
+      } catch (error) {
+        console.error(`Transaction attempt ${retries + 1} failed:`, error);
+        retries++;
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retries))); // Exponential backoff
+      }
+    }
+
+    throw new Error('Transaction failed after multiple retries');
   };
 
   // Step 4: Main function to swap and send token
+  // const swapAndSendToken = async (
+  //   walletAdapter: WalletAdapter,
+  //   recipientAddress: string,
+  //   inputMint: string,
+  //   outputMint: string,
+  //   amount: number
+  // ) => {
+  //   try {
+  //     const walletPublicKey = walletAdapter.publicKey;
+
+  //     // Step 1: Fetch swap info
+  //     const swapInfo = await fetchSwapInfo(inputMint, outputMint, amount);
+
+  //     // Step 2: Fetch the swap transaction
+  //     const { swapTransaction, lastValidBlockHeight } =
+  //       await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
+  //     console.log(swapTransaction);
+  //     // Step 3: Send the transaction to the blockchain
+  //     let txid = await sendTransaction(swapTransaction, walletAdapter);
+
+  //     console.log("$ sent successfully!\n https://solscan.io/tx/" + txid);
+
+  //     console.log("Swap and send transaction completed successfully.");
+  //     setIsSuccessful(true);
+  //   } catch (error) {
+  //     console.error("Error during swap and send:", error);
+  //     setIsBroken(true);
+  //     //alert("Failed! " + error.message);
+  //   }
+  // };
+
+
   const swapAndSendToken = async (
     walletAdapter: WalletAdapter,
     recipientAddress: string,
@@ -207,26 +285,20 @@ export const StableCoinHome = () => {
     try {
       const walletPublicKey = walletAdapter.publicKey;
 
-      // Step 1: Fetch swap info
       const swapInfo = await fetchSwapInfo(inputMint, outputMint, amount);
 
-      // Step 2: Fetch the swap transaction
-      const { swapTransaction, lastValidBlockHeight } =
-        await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
-      console.log(swapTransaction);
-      // Step 3: Send the transaction to the blockchain
-      let txid = await sendTransaction(swapTransaction, walletAdapter);
+      const { swapTransaction, lastValidBlockHeight } = await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
 
-      console.log("$ sent successfully!\n https://solscan.io/tx/" + txid);
+      const txid = await sendTransaction(swapTransaction, walletAdapter, lastValidBlockHeight);
 
-      console.log("Swap and send transaction completed successfully.");
+      console.log(`$ sent successfully! https://solscan.io/tx/${txid}`);
       setIsSuccessful(true);
     } catch (error) {
-      console.error("Error during swap and send:", error);
+      console.error('Error during swap and send:', error);
       setIsBroken(true);
-      //alert("Failed! " + error.message);
     }
   };
+
 
   const sendDirectToken = async (
     walletAdapter: WalletAdapter,
@@ -393,11 +465,10 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
-                selectedMethod === "qrCode"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${selectedMethod === "qrCode"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => {
                 // setSelectedMethod("qrCode")
                 // dark:hover:border-[#9F9F9F] hover:border-black
@@ -423,11 +494,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "qrCode"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "qrCode"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "qrCode" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -437,11 +507,10 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
-                selectedMethod === "wallet"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${selectedMethod === "wallet"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => setSelectedMethod("wallet")}
             >
               <div className="flex items-center gap-2">
@@ -467,11 +536,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "wallet"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "wallet"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "wallet" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -491,15 +559,15 @@ export const StableCoinHome = () => {
               onClick={
                 selectedMethod == "qrCode"
                   ? () => {
-                      setStablecoinPaymentMethod("qrCode");
-                    }
+                    setStablecoinPaymentMethod("qrCode");
+                  }
                   : walletConnected
                     ? () => {
-                        payCoin();
-                      }
+                      payCoin();
+                    }
                     : () => {
-                        setStablecoinPaymentMethod("wallet");
-                      }
+                      setStablecoinPaymentMethod("wallet");
+                    }
               }
             >
               {selectedMethod == "qrCode"
@@ -580,11 +648,10 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[150px] mt-5 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
-                selectedMethod === "qrCode"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${selectedMethod === "qrCode"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => {
                 // setSelectedMethod("qrCode")
                 // dark:hover:border-[#9F9F9F] hover:border-black
@@ -610,11 +677,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "qrCode"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "qrCode"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "qrCode" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -624,11 +690,10 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
-                selectedMethod === "wallet"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${selectedMethod === "wallet"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => setSelectedMethod("wallet")}
             >
               <div className="flex items-center gap-2">
@@ -654,11 +719,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "wallet"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "wallet"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "wallet" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -678,15 +742,15 @@ export const StableCoinHome = () => {
               onClick={
                 selectedMethod == "qrCode"
                   ? () => {
-                      setStablecoinPaymentMethod("qrCode");
-                    }
+                    setStablecoinPaymentMethod("qrCode");
+                  }
                   : walletConnected
                     ? () => {
-                        payCoin();
-                      }
+                      payCoin();
+                    }
                     : () => {
-                        setStablecoinPaymentMethod("wallet");
-                      }
+                      setStablecoinPaymentMethod("wallet");
+                    }
               }
             >
               {selectedMethod == "qrCode"
