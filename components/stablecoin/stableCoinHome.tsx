@@ -104,7 +104,6 @@ export const StableCoinHome = () => {
     const response = await fetch(url);
     const data = await response.json();
     return {
-      
       inAmount: data.inAmount,
       otherAmountThreshold: data.otherAmountThreshold,
       quoteResponse: data,
@@ -178,6 +177,7 @@ export const StableCoinHome = () => {
 
     // Execute the transaction
     const rawTransaction = signedTransaction.serialize();
+    console.log("Raw transaction:", rawTransaction);
 
     latestBlockHash = await connection.getLatestBlockhash();
     const txid = await connection.sendRawTransaction(rawTransaction, {
@@ -219,8 +219,11 @@ export const StableCoinHome = () => {
       console.log("Swap info fetched:", swapInfo);
 
       // Step 2: Fetch the swap transaction
-      const { swapTransaction } =
-        await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
+      const { swapTransaction } = await fetchSwapTransaction(
+        walletPublicKey,
+        recipientAddress,
+        swapInfo
+      );
       console.log("Swap transaction fetched:", swapTransaction);
 
       // Step 3: Send the transaction to the blockchain
