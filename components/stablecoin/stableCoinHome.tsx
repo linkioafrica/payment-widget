@@ -104,6 +104,7 @@ export const StableCoinHome = () => {
     const response = await fetch(url);
     const data = await response.json();
     return {
+      
       inAmount: data.inAmount,
       otherAmountThreshold: data.otherAmountThreshold,
       quoteResponse: data,
