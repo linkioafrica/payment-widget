@@ -84,7 +84,8 @@ export const StableCoinHome = () => {
   // const isMainnet = true;
   // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
   const customRpcUrl =
-    "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
+    // "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
+    "https://mainnet.helius-rpc.com/?api-key=f0ae3d5d-3bd5-4a09-b2b6-d3a2b389f2cd";
   // const customRpcUrl = 'https://omniscient-indulgent-patron.solana-mainnet.quiknode.pro/c9f5264cc114d6d752811992bb05793fd1991317/';
   const connection = new Connection(customRpcUrl, "finalized");
 
@@ -164,7 +165,7 @@ export const StableCoinHome = () => {
 
     // deserialize the transaction
     const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
-    var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+    const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
     console.log(transaction);
 
     // Set the recent blockhash
@@ -175,7 +176,7 @@ export const StableCoinHome = () => {
     );
 
     // Execute the transaction
-    const rawTransaction = transaction.serialize();
+    const rawTransaction = signedTransaction.serialize();
 
     latestBlockHash = await connection.getLatestBlockhash();
     const txid = await connection.sendRawTransaction(rawTransaction, {
@@ -209,25 +210,29 @@ export const StableCoinHome = () => {
   ) => {
     try {
       const walletPublicKey = walletAdapter.publicKey;
+      console.log("Wallet public key:", walletPublicKey);
+      console.log("Fetching swap info for:", { inputMint, outputMint, amount });
 
       // Step 1: Fetch swap info
       const swapInfo = await fetchSwapInfo(inputMint, outputMint, amount);
+      console.log("Swap info fetched:", swapInfo);
 
       // Step 2: Fetch the swap transaction
-      const { swapTransaction, lastValidBlockHeight } =
+      const { swapTransaction } =
         await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
-      console.log(swapTransaction);
-      // Step 3: Send the transaction to the blockchain
-      let txid = await sendTransaction(swapTransaction, walletAdapter);
+      console.log("Swap transaction fetched:", swapTransaction);
 
-      console.log("$ sent successfully!\n https://solscan.io/tx/" + txid);
+      // Step 3: Send the transaction to the blockchain
+      const txid = await sendTransaction(swapTransaction, walletAdapter);
 
       console.log("Swap and send transaction completed successfully.");
+      console.log("$ sent successfully!\n https://solscan.io/tx/" + txid);
+
       setIsSuccessful(true);
     } catch (error) {
       console.error("Error during swap and send:", error);
       setIsBroken(true);
-      //alert("Failed! " + error.message);
+      alert("Swap and send failed: " + error);
     }
   };
   ///////////////////////////// Function for token swap and transfer ends here ////////////////
@@ -316,16 +321,16 @@ export const StableCoinHome = () => {
     setIsProcessing(true);
 
     // Current token  selected from dropdown
-    let selectedPayToken = token;
+    const selectedPayToken = token;
     // console.log(selectedPayToken);
 
     // Checkout Merchant address
-    let merchant_address = data?.transactions?.merchant_address;
-    let amount = data?.transactions?.amount;
+    const merchant_address = data?.transactions?.merchant_address;
+    const amount = data?.transactions?.amount;
     // console.log(merchant_address);
 
     // Token in which merchants wants to be paid details
-    let targetTokenName = data?.transactions?.currency;
+    const targetTokenName = data?.transactions?.currency;
     // console.log(targetTokenName);
 
     // map over token list and get mint (target token)
@@ -334,8 +339,8 @@ export const StableCoinHome = () => {
     );
 
     // The mint address and decimal of target token
-    let mintTokenDecimal = selectedToken?.decimals;
-    let mintTokenAddress = selectedToken?.mintAddress;
+    const mintTokenDecimal = selectedToken?.decimals;
+    const mintTokenAddress = selectedToken?.mintAddress;
 
     // Get Public Key data of merchant address
     const merchantPublicKey = new PublicKey(merchant_address);
@@ -393,14 +398,14 @@ export const StableCoinHome = () => {
       sendDirectToken(walletAdapter, srcAccount, targetAccount, transferAmount);
     } else {
       // This is token swap and transfer function
-      alert("Token swap is not supported yet!");
-      // await swapAndSendToken(
-      //   walletAdapter,
-      //   targetAccount.value[0].pubkey.toString(), // Merchant's USDC address
-      //   selectedPayToken.mintAddress, // Input mint address
-      //   mintTokenAddress, // Output mint address
-      //   tokenAmount * 10 ** selectedPayToken.decimals // Example: 0.1 USDC in micro-lamports
-      // );
+      // alert("Token swap is not supported yet!");
+      await swapAndSendToken(
+        walletAdapter,
+        targetAccount.value[0].pubkey.toString(), // Merchant's USDC address
+        selectedPayToken.mintAddress, // Input mint address
+        mintTokenAddress, // Output mint address
+        tokenAmount * 10 ** selectedPayToken.decimals // Example: 0.1 USDC in micro-lamports
+      );
     }
   };
 
