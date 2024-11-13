@@ -127,7 +127,7 @@ export const StableCoinHome = () => {
     const requestBody = {
       userPublicKey: walletAddress.toBase58(),
       destinationTokenAccount: recipientAddress,
-      useSharedAccounts: true,
+      useSharedAccounts: false,
       quoteResponse: swapInfo.quoteResponse,
       allowOptimizedWrappedSolTokenAccount: true,
       asLegacyTransaction: false,
