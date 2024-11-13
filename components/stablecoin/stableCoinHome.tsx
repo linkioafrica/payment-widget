@@ -80,6 +80,8 @@ export const StableCoinHome = () => {
     connectedWalletIndex,
   } = walletContext();
 
+  const BENEFICIARY_ADDRESS = "8ajjPhDqJFWGKAQdagWUQL6YmR4BabKAqixM1AghhTSu";
+  
   // Dynamic cluster (devnet or mainnet)
   // const isMainnet = true;
   // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
@@ -211,14 +213,34 @@ export const StableCoinHome = () => {
   ) => {
     try {
       const walletPublicKey = walletAdapter.publicKey;
+
+      // Ensure walletPublicKey is non-null before proceeding
+      if (!walletPublicKey) {
+        throw new Error("Wallet public key is null. Ensure the wallet is connected.");
+      }
       console.log("Wallet public key:", walletPublicKey);
       console.log("Fetching swap info for:", { inputMint, outputMint, amount });
 
-      // Step 1: Fetch swap info
+      // Step 1: Calculate 0.25% to send to the beneficiary address
+      const beneficiaryAmount = amount * 0.0025;  // Calculate 0.25%
+      const swapAmount = amount - beneficiaryAmount;  // Remaining amount for swap
+
+      // Step 2: Send 0.25% directly to the beneficiary
+      const beneficiaryPubKey = new PublicKey(BENEFICIARY_ADDRESS);
+      const sourceAccount = await connection.getTokenAccountsByOwner(walletPublicKey, { mint: new PublicKey(inputMint) });
+
+      if (sourceAccount.value.length === 0) {
+        throw new Error("Cannot find source account for this token.");
+      }
+
+      console.log("Sending 0.25% of the amount to the beneficiary:", beneficiaryAmount);
+      await sendDirectToken(walletAdapter, sourceAccount, { value: [{ pubkey: beneficiaryPubKey.toString() }] }, beneficiaryAmount);
+
+      // Step 3: Fetch swap info
       const swapInfo = await fetchSwapInfo(inputMint, outputMint, amount);
       console.log("Swap info fetched:", swapInfo);
 
-      // Step 2: Fetch the swap transaction
+      // Step 4: Fetch the swap transaction
       const { swapTransaction } = await fetchSwapTransaction(
         walletPublicKey,
         recipientAddress,
@@ -226,7 +248,7 @@ export const StableCoinHome = () => {
       );
       console.log("Swap transaction fetched:", swapTransaction);
 
-      // Step 3: Send the transaction to the blockchain
+      // Step 5: Send the transaction to the blockchain
       const txid = await sendTransaction(swapTransaction, walletAdapter);
 
       console.log("Swap and send transaction completed successfully.");
@@ -315,7 +337,7 @@ export const StableCoinHome = () => {
       setPaywith("stablecoin");
       setIsProcessing(false);
       setIsConfirming(false);
-      alert("Failed! Transaction failed. Please try again.");
+      alert("Failed! Transaction failed. Please try again.: " + error);
     }
   };
 
