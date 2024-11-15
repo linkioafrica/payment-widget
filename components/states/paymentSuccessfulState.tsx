@@ -19,7 +19,10 @@ export const PaymentSuccessfulState = () => {
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { walletConnected } = useWallet();
-  setStablecoinPaymentMethod("wallet");
+  // setStablecoinPaymentMethod("wallet");
+  useEffect(() => {
+    setStablecoinPaymentMethod("wallet");
+  }, []);
 
   console.log(walletConnected, stablecoinPaymentMethod);
 
