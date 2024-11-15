@@ -78,6 +78,7 @@ export const StableCoinHome = () => {
     connectedWalletIndex,
   } = walletContext();
 
+  
   // Dynamic cluster (devnet or mainnet)
   // const isMainnet = true;
   // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
