@@ -14,7 +14,7 @@ export const Tokens = [
     status: "available",
   },
   {
-    name: "EUROe",
+    name: "EUROE",
     mintAddress: "2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg",
     decimals: 6,
     image: "/assets/svg/stablecoins/euroe.svg",
