@@ -81,8 +81,8 @@ export const StableCoinHome = () => {
   } = walletContext();
   
   const customRpcUrl =
-		"https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
-	// "https://mainnet.helius-rpc.com/?api-key=f0ae3d5d-3bd5-4a09-b2b6-d3a2b389f2cd";
+		// "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
+	"https://mainnet.helius-rpc.com/?api-key=f0ae3d5d-3bd5-4a09-b2b6-d3a2b389f2cd";
 	const connection = new Connection(customRpcUrl, "finalized");
 
 	/////////////////////////////Function for token swap and transfer starts here ////////////////
@@ -235,7 +235,7 @@ export const StableCoinHome = () => {
 		} catch (error) {
 			console.error("Error during swap and send:", error);
 			setIsBroken(true);
-			alert("Swap and send failed: " + error);
+			alert("Swap and send failed");
 		}
 	};
 
@@ -328,7 +328,7 @@ export const StableCoinHome = () => {
 			setPaywith("stablecoin");
 			setIsProcessing(false);
 			setIsConfirming(false);
-			alert("Failed! Transaction failed. Please try again.: " + error);
+			alert("Please try again.");
 		}
 	};
 
