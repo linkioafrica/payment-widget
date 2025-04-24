@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useDevice } from "@/contexts/DeviceContext";
 import Tag from "./tag";
+import Image from "next/image";
 import { NavBar } from "./navBar";
 import { SkeletonLoader } from "./UI Helper/skeletonLoader";
 import { spawn } from "child_process";
@@ -30,6 +31,8 @@ export const PayWithModal = ({ children }: any) => {
     data,
     token,
     setToken,
+    network,
+    setNetwork,
     isBroken,
     conversionLoading,
     setConversionLoading,
@@ -41,8 +44,7 @@ export const PayWithModal = ({ children }: any) => {
       setConversionLoading(true);
       var inputPrice = data?.transactions?.amount;
       var inputTokenName = data?.transactions?.currency;
-      console.log(inputTokenName);
-      if(inputTokenName == undefined ||  inputTokenName == "") return;
+      if (inputTokenName == undefined || inputTokenName == "") return;
       if (inputTokenName == token.name) {
         setTokenAmount(inputPrice);
         return;
@@ -115,6 +117,15 @@ export const PayWithModal = ({ children }: any) => {
             ) : (
               <CurrencyDropDown></CurrencyDropDown>
             )}
+            <div className="px-2 py-2 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white">
+              <Image
+                src={network.flag}
+                alt={"flag"}
+                width={12}
+                height={12}
+                priority
+              />
+            </div>
             <button
               className="px-2 py-2 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white"
               onClick={() => toggleTheme()}
@@ -219,7 +230,7 @@ export const PayWithModal = ({ children }: any) => {
     );
   } else {
     return (
-      <div className="flex-grow bg-white dark:bg-[#101113] px-12 pt-6 pb-3 flex-col relative ">
+      <div className="flex-grow bg-white dark:bg-[#101113] px-10 pt-6 pb-3 flex-col relative ">
         <div className={`flex items-end justify-between`}>
           {loading ? (
             <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
@@ -235,6 +246,15 @@ export const PayWithModal = ({ children }: any) => {
             ) : (
               <CurrencyDropDown></CurrencyDropDown>
             )}
+            <div className="px-1 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white">
+              <Image
+                src={network.flag}
+                alt={"flag"}
+                width={15}
+                height={15}
+                priority
+              />
+            </div>
             <button
               className="px-2 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white"
               onClick={() => toggleTheme()}

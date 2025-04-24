@@ -24,6 +24,7 @@ export const NavBar = () => {
   } = usePaymentLinkMerchantContext();
 
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const [network, setNetwork] = useState<string>("Celo");
 
   useEffect(() => {
     if (loading) return;
@@ -33,6 +34,9 @@ export const NavBar = () => {
     }
     // Replace with your API date value
     const expirationDate = new Date(data?.transactions?.timeout).getTime();
+    const hasCelo = data?.transactions?.merchant_network;
+
+    setNetwork(hasCelo);
 
     const updateTimeLeft = () => {
       const now = new Date().getTime();
@@ -61,10 +65,11 @@ export const NavBar = () => {
   const handleTimeEnd = async () => {
     await updatePaymentLink();
   };
+
   const updatePaymentLink = async () => {
     if (!trx) return;
     const url = UpdateTrxDetails;
-    console.log("called");
+    // console.log("called");
     const requestBody = {
       checkout_id: trx,
       payment_status: "expired",
@@ -79,13 +84,12 @@ export const NavBar = () => {
         },
         body: JSON.stringify(requestBody),
       });
-
-      const data = await response.json();
+      await response.json();
       // console.log("API Response:", data);
     } catch (error) {
       // console.error("Error calling API:", error);
     } finally {
-      console.log("API call completed");
+      // console.log("API call completed");
     }
   };
 
@@ -167,12 +171,11 @@ export const NavBar = () => {
             </button>
           </div>
         </div>
-        <div className="border-t flex flex-col px-5 border-[#888888] py-10 gap-4">
+        <div className="border-t flex flex-col px-5 border-[#888888] py-5 gap-4">
           <div className="flex items-center gap-3">
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-sm">
-              For payment inquiries, contact the merchant who shared the link
-              with you.
+              For inquiries, contact the merchant who shared the link with you.
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -196,8 +199,7 @@ export const NavBar = () => {
             className={`flex flex-col w-full gap-3 text-sm ${isExpired || isBroken ? "opacity-30" : ""}`}
           >
             <button
-              className={`w-full text-start py-3 px-6 rounded-full flex opacity-30 gap-2 items-center
-        ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
+              className={`w-full text-start py-3 px-6 rounded-full flex opacity-30 gap-2 items-center ${paywith == "transfer" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
               onClick={() => {
                 // hover:bg-[#4f4f4f]
                 // setPaywith("transfer");
@@ -209,14 +211,7 @@ export const NavBar = () => {
               Transfer
             </button>
             <button
-              className={`w-full text-start  py-3 px-6 rounded-full opacity-30 flex gap-2 items-center
-        ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
-              onClick={() => {
-                // hover:bg-[#4f4f4f]
-                // setPaywith("bank");
-                // setIsConfirming(false);
-                // setIsSuccessful(false);
-              }}
+              className={`w-full text-start  py-3 px-6 rounded-full opacity-30 flex gap-2 items-center ${paywith == "bank" ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}`}
             >
               <i>{Icons.bank}</i>
               Bank
@@ -235,6 +230,14 @@ export const NavBar = () => {
                 textColor="text-[#4f4f4f]"
               ></Tag>
             </button>
+            {network === "Celo" ? (
+              <button className="w-full  text-start  py-3 px-6  rounded-full opacity-30  cursor-default flex gap-2 items-center text-white">
+                <i>{Icons.card}</i>
+                MiniPay
+              </button>
+            ) : (
+              ""
+            )}
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
         ${paywith == "stablecoin" && !isExpired && !isBroken && !isSuccessful ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
@@ -262,12 +265,11 @@ export const NavBar = () => {
             </button>
           </div>
         </div>
-        <div className="border-t flex flex-col px-5 border-[#888888] py-10 gap-4">
+        <div className="border-t flex flex-col px-5 border-[#888888] py-2 gap-3">
           <div className="flex items-center gap-3">
             <i className="text-[#9F9F9F]">{Icons.info}</i>
             <span className="text-[#9F9F9F] text-[11px]">
-              For payment inquiries, contact the merchant who shared the link
-              with you.
+              Need help? Contact the merchant who sent link with you.
             </span>
           </div>
           <div className="flex items-center gap-3">

@@ -19,7 +19,7 @@ export const TokensDropDown = ({ disabled }: any) => {
           </div>
         ) : (
           <div
-            className={`border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] px-2 py-2 flex items-center gap-2  rounded-md 
+            className={`border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] px-2 py-2 flex items-center gap-2  rounded-md
               ${disabled ? "cursor-default" : "cursor-pointer hover:border-black dark:hover:border-white"}`}
             onClick={() => setDropDown(!dropDown)}
           >
@@ -42,7 +42,7 @@ export const TokensDropDown = ({ disabled }: any) => {
             ></div>
             <div
               className={`absolute left-0 w-full -bottom-1 pt-1 drop-shadow-xl z-10 border dark:bg-[#101113] dark:border-[#242425] border-[#E2E3E7] translate-y-full bg-white max-h-[200px] overflow-y-auto rounded-md
-              
+
               `}
             >
               {Tokens.sort((a, b) =>
@@ -87,7 +87,7 @@ export const TokensDropDown = ({ disabled }: any) => {
       <div className="relative w-fit select-none">
         {loading ? (
           <div className="border border-[#E2E3E7] text-black dark:text-white dark:bg-[#101113]  dark:border-[#242425] dark:hover:border-white px-2 py-1 flex items-center gap-2 hover:border-black cursor-pointer rounded-md">
-            <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
+            <SkeletonLoader classes={"h-5 rounded w-[80px]"}></SkeletonLoader>
           </div>
         ) : (
           <div

@@ -1,8 +1,8 @@
 "use client";
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { useFetchLinkDetails } from "@/hooks/fetchLinkDetails";
 import { Currency } from "@/constants/currencies";
-import { Tokens } from "@/constants/token";
+import { Tokens, Networks } from "@/constants/token";
+import { useFetchLinkDetails } from "@/hooks/fetchLinkDetails";
 import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
 
 interface PaymentLinkMerchantContextType {
@@ -18,6 +18,8 @@ interface PaymentLinkMerchantContextType {
   setIsSuccessful: React.Dispatch<React.SetStateAction<boolean>>;
   token: (typeof Tokens)[number];
   setToken: React.Dispatch<React.SetStateAction<(typeof Tokens)[number]>>;
+  network: (typeof Networks)[number];
+  setNetwork: React.Dispatch<React.SetStateAction<(typeof Networks)[number]>>;
   tokenAmount: number;
   setTokenAmount: React.Dispatch<React.SetStateAction<number>>;
   stablecoinPaymentMethod: string;
@@ -50,6 +52,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [paywith, setPaywith] = useState("stablecoin");
   const [conversionLoading, setConversionLoading] = useState(false);
   const [token, setToken] = useState(Tokens[0]);
+  const [network, setNetwork] = useState(Networks[0]);
   const [tokenAmount, setTokenAmount] = useState(0);
   const [currency, setCurrency] = useState(
     fiatCurrency.filter((currency) => currency.status == "available")[0]
@@ -72,10 +75,23 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   }, []);
   useEffect(() => {
     if (data && data.status != 403) {
-      const token = Tokens.find(
-        (token) => token.name === data.transactions.currency
-      );
-      if (token) setToken(token);
+      const cur_net = data.transactions.merchant_network;
+      const cur_currency = data.transactions.currency;
+
+      // const matchedNetwork = Tokens.find(
+      //   (token) => token.network === cur_network
+      // );
+      // const matchedToken = matchedNetwork?.stables.find(
+      //   (stable) => stable.name === cur_currency
+      // );
+
+      const cur_token = Tokens.find((token) => token.name === cur_currency);
+      if (cur_token) setToken(cur_token);
+
+      const cur_network = Networks.find((token) => token.name === cur_currency);
+      if (cur_network) setNetwork(cur_network);
+
+      console.log(cur_token, cur_network);
     }
   }, [data]);
   return (
@@ -91,6 +107,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         setIsSuccessful,
         token,
         setToken,
+        network,
+        setNetwork,
         tokenAmount,
         setTokenAmount,
         stablecoinPaymentMethod,

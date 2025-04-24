@@ -67,6 +67,10 @@ export default function Home() {
         );
       return screen;
     }
+    // } else if (paywith == "minipay") {
+    //   const screen = <MinipayQRCode></MinipayQRCode>;
+    //   return screen;
+    // }
   };
   useEffect(() => {
     if (!loading) {
