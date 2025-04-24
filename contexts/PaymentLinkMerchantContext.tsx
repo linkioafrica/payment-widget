@@ -67,7 +67,6 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
     if (typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
       const trxValue = searchParams.get("trx");
-      // console.log(trxValue, "this is tex Value");
       setTrx(trxValue);
     }
   }, []);
