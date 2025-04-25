@@ -46,6 +46,7 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 import { DisconnectWallet } from "../disconnectWallet";
 import { WalletAdapter } from "@solana/wallet-adapter-base";
 import { Tokens } from "@/constants/token";
+import { ConnectWalletMenu } from "./Components/connectWalletMenu";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("wallet");
@@ -59,6 +60,8 @@ export const StableCoinHome = () => {
     data,
     setIsConfirming,
     setIsBroken,
+    netAndToken,
+    network,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
@@ -306,7 +309,7 @@ export const StableCoinHome = () => {
     var targetTokenName = data?.transactions?.currency;
     var targetUnitNumber = 0;
     var targetMint = "";
-    Tokens.forEach((element) => {
+    netAndToken?.stables.forEach((element) => {
       if (element.name == targetTokenName) {
         targetMint = element.mintAddress;
         targetUnitNumber = element.decimals;
@@ -327,7 +330,7 @@ export const StableCoinHome = () => {
       alert("can not find merchant account address for this spl token!");
     }
     const srcaccountPublicKey = new PublicKey(walletAdapter.publicKey);
-    const srcmintAccount = new PublicKey(inputToken.mintAddress);
+    const srcmintAccount = new PublicKey(inputToken?.mintAddress as string);
     const srcAccount = await connection.getTokenAccountsByOwner(
       srcaccountPublicKey,
       {
@@ -338,21 +341,21 @@ export const StableCoinHome = () => {
     if (srcAccount.value.length == 0) {
       alert("can not find source account address for this spl token!");
     }
-    if (inputToken.name == targetTokenName) {
+    if (inputToken?.name == targetTokenName) {
       sendDirectToken(
         walletAdapter,
         srcAccount,
         targetAccount,
-        inputToken.decimals,
+        inputToken?.decimals as number,
         tokenAmount
       );
     } else {
       await swapAndSendToken(
         walletAdapter,
         targetAccount.value[0].pubkey.toString(), // Merchant's USDC address
-        inputToken.mintAddress, // Input mint address
+        inputToken?.mintAddress as string, // Input mint address
         targetMint, // Output mint address
-        tokenAmount * 10 ** inputToken.decimals // Example: 0.1 USDC in micro-lamports
+        tokenAmount * 10 ** (inputToken?.decimals as number) // Example: 0.1 USDC in micro-lamports
       );
     }
     setIsProcessing(false);
@@ -514,57 +517,66 @@ export const StableCoinHome = () => {
           </div>
         </div>
         {stablecoinPaymentMethod == "wallet" && (
-          <div className="w-screen h-screen fixed top-0 left-0 flex items-center justify-center text-white">
-            <div
-              className="w-full h-full bg-black absolute opacity-20"
-              onClick={() => setStablecoinPaymentMethod("")}
-            ></div>
-            <div className="w-[300px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-6 items-center">
-              <div className="w-full flex items-end justify-end">
-                <button
-                  className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
-                  onClick={() => setStablecoinPaymentMethod("")}
-                >
-                  {Icons.closeIcon}
-                </button>
-              </div>
-              <div className="max-w-[300px] my-3">
-                <h2 className=" text-xl font-semibold text-center ">
-                  Connect a Solana Wallet & continue
-                </h2>
-              </div>
-              <div className="w-full flex flex-col gap-6 mt-7">
-                {AllWallets.map((wallet) => (
-                  <div
-                    key={wallet.id}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={wallet.image}
-                        alt={wallet.name}
-                        width={20}
-                        height={20}
-                      />
-                      <span className="text-[15px]">{wallet.name}</span>
-                    </div>
-                    {connectedWalletIndex === wallet.id ? (
-                      <span className="text-green-500">Connecting...</span>
-                    ) : (
-                      <button
-                        className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
-                        onClick={() => {
-                          connectWallet(wallet.id);
-                        }}
-                      >
-                        Connect
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          // <div className="w-screen h-screen fixed top-0 left-0 flex items-center justify-center text-white">
+          //   <div
+          //     className="w-full h-full bg-black absolute opacity-20"
+          //     onClick={() => setStablecoinPaymentMethod("")}
+          //   ></div>
+          //   <div className="w-[300px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-6 items-center">
+          //     <div className="w-full flex items-end justify-end">
+          //       <button
+          //         className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
+          //         onClick={() => setStablecoinPaymentMethod("")}
+          //       >
+          //         {Icons.closeIcon}
+          //       </button>
+          //     </div>
+          //     <div className="max-w-[300px] my-3">
+          //       <h2 className=" text-xl font-semibold text-center ">
+          //         Connect a Solana Wallet & continue
+          //       </h2>
+          //     </div>
+          //     <div className="w-full flex flex-col gap-6 mt-7">
+          //       {AllWallets.map((wallet) => (
+          //         <div
+          //           key={wallet.id}
+          //           className="w-full flex items-center justify-between"
+          //         >
+          //           <div className="flex items-center gap-2">
+          //             <Image
+          //               src={wallet.wallets.}
+          //               alt={wallet.name}
+          //               width={20}
+          //               height={20}
+          //             />
+          //             <span className="text-[15px]">{wallet.name}</span>
+          //           </div>
+          //           {connectedWalletIndex === wallet.id ? (
+          //             <span className="text-green-500">Connecting...</span>
+          //           ) : (
+          //             <button
+          //               className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
+          //               onClick={() => {
+          //                 connectWallet(wallet.id);
+          //               }}
+          //             >
+          //               Connect
+          //             </button>
+          //           )}
+          //         </div>
+          //       ))}
+          //     </div>
+          //   </div>
+          // </div>
+          <ConnectWalletMenu
+            setStablecoinPaymentMethod={setStablecoinPaymentMethod}
+            connectedWalletIndex={connectedWalletIndex}
+            connectWallet={connectWallet}
+            wallets={
+              AllWallets.find((wallet) => wallet.name == network.name)?.wallets
+            }
+            network={network.name}
+          ></ConnectWalletMenu>
         )}
       </>
     );
@@ -700,61 +712,70 @@ export const StableCoinHome = () => {
           </div>
         </div>
         {stablecoinPaymentMethod == "wallet" && (
-          <div className="w-screen h-screen fixed top-0 left-0 flex items-center justify-center text-white">
-            <div
-              className="w-full h-full bg-black absolute opacity-20"
-              onClick={() => setStablecoinPaymentMethod("")}
-            ></div>
-            <div className="w-[350px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-4 items-center">
-              <div className="w-full flex items-end justify-end">
-                <button
-                  className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
-                  onClick={() => setStablecoinPaymentMethod("")}
-                >
-                  {Icons.closeIcon}
-                </button>
-              </div>
-              <div className="max-w-[300px] mt-3">
-                <h2 className=" text-xl font-semibold text-center ">
-                  Connect a Solana Wallet & continue
-                </h2>
-              </div>
-              <div className="w-full flex flex-col gap-6 mt-7">
-                {AllWallets.map((wallet) => (
-                  <div
-                    key={wallet.id}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={wallet.image}
-                        alt={wallet.name}
-                        width={30}
-                        height={30}
-                      />
-                      <span className="text-[17px]">{wallet.name}</span>
-                    </div>
-                    {connectedWalletIndex === wallet.id ? (
-                      <span className="text-green-500">connecting...</span>
-                    ) : (
-                      <button
-                        className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
-                        onClick={() => connectWallet(wallet.id)}
-                      >
-                        Connect
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {/* <div className="w-full flex justify-end mt-8">
-                <button className="flex items-center text-sm gap-3">
-                  <span>More Options</span>
-                  <i>{Icons.chevron_down}</i>
-                </button>
-              </div> */}
-            </div>
-          </div>
+          // <div className="w-screen h-screen fixed top-0 left-0 flex items-center justify-center text-white">
+          //   <div
+          //     className="w-full h-full bg-black absolute opacity-20"
+          //     onClick={() => setStablecoinPaymentMethod("")}
+          //   ></div>
+          //   <div className="w-[350px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-4 items-center">
+          //     <div className="w-full flex items-end justify-end">
+          //       <button
+          //         className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
+          //         onClick={() => setStablecoinPaymentMethod("")}
+          //       >
+          //         {Icons.closeIcon}
+          //       </button>
+          //     </div>
+          //     <div className="max-w-[300px] mt-3">
+          //       <h2 className=" text-xl font-semibold text-center ">
+          //         Connect a Solana Wallet & continue
+          //       </h2>
+          //     </div>
+          //     <div className="w-full flex flex-col gap-6 mt-7">
+          //       {AllWallets.map((wallet) => (
+          //         <div
+          //           key={wallet.id}
+          //           className="w-full flex items-center justify-between"
+          //         >
+          //           <div className="flex items-center gap-2">
+          //             <Image
+          //               src={wallet.image}
+          //               alt={wallet.name}
+          //               width={30}
+          //               height={30}
+          //             />
+          //             <span className="text-[17px]">{wallet.name}</span>
+          //           </div>
+          //           {connectedWalletIndex === wallet.id ? (
+          //             <span className="text-green-500">connecting...</span>
+          //           ) : (
+          //             <button
+          //               className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
+          //               onClick={() => connectWallet(wallet.id)}
+          //             >
+          //               Connect
+          //             </button>
+          //           )}
+          //         </div>
+          //       ))}
+          //     </div>
+          //     {/* <div className="w-full flex justify-end mt-8">
+          //       <button className="flex items-center text-sm gap-3">
+          //         <span>More Options</span>
+          //         <i>{Icons.chevron_down}</i>
+          //       </button>
+          //     </div> */}
+          //   </div>
+          // </div>
+          <ConnectWalletMenu
+            setStablecoinPaymentMethod={setStablecoinPaymentMethod}
+            connectedWalletIndex={connectedWalletIndex}
+            connectWallet={connectWallet}
+            wallets={
+              AllWallets.find((wallet) => wallet.name == network.name)?.wallets
+            }
+            network={network.name}
+          ></ConnectWalletMenu>
         )}
       </>
     );
