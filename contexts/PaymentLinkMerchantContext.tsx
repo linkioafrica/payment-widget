@@ -4,7 +4,8 @@ import { Currency } from "@/constants/currencies";
 import { Tokens, Networks } from "@/constants/token";
 import { useFetchLinkDetails } from "@/hooks/fetchLinkDetails";
 import { fiatCurrency } from "@/constants/CurrenciesAndBanks";
-
+type Stable = (typeof Tokens)[number]["stables"][number];
+type NetAndToken = (typeof Tokens)[number];
 interface PaymentLinkMerchantContextType {
   paywith: string;
   setPaywith: React.Dispatch<React.SetStateAction<string>>;
@@ -16,8 +17,8 @@ interface PaymentLinkMerchantContextType {
   setIsConfirming: React.Dispatch<React.SetStateAction<boolean>>;
   isSuccessful: boolean;
   setIsSuccessful: React.Dispatch<React.SetStateAction<boolean>>;
-  token: (typeof Tokens)[number];
-  setToken: React.Dispatch<React.SetStateAction<(typeof Tokens)[number]>>;
+  token: Stable | null;
+  setToken: React.Dispatch<React.SetStateAction<Stable | null>>;
   network: (typeof Networks)[number];
   setNetwork: React.Dispatch<React.SetStateAction<(typeof Networks)[number]>>;
   tokenAmount: number;
@@ -38,6 +39,8 @@ interface PaymentLinkMerchantContextType {
   setIsBroken: React.Dispatch<React.SetStateAction<boolean>>;
   conversionLoading: boolean;
   setConversionLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setNetAndToken: React.Dispatch<React.SetStateAction<NetAndToken | null>>;
+  netAndToken: NetAndToken | null;
 }
 
 const PaymentLinkMerchantContext = createContext<
@@ -51,7 +54,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
 
   const [paywith, setPaywith] = useState("stablecoin");
   const [conversionLoading, setConversionLoading] = useState(false);
-  const [token, setToken] = useState(Tokens[0]);
+  const [token, setToken] = useState<Stable | null>(null);
   const [network, setNetwork] = useState(Networks[0]);
   const [tokenAmount, setTokenAmount] = useState(0);
   const [currency, setCurrency] = useState(
@@ -65,6 +68,7 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
   const [isBroken, setIsBroken] = useState(false);
+  const [netAndToken, setNetAndToken] = useState<NetAndToken | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -84,16 +88,19 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
       //   (stable) => stable.name === cur_currency
       // );
 
-      const cur_token = Tokens.find((token) => token.name === cur_currency);
-      if (cur_token) setToken(cur_token);
-
       const cur_network = Networks.find((token) => token.name === cur_net);
-
       if (cur_network) setNetwork(cur_network);
-
-      console.log(cur_token, cur_network);
+      const selectedNetworkWithToken = Tokens.find(
+        (tok) => tok.network == cur_network?.name
+      );
+      if (!selectedNetworkWithToken) return;
+      setNetAndToken(selectedNetworkWithToken);
+      const tokens = selectedNetworkWithToken.stables;
+      const cur_token = tokens.find((token) => token.name === cur_currency);
+      if (cur_token) setToken(cur_token);
     }
   }, [data]);
+
   return (
     <PaymentLinkMerchantContext.Provider
       value={{
@@ -106,6 +113,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
         isSuccessful,
         setIsSuccessful,
         token,
+        setNetAndToken,
+        netAndToken,
         setToken,
         network,
         setNetwork,

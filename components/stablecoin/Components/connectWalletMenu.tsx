@@ -83,7 +83,7 @@ export const ConnectWalletMenu = ({
           </div>
           <div className="max-w-[300px] mt-3">
             <h2 className=" text-xl font-semibold text-center ">
-              Connect a Solana Wallet & continue
+              Connect a {network} Wallet & continue
             </h2>
           </div>
           <div className="w-full flex flex-col gap-6 mt-7">

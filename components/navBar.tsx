@@ -145,6 +145,7 @@ export const NavBar = () => {
             </button>
             {data && data.transactions.merchant_network == "Celo" && (
               <button
+                disabled={true}
                 onClick={
                   isExpired || isBroken || isSuccessful
                     ? () => {}
@@ -155,7 +156,7 @@ export const NavBar = () => {
                         setIsDrawerOpen(false);
                       }
                 }
-                className={`w-full  text-start  py-3 px-6  rounded-full    flex gap-2 items-center hover:bg-[#4f4f4f] ${paywith == "miniPay" ? "text-[#A6CAFE] bg-[#4f4f4f]" : "text-white"}`}
+                className={`w-full  text-start  py-3 px-6  rounded-full opacity-30   flex gap-2 items-center  ${paywith == "miniPay" ? "text-[#A6CAFE] bg-[#4f4f4f]" : "text-white"}`}
               >
                 <i>{Icons.card}</i>
                 MiniPay
@@ -250,6 +251,7 @@ export const NavBar = () => {
             </button>
             {data && data.transactions.merchant_network == "Celo" && (
               <button
+                disabled={true}
                 onClick={
                   isExpired || isBroken || isSuccessful
                     ? () => {}
@@ -259,10 +261,15 @@ export const NavBar = () => {
                         setIsSuccessful(false);
                       }
                 }
-                className={`w-full  text-start  py-3 px-6  rounded-full    flex gap-2 items-center hover:bg-[#4f4f4f] ${paywith == "miniPay" ? "text-[#A6CAFE] bg-[#4f4f4f]" : "text-white"}`}
+                className={`w-full  text-start  py-3 px-6  rounded-full  opacity-30  flex gap-2 items-center  ${paywith == "miniPay" ? "text-[#A6CAFE] bg-[#4f4f4f]" : "text-white"}`}
               >
                 <i>{Icons.card}</i>
-                MiniPay
+                MiniPay{" "}
+                <Tag
+                  text="Coming soon"
+                  bgColor="bg-[#BFD9FF]"
+                  textColor="text-[#4f4f4f]"
+                ></Tag>
               </button>
             )}
             <button

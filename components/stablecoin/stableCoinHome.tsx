@@ -62,6 +62,7 @@ export const StableCoinHome = () => {
     setIsConfirming,
     setIsBroken,
     setPaywith,
+    netAndToken,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const { connected, disconnect } = useWallet(); // Get the wallet status
@@ -389,10 +390,11 @@ export const StableCoinHome = () => {
 
       const amount = data?.transactions?.amount;
       console.log("amount", amount);
-
       const targetTokenName = data?.transactions?.currency;
 
-      const selectedToken: any = Tokens.find((t) => t.name === targetTokenName);
+      const selectedToken: any = netAndToken?.stables.find(
+        (t) => t.name === targetTokenName
+      );
       if (!selectedToken) throw new Error("Selected token not found.");
 
       const merchantPublicKey = new PublicKey(merchantAddress);
@@ -407,7 +409,7 @@ export const StableCoinHome = () => {
 
       const customerPublicKey = new PublicKey(walletAdapter.publicKey);
       console.log("customerPublicKey", customerPublicKey.toBase58());
-
+      if (!selectedPayToken) return;
       const srcAccount = await connection.getTokenAccountsByOwner(
         customerPublicKey,
         {
@@ -764,6 +766,7 @@ export const StableCoinHome = () => {
             setStablecoinPaymentMethod={setStablecoinPaymentMethod}
             connectedWalletIndex={connectedWalletIndex}
             connectWallet={connectWallet}
+            network={network.name}
             wallets={
               AllWallets.find((netWal) => netWal.name === network.name)?.wallets
             }

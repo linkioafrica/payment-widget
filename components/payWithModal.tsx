@@ -36,11 +36,13 @@ export const PayWithModal = ({ children }: any) => {
     isBroken,
     conversionLoading,
     setConversionLoading,
+    netAndToken,
   } = usePaymentLinkMerchantContext();
 
   // Function to get swap price
   const setSelectedTokenPrice = async () => {
     try {
+      if (!token) return;
       setConversionLoading(true);
       var inputPrice = data?.transactions?.amount;
       var inputTokenName = data?.transactions?.currency;
@@ -51,7 +53,7 @@ export const PayWithModal = ({ children }: any) => {
       }
       var inputUnitNumber = 0;
       var inputMint = "";
-      Tokens.forEach((element) => {
+      netAndToken?.stables.forEach((element) => {
         if (element.name == inputTokenName) {
           inputMint = element.mintAddress;
           inputUnitNumber = element.decimals;
@@ -89,7 +91,7 @@ export const PayWithModal = ({ children }: any) => {
     var inputTokenName = data?.transactions?.currency;
     // console.log("token=" + inputTokenName);
 
-    Tokens.forEach((element) => {
+    netAndToken?.stables.forEach((element) => {
       if (element.name == inputTokenName) {
         setToken(element);
       }
@@ -207,7 +209,7 @@ export const PayWithModal = ({ children }: any) => {
                   {isBroken
                     ? "--"
                     : `${tokenAmount || 0}
-                ${token.name} `}
+                ${token?.name} `}
                 </span>
               )}
             </span>
@@ -300,7 +302,7 @@ export const PayWithModal = ({ children }: any) => {
               {isBroken
                 ? "--"
                 : `${tokenAmount || 0}
-                ${paywith !== "miniPay" ? token.name : ""} `}
+                ${paywith !== "miniPay" ? token?.name : ""} `}
             </span>
           )}
         </div>
