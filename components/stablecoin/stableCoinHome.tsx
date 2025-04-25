@@ -84,7 +84,6 @@ export const StableCoinHome = () => {
   } = walletContext();
 
   const customRpcUrl =
-    // "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
     "https://mainnet.helius-rpc.com/?api-key=f0ae3d5d-3bd5-4a09-b2b6-d3a2b389f2cd";
   const connection = new Connection(customRpcUrl, "finalized");
 
@@ -555,7 +554,7 @@ export const StableCoinHome = () => {
                 <div className="flex flex-col">
                   <span className="font-medium ">Connect wallet</span>
                   <span className="text-sm text-[#696F79]">
-                    Pay directly from your Solana wallet
+                    Pay directly from your Wallet
                   </span>
                 </div>
               </div>
@@ -700,7 +699,7 @@ export const StableCoinHome = () => {
                 <div className="flex flex-col">
                   <span className="font-medium text-sm">Connect wallet</span>
                   <span className="text-[10px] text-[#696F79]">
-                    Pay directly from your Solana wallet
+                    Pay directly from your Wallet
                   </span>
                 </div>
               </div>

@@ -32,6 +32,18 @@ const CeloWallets = [
     image: "/assets/images/wallets/Celo/valora.svg",
   },
 ];
+const BaseWallets = [
+  {
+    id: 0,
+    name: "MetaMask",
+    image: "/assets/images/wallets/Celo/metamask.svg",
+  },
+  {
+    id: 1,
+    name: "Trust",
+    image: "/assets/images/wallets/Solana/trust.svg",
+  },
+];
 
 export const AllWallets = [
   {
@@ -43,5 +55,10 @@ export const AllWallets = [
     id: 1,
     name: "Celo",
     wallets: CeloWallets,
+  },
+  {
+    id: 1,
+    name: "Base",
+    wallets: BaseWallets,
   },
 ];

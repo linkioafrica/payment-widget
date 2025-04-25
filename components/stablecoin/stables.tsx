@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useWallet as walletContext } from "@/contexts/WalletContext";
 
-import { Wallets } from "@/constants/wallets";
+import { AllWallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
 import axios from "axios";
@@ -78,7 +78,6 @@ export const StableCoinHome = () => {
     connectedWalletIndex,
   } = walletContext();
 
-  
   // Dynamic cluster (devnet or mainnet)
   // const isMainnet = true;
   // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
@@ -228,8 +227,6 @@ export const StableCoinHome = () => {
       //alert("Failed! " + error.message);
     }
   };
-
-
 
   const sendDirectToken = async (
     walletAdapter: WalletAdapter,
@@ -396,10 +393,11 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${selectedMethod === "qrCode"
-                ? "border-black dark:border-[#9F9F9F]"
-                : ""
-                }`}
+              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
+                selectedMethod === "qrCode"
+                  ? "border-black dark:border-[#9F9F9F]"
+                  : ""
+              }`}
               onClick={() => {
                 // setSelectedMethod("qrCode")
                 // dark:hover:border-[#9F9F9F] hover:border-black
@@ -425,10 +423,11 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "qrCode"
-                    ? "border-black dark:border-[#9F9F9F]"
-                    : "border-gray-400 dark:border-[#242425]"
-                    }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
+                    selectedMethod === "qrCode"
+                      ? "border-black dark:border-[#9F9F9F]"
+                      : "border-gray-400 dark:border-[#242425]"
+                  }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "qrCode" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -438,10 +437,11 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${selectedMethod === "wallet"
-                ? "border-black dark:border-[#9F9F9F]"
-                : ""
-                }`}
+              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
+                selectedMethod === "wallet"
+                  ? "border-black dark:border-[#9F9F9F]"
+                  : ""
+              }`}
               onClick={() => setSelectedMethod("wallet")}
             >
               <div className="flex items-center gap-2">
@@ -451,7 +451,7 @@ export const StableCoinHome = () => {
                 <div className="flex flex-col">
                   <span className="font-medium ">Connect wallet</span>
                   <span className="text-sm text-[#696F79]">
-                    Pay directly from your Solana wallet
+                    Pay directly from your Wallet
                   </span>
                 </div>
               </div>
@@ -467,10 +467,11 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "wallet"
-                    ? "border-black dark:border-[#9F9F9F]"
-                    : "border-gray-400 dark:border-[#242425]"
-                    }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
+                    selectedMethod === "wallet"
+                      ? "border-black dark:border-[#9F9F9F]"
+                      : "border-gray-400 dark:border-[#242425]"
+                  }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "wallet" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -490,15 +491,15 @@ export const StableCoinHome = () => {
               onClick={
                 selectedMethod == "qrCode"
                   ? () => {
-                    setStablecoinPaymentMethod("qrCode");
-                  }
+                      setStablecoinPaymentMethod("qrCode");
+                    }
                   : walletConnected
                     ? () => {
-                      payCoin();
-                    }
+                        payCoin();
+                      }
                     : () => {
-                      setStablecoinPaymentMethod("wallet");
-                    }
+                        setStablecoinPaymentMethod("wallet");
+                      }
               }
             >
               {selectedMethod == "qrCode"
@@ -533,7 +534,7 @@ export const StableCoinHome = () => {
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
-                {Wallets.map((wallet) => (
+                {AllWallets.map((wallet) => (
                   <div
                     key={wallet.id}
                     className="w-full flex items-center justify-between"
@@ -579,10 +580,11 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[150px] mt-5 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${selectedMethod === "qrCode"
-                ? "border-black dark:border-[#9F9F9F]"
-                : ""
-                }`}
+              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
+                selectedMethod === "qrCode"
+                  ? "border-black dark:border-[#9F9F9F]"
+                  : ""
+              }`}
               onClick={() => {
                 // setSelectedMethod("qrCode")
                 // dark:hover:border-[#9F9F9F] hover:border-black
@@ -608,10 +610,11 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "qrCode"
-                    ? "border-black dark:border-[#9F9F9F]"
-                    : "border-gray-400 dark:border-[#242425]"
-                    }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
+                    selectedMethod === "qrCode"
+                      ? "border-black dark:border-[#9F9F9F]"
+                      : "border-gray-400 dark:border-[#242425]"
+                  }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "qrCode" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -621,10 +624,11 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${selectedMethod === "wallet"
-                ? "border-black dark:border-[#9F9F9F]"
-                : ""
-                }`}
+              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
+                selectedMethod === "wallet"
+                  ? "border-black dark:border-[#9F9F9F]"
+                  : ""
+              }`}
               onClick={() => setSelectedMethod("wallet")}
             >
               <div className="flex items-center gap-2">
@@ -634,7 +638,7 @@ export const StableCoinHome = () => {
                 <div className="flex flex-col">
                   <span className="font-medium text-sm">Connect wallet</span>
                   <span className="text-[10px] text-[#696F79]">
-                    Pay directly from your Solana wallet
+                    Pay directly from your Wallet
                   </span>
                 </div>
               </div>
@@ -650,10 +654,11 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "wallet"
-                    ? "border-black dark:border-[#9F9F9F]"
-                    : "border-gray-400 dark:border-[#242425]"
-                    }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
+                    selectedMethod === "wallet"
+                      ? "border-black dark:border-[#9F9F9F]"
+                      : "border-gray-400 dark:border-[#242425]"
+                  }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "wallet" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -673,15 +678,15 @@ export const StableCoinHome = () => {
               onClick={
                 selectedMethod == "qrCode"
                   ? () => {
-                    setStablecoinPaymentMethod("qrCode");
-                  }
+                      setStablecoinPaymentMethod("qrCode");
+                    }
                   : walletConnected
                     ? () => {
-                      payCoin();
-                    }
+                        payCoin();
+                      }
                     : () => {
-                      setStablecoinPaymentMethod("wallet");
-                    }
+                        setStablecoinPaymentMethod("wallet");
+                      }
               }
             >
               {selectedMethod == "qrCode"
@@ -715,7 +720,7 @@ export const StableCoinHome = () => {
                 </h2>
               </div>
               <div className="w-full flex flex-col gap-6 mt-7">
-                {Wallets.map((wallet) => (
+                {AllWallets.map((wallet) => (
                   <div
                     key={wallet.id}
                     className="w-full flex items-center justify-between"
