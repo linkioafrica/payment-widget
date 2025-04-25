@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useWallet as walletContext } from "@/contexts/WalletContext";
 
-import { Wallets } from "@/constants/wallets";
 import { useDevice } from "@/contexts/DeviceContext";
 import { ChangePaymentMethod } from "../changePaymentMethod";
 import axios from "axios";
@@ -47,6 +46,8 @@ import { stableCoinInfos } from "@/constants/stableCoinInfos";
 import { DisconnectWallet } from "../disconnectWallet";
 import { WalletAdapter } from "@solana/wallet-adapter-base";
 import { Tokens } from "@/constants/token";
+import { ConnectWalletMenu } from "./Components/connectWalletMenu";
+import { AllWallets } from "@/constants/wallets";
 
 export const StableCoinHome = () => {
   const [selectedMethod, setSelectedMethod] = useState("wallet");
@@ -68,6 +69,7 @@ export const StableCoinHome = () => {
   const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null);
   const [connectedWallet, setConnectedWallet] = useState<number | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const { network } = usePaymentLinkMerchantContext();
 
   const {
     walletConnected,
@@ -79,171 +81,176 @@ export const StableCoinHome = () => {
     setConnectedWalletIndex,
     connectedWalletIndex,
   } = walletContext();
-  
+
   const customRpcUrl =
-		// "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
-	"https://mainnet.helius-rpc.com/?api-key=f0ae3d5d-3bd5-4a09-b2b6-d3a2b389f2cd";
-	const connection = new Connection(customRpcUrl, "finalized");
+    // "https://radial-aged-diamond.solana-mainnet.quiknode.pro/3edb6073fca7e4ed8460ff4a450ae31fb766cc76/";
+    "https://mainnet.helius-rpc.com/?api-key=f0ae3d5d-3bd5-4a09-b2b6-d3a2b389f2cd";
+  const connection = new Connection(customRpcUrl, "finalized");
 
-	/////////////////////////////Function for token swap and transfer starts here ////////////////
-	// Replace with the Jupiter API endpoint
-	const JUPITER_QUOTE_API = "https://quote-api.jup.ag/v6/quote";
-	const JUPITER_SWAP_API = "https://quote-api.jup.ag/v6/swap";
+  /////////////////////////////Function for token swap and transfer starts here ////////////////
+  // Replace with the Jupiter API endpoint
+  const JUPITER_QUOTE_API = "https://quote-api.jup.ag/v6/quote";
+  const JUPITER_SWAP_API = "https://quote-api.jup.ag/v6/swap";
 
-	const devWalletAddress = "8ajjPhDqJFWGKAQdagWUQL6YmR4BabKAqixM1AghhTSu"; // Developer's wallet address
+  const devWalletAddress = "8ajjPhDqJFWGKAQdagWUQL6YmR4BabKAqixM1AghhTSu"; // Developer's wallet address
 
-	// Step 1: Fetch swap info from Jupiter
-	const fetchSwapInfo = async (
-		inputMint: string,
-		outputMint: string,
-		amount: number
-	) => {
-		const url = `${JUPITER_QUOTE_API}?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=150&&swapMode=ExactIn&onlyDirectRoutes=false&asLegacyTransaction=false&maxAccounts=64&minimizeSlippage=false`;
-		const response = await fetch(url);
-		const data = await response.json();
-		return {
-			inAmount: data.inAmount,
-			otherAmountThreshold: data.otherAmountThreshold,
-			quoteResponse: data,
-		};
-	};
+  // Step 1: Fetch swap info from Jupiter
+  const fetchSwapInfo = async (
+    inputMint: string,
+    outputMint: string,
+    amount: number
+  ) => {
+    const url = `${JUPITER_QUOTE_API}?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=150&&swapMode=ExactIn&onlyDirectRoutes=false&asLegacyTransaction=false&maxAccounts=64&minimizeSlippage=false`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return {
+      inAmount: data.inAmount,
+      otherAmountThreshold: data.otherAmountThreshold,
+      quoteResponse: data,
+    };
+  };
 
-	// Step 2: Fetch swap transaction from Jupiter
-	const fetchSwapTransaction = async (
-		walletAddress: PublicKey | null,
-		recipientAddress: string,
-		swapInfo: any
-	) => {
-		if (!walletAddress || !recipientAddress || !swapInfo?.quoteResponse) {
-			throw new Error(
-				"Invalid parameters: Ensure walletAddress, recipientAddress, and swapInfo are defined."
-			);
-		}
+  // Step 2: Fetch swap transaction from Jupiter
+  const fetchSwapTransaction = async (
+    walletAddress: PublicKey | null,
+    recipientAddress: string,
+    swapInfo: any
+  ) => {
+    if (!walletAddress || !recipientAddress || !swapInfo?.quoteResponse) {
+      throw new Error(
+        "Invalid parameters: Ensure walletAddress, recipientAddress, and swapInfo are defined."
+      );
+    }
 
-		const requestBody = {
-			userPublicKey: walletAddress.toBase58(),
-			destinationTokenAccount: recipientAddress,
-			useSharedAccounts: true,
-			quoteResponse: swapInfo.quoteResponse,
-			allowOptimizedWrappedSolTokenAccount: true,
-			asLegacyTransaction: false,
-			dynamicComputeUnitLimit: true,
-			prioritizationFeeLamports: {
-				priorityLevelWithMaxLamports: {
-					global: false,
-					maxLamports: 4000000,
-					priorityLevel: "veryHigh",
-				},
-			},
-			wrapAndUnwrapSol: true,
-		};
+    const requestBody = {
+      userPublicKey: walletAddress.toBase58(),
+      destinationTokenAccount: recipientAddress,
+      useSharedAccounts: true,
+      quoteResponse: swapInfo.quoteResponse,
+      allowOptimizedWrappedSolTokenAccount: true,
+      asLegacyTransaction: false,
+      dynamicComputeUnitLimit: true,
+      prioritizationFeeLamports: {
+        priorityLevelWithMaxLamports: {
+          global: false,
+          maxLamports: 4000000,
+          priorityLevel: "veryHigh",
+        },
+      },
+      wrapAndUnwrapSol: true,
+    };
 
-		const response = await fetch(JUPITER_SWAP_API, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(requestBody),
-		});
+    const response = await fetch(JUPITER_SWAP_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
 
-		if (!response.ok) {
-			const errorText = await response.text();
-			throw new Error(`Error fetching swap transaction: ${errorText}`);
-		}
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error fetching swap transaction: ${errorText}`);
+    }
 
-		const { swapTransaction, lastValidBlockHeight } = await response.json();
-		return { swapTransaction, lastValidBlockHeight };
-	};
+    const { swapTransaction, lastValidBlockHeight } = await response.json();
+    return { swapTransaction, lastValidBlockHeight };
+  };
 
-	// Function to find the fee account and get serialized transactions for the swap
-	// Step 3: Send transaction to Solana blockchain
-	const sendTransaction = async (
-		swapTransaction: string,
-		walletAdapter: WalletAdapter
-	) => {
-		let latestBlockHash = await connection.getLatestBlockhash();
+  // Function to find the fee account and get serialized transactions for the swap
+  // Step 3: Send transaction to Solana blockchain
+  const sendTransaction = async (
+    swapTransaction: string,
+    walletAdapter: WalletAdapter
+  ) => {
+    let latestBlockHash = await connection.getLatestBlockhash();
 
-		// deserialize the transaction
-		const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
-		const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-		console.log(transaction);
+    // deserialize the transaction
+    const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
+    const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+    console.log(transaction);
 
-		// Set the recent blockhash
-		transaction.message.recentBlockhash = latestBlockHash.blockhash;
+    // Set the recent blockhash
+    transaction.message.recentBlockhash = latestBlockHash.blockhash;
 
-		const signedTransaction = await (walletAdapter as any).signTransaction(
-			transaction
-		);
+    const signedTransaction = await (walletAdapter as any).signTransaction(
+      transaction
+    );
 
-		// Execute the transaction
-		const rawTransaction = signedTransaction.serialize();
-		console.log("Raw transaction:", rawTransaction);
+    // Execute the transaction
+    const rawTransaction = signedTransaction.serialize();
+    console.log("Raw transaction:", rawTransaction);
 
-		latestBlockHash = await connection.getLatestBlockhash();
-		const txid = await connection.sendRawTransaction(rawTransaction, {
-			skipPreflight: false,
-			maxRetries: 5,
-		});
-		// get the latest block hash
-		console.log(`https://solscan.io/tx/${txid}`);
-		setIsConfirming(true);
-		await connection.confirmTransaction(
-			{
-				blockhash: latestBlockHash.blockhash,
-				lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-				signature: txid,
-			},
-			"confirmed"
-		);
-		setIsConfirming(false);
-		setTransactionLink(`https://solscan.io/tx/${txid}`);
-		console.log(`https://solscan.io/tx/${txid}`);
-		return txid;
-	};
+    latestBlockHash = await connection.getLatestBlockhash();
+    const txid = await connection.sendRawTransaction(rawTransaction, {
+      skipPreflight: false,
+      maxRetries: 5,
+    });
+    // get the latest block hash
+    console.log(`https://solscan.io/tx/${txid}`);
+    setIsConfirming(true);
+    await connection.confirmTransaction(
+      {
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature: txid,
+      },
+      "confirmed"
+    );
+    setIsConfirming(false);
+    setTransactionLink(`https://solscan.io/tx/${txid}`);
+    console.log(`https://solscan.io/tx/${txid}`);
+    return txid;
+  };
 
-	// Step 4: Main function to swap and send token
-	const swapAndSendToken = async (
-		walletAdapter: WalletAdapter,
-		recipientAddress: string,
-		inputMint: string,
-		outputMint: string,
-		amount: number
-	) => {
-		try {
-			const walletPublicKey = walletAdapter.publicKey;
+  // Step 4: Main function to swap and send token
+  const swapAndSendToken = async (
+    walletAdapter: WalletAdapter,
+    recipientAddress: string,
+    inputMint: string,
+    outputMint: string,
+    amount: number
+  ) => {
+    try {
+      const walletPublicKey = walletAdapter.publicKey;
 
-			console.log("Wallet public key:", walletPublicKey);
-			console.log("Fetching swap info for:", { walletAdapter, recipientAddress, inputMint, outputMint, amount });
+      console.log("Wallet public key:", walletPublicKey);
+      console.log("Fetching swap info for:", {
+        walletAdapter,
+        recipientAddress,
+        inputMint,
+        outputMint,
+        amount,
+      });
 
-			// Step 1: Fetch swap info
-			const swapInfo = await fetchSwapInfo(inputMint, outputMint, amount);
-			console.log("Swap info fetched:", swapInfo);
+      // Step 1: Fetch swap info
+      const swapInfo = await fetchSwapInfo(inputMint, outputMint, amount);
+      console.log("Swap info fetched:", swapInfo);
 
-			// Step 2: Fetch the swap transaction
-			const { swapTransaction } = await fetchSwapTransaction(
-				walletPublicKey,
-				recipientAddress,
-				swapInfo
-			);
-			console.log("Swap transaction fetched:", swapTransaction);
+      // Step 2: Fetch the swap transaction
+      const { swapTransaction } = await fetchSwapTransaction(
+        walletPublicKey,
+        recipientAddress,
+        swapInfo
+      );
+      console.log("Swap transaction fetched:", swapTransaction);
 
-			// Step 5: Send the transaction to the blockchain
-			const txid = await sendTransaction(swapTransaction, walletAdapter);
+      // Step 5: Send the transaction to the blockchain
+      const txid = await sendTransaction(swapTransaction, walletAdapter);
 
-			console.log("Swap and send transaction completed successfully.");
-			console.log("$ sent successfully!\n https://solscan.io/tx/" + txid);
+      console.log("Swap and send transaction completed successfully.");
+      console.log("$ sent successfully!\n https://solscan.io/tx/" + txid);
 
-			setIsSuccessful(true);
-		} catch (error) {
-			console.error("Error during swap and send:", error);
-			setIsBroken(true);
-			alert("Swap and send failed");
-		}
-	};
+      setIsSuccessful(true);
+    } catch (error) {
+      console.error("Error during swap and send:", error);
+      setIsBroken(true);
+      alert("Swap and send failed");
+    }
+  };
 
+  ///////////////////////////// Function for token swap and transfer ends here ////////////////
 
-	///////////////////////////// Function for token swap and transfer ends here ////////////////
-
-	// Function to send token directly
-const sendDirectToken = async (
+  // Function to send token directly
+  const sendDirectToken = async (
     walletAdapter: WalletAdapter, // Adapter for interacting with the wallet
     sourceAccount: any, // Token account of the sender
     destinationOwner: PublicKey, // Merchant wallet
@@ -261,14 +268,11 @@ const sendDirectToken = async (
       // Get or create destination associated token account
       const destTokenAccount = await getAssociatedTokenAddress(
         mint,
-        destinationOwner,
+        destinationOwner
       );
 
       // Get or create developer associated token account
-      const devTokenAccount = await getAssociatedTokenAddress(
-        mint,
-        devOwner,
-      );
+      const devTokenAccount = await getAssociatedTokenAddress(mint, devOwner);
 
       const instructions = [
         ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 12345 }),
@@ -326,7 +330,7 @@ const sendDirectToken = async (
         )
       );
 
-      const latestBlockhash = await connection.getLatestBlockhash('finalized');
+      const latestBlockhash = await connection.getLatestBlockhash("finalized");
 
       // Create transaction message
       const messageV0 = new TransactionMessage({
@@ -337,7 +341,9 @@ const sendDirectToken = async (
 
       const versionedTransaction = new VersionedTransaction(messageV0);
 
-      const signedTransaction = await (walletAdapter as any).signTransaction(versionedTransaction);
+      const signedTransaction = await (walletAdapter as any).signTransaction(
+        versionedTransaction
+      );
 
       setIsConfirming(true);
       setIsProcessing(false);
@@ -362,15 +368,13 @@ const sendDirectToken = async (
       setIsSuccessful(true);
 
       console.log(`Transaction confirmed: https://solscan.io/tx/${txid}`);
-
     } catch (error) {
-      console.error('Error during token transfer:', error);
+      console.error("Error during token transfer:", error);
       // throw new Error('Token transfer failed. Please check the logs.');
       setPaywith("stablecoin");
       setIsProcessing(false);
       setIsConfirming(false);
       alert("Please try again.");
-
     }
   };
 
@@ -389,7 +393,7 @@ const sendDirectToken = async (
       const targetTokenName = data?.transactions?.currency;
 
       const selectedToken: any = Tokens.find((t) => t.name === targetTokenName);
-      if (!selectedToken) throw new Error('Selected token not found.');
+      if (!selectedToken) throw new Error("Selected token not found.");
 
       const merchantPublicKey = new PublicKey(merchantAddress);
       console.log("merchantPublicKey", merchantPublicKey.toBase58());
@@ -404,9 +408,12 @@ const sendDirectToken = async (
       const customerPublicKey = new PublicKey(walletAdapter.publicKey);
       console.log("customerPublicKey", customerPublicKey.toBase58());
 
-      const srcAccount = await connection.getTokenAccountsByOwner(customerPublicKey, {
-        mint: new PublicKey(selectedPayToken.mintAddress),
-      });
+      const srcAccount = await connection.getTokenAccountsByOwner(
+        customerPublicKey,
+        {
+          mint: new PublicKey(selectedPayToken.mintAddress),
+        }
+      );
       console.log("srcAccount", srcAccount);
       console.log("selectedPayToken.mintAddress", selectedPayToken.mintAddress);
 
@@ -430,46 +437,51 @@ const sendDirectToken = async (
         );
       } else {
         // Token swap logic (if implemented)
-        console.log('Initiating token swap...');
+        console.log("Initiating token swap...");
         await swapAndSendToken(
           walletAdapter,
           merchantPublicKey.toString(),
           selectedPayToken.mintAddress,
           mintTokenAddress.toString(),
-          amount * Math.pow(10, selectedPayToken.decimals),
+          amount * Math.pow(10, selectedPayToken.decimals)
         );
       }
     } catch (error) {
-      console.error('Error during payment:', error);
-      alert('Payment failed. Please try again.');
+      console.error("Error during payment:", error);
+      alert("Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-	// Function to connect to the wallet
-	const connectWallet = async (walletId: number) => {
-		const wallets = [
-			new PhantomWalletAdapter(),
-			new SolflareWalletAdapter(),
-			new TrustWalletAdapter(),
-		];
-		const wallet = wallets[walletId];
+  // Function to connect to the wallet
+  const connectWallet = async (walletId: number) => {
+    const wallets = [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+      new TrustWalletAdapter(),
+    ];
+    const wallet = wallets[walletId];
 
-		try {
-			await wallet.connect();
-			if (wallet.publicKey == null) return;
-			setWalletAddress(wallet.publicKey.toString());
-			console.log("Connected to wallet:", wallet.publicKey.toString());
-			const publicKey = wallet.publicKey;
-			setWalletAdapter(wallet);
-			setConnectedWalletIndex(walletId);
-			setWalletConnected(true);
-			setStablecoinPaymentMethod("");
-		} catch (error) {
-			console.error("Failed to connect to wallet:", error);
-		}
-	};
+    try {
+      await wallet.connect();
+      if (wallet.publicKey == null) return;
+      setWalletAddress(wallet.publicKey.toString());
+      console.log("Connected to wallet:", wallet.publicKey.toString());
+      const publicKey = wallet.publicKey;
+      setWalletAdapter(wallet);
+      setConnectedWalletIndex(walletId);
+      setWalletConnected(true);
+      setStablecoinPaymentMethod("");
+    } catch (error) {
+      console.error("Failed to connect to wallet:", error);
+    }
+  };
+  useEffect(() => {
+    console.log(
+      AllWallets.find((netWal) => netWal.name === network.name)?.wallets
+    );
+  }, []);
 
   if (isMobile) {
     return (
@@ -604,57 +616,15 @@ const sendDirectToken = async (
           </div>
         </div>
         {stablecoinPaymentMethod == "wallet" && (
-          <div className="w-screen h-screen fixed top-0 left-0 flex items-center justify-center text-white">
-            <div
-              className="w-full h-full bg-black absolute opacity-20"
-              onClick={() => setStablecoinPaymentMethod("")}
-            ></div>
-            <div className="w-[300px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-6 items-center">
-              <div className="w-full flex items-end justify-end">
-                <button
-                  className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
-                  onClick={() => setStablecoinPaymentMethod("")}
-                >
-                  {Icons.closeIcon}
-                </button>
-              </div>
-              <div className="max-w-[300px] my-3">
-                <h2 className=" text-xl font-semibold text-center ">
-                  Connect a Solana Wallet & continue
-                </h2>
-              </div>
-              <div className="w-full flex flex-col gap-6 mt-7">
-                {Wallets.map((wallet) => (
-                  <div
-                    key={wallet.id}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={wallet.image}
-                        alt={wallet.name}
-                        width={20}
-                        height={20}
-                      />
-                      <span className="text-[15px]">{wallet.name}</span>
-                    </div>
-                    {connectedWalletIndex === wallet.id ? (
-                      <span className="text-green-500">Connecting...</span>
-                    ) : (
-                      <button
-                        className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
-                        onClick={() => {
-                          connectWallet(wallet.id);
-                        }}
-                      >
-                        Connect
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ConnectWalletMenu
+            setStablecoinPaymentMethod={setStablecoinPaymentMethod}
+            connectedWalletIndex={connectedWalletIndex}
+            connectWallet={connectWallet}
+            wallets={
+              AllWallets.find((netWal) => netWal.name === network.name)?.wallets
+            }
+            network={network.name}
+          ></ConnectWalletMenu>
         )}
       </>
     );
@@ -790,61 +760,14 @@ const sendDirectToken = async (
           </div>
         </div>
         {stablecoinPaymentMethod == "wallet" && (
-          <div className="w-screen h-screen fixed top-0 left-0 flex items-center justify-center text-white">
-            <div
-              className="w-full h-full bg-black absolute opacity-20"
-              onClick={() => setStablecoinPaymentMethod("")}
-            ></div>
-            <div className="w-[350px] bg-[#10141E] z-10 rounded-2xl flex flex-col px-4 py-4 items-center">
-              <div className="w-full flex items-end justify-end">
-                <button
-                  className="text-[#777777] w-[30px] h-[30px] items-center justify-center flex bg-[#1B1F2D] rounded-full "
-                  onClick={() => setStablecoinPaymentMethod("")}
-                >
-                  {Icons.closeIcon}
-                </button>
-              </div>
-              <div className="max-w-[300px] mt-3">
-                <h2 className=" text-xl font-semibold text-center ">
-                  Connect a Solana Wallet & continue
-                </h2>
-              </div>
-              <div className="w-full flex flex-col gap-6 mt-7">
-                {Wallets.map((wallet) => (
-                  <div
-                    key={wallet.id}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={wallet.image}
-                        alt={wallet.name}
-                        width={30}
-                        height={30}
-                      />
-                      <span className="text-[17px]">{wallet.name}</span>
-                    </div>
-                    {connectedWalletIndex === wallet.id ? (
-                      <span className="text-green-500">connecting...</span>
-                    ) : (
-                      <button
-                        className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
-                        onClick={() => connectWallet(wallet.id)}
-                      >
-                        Connect
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {/* <div className="w-full flex justify-end mt-8">
-                <button className="flex items-center text-sm gap-3">
-                  <span>More Options</span>
-                  <i>{Icons.chevron_down}</i>
-                </button>
-              </div> */}
-            </div>
-          </div>
+          <ConnectWalletMenu
+            setStablecoinPaymentMethod={setStablecoinPaymentMethod}
+            connectedWalletIndex={connectedWalletIndex}
+            connectWallet={connectWallet}
+            wallets={
+              AllWallets.find((netWal) => netWal.name === network.name)?.wallets
+            }
+          ></ConnectWalletMenu>
         )}
       </>
     );

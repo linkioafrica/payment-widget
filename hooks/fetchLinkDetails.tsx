@@ -13,6 +13,7 @@ export const useFetchLinkDetails = (checkout_id: any) => {
         const response = await axios.get(TrxDetails, {
           params: { checkout_id },
         });
+        console.log(response, TrxDetails);
         setData(response.data);
       } catch (err: any) {
         setError(err);

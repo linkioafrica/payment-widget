@@ -65,7 +65,7 @@ export const Networks = [
     flag: "/assets/svg/networks/solana.svg",
   },
   {
-    id: 1,
+    id: 2,
     name: "Celo",
     label: "Celo",
     flag: "/assets/svg/networks/celo.svg",

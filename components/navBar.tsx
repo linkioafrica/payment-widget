@@ -143,6 +143,24 @@ export const NavBar = () => {
                 textColor="text-[#162255]"
               ></Tag>
             </button>
+            {data && data.transactions.merchant_network == "Celo" && (
+              <button
+                onClick={
+                  isExpired || isBroken || isSuccessful
+                    ? () => {}
+                    : () => {
+                        setPaywith("miniPay");
+                        setIsConfirming(false);
+                        setIsSuccessful(false);
+                        setIsDrawerOpen(false);
+                      }
+                }
+                className={`w-full  text-start  py-3 px-6  rounded-full    flex gap-2 items-center hover:bg-[#4f4f4f] ${paywith == "miniPay" ? "text-[#A6CAFE] bg-[#4f4f4f]" : "text-white"}`}
+              >
+                <i>{Icons.card}</i>
+                MiniPay
+              </button>
+            )}
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center
         ${paywith == "stablecoin" && !isBroken && !isExpired && !isSuccessful ? "text-[#A6CAFE] bg-[#4f4f4f] " : "text-white"}
@@ -230,13 +248,22 @@ export const NavBar = () => {
                 textColor="text-[#4f4f4f]"
               ></Tag>
             </button>
-            {network === "Celo" ? (
-              <button className="w-full  text-start  py-3 px-6  rounded-full opacity-30  cursor-default flex gap-2 items-center text-white">
+            {data && data.transactions.merchant_network == "Celo" && (
+              <button
+                onClick={
+                  isExpired || isBroken || isSuccessful
+                    ? () => {}
+                    : () => {
+                        setPaywith("miniPay");
+                        setIsConfirming(false);
+                        setIsSuccessful(false);
+                      }
+                }
+                className={`w-full  text-start  py-3 px-6  rounded-full    flex gap-2 items-center hover:bg-[#4f4f4f] ${paywith == "miniPay" ? "text-[#A6CAFE] bg-[#4f4f4f]" : "text-white"}`}
+              >
                 <i>{Icons.card}</i>
                 MiniPay
               </button>
-            ) : (
-              ""
             )}
             <button
               className={`w-full text-start  py-3 px-6 rounded-full flex gap-2 items-center

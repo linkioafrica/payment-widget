@@ -112,17 +112,19 @@ export const PayWithModal = ({ children }: any) => {
             <i className="text-black dark:text-white">{Icons.menuIcon}</i>
           </button>
           <div className="flex gap-4">
-            {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
-              <TokensDropDown disabled={isBroken}></TokensDropDown>
-            ) : (
-              <CurrencyDropDown></CurrencyDropDown>
-            )}
-            <div className="px-2 py-2 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white">
+            {paywith !== "miniPay" ? (
+              isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
+                <TokensDropDown disabled={isBroken}></TokensDropDown>
+              ) : (
+                <CurrencyDropDown></CurrencyDropDown>
+              )
+            ) : null}
+            <div className="px-2 py-2  border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] flex items-center justify-center dark:hover:border-white">
               <Image
                 src={network.flag}
                 alt={"flag"}
-                width={12}
-                height={12}
+                width={15}
+                height={15}
                 priority
               />
             </div>
@@ -156,23 +158,25 @@ export const PayWithModal = ({ children }: any) => {
             {loading ? (
               <SkeletonLoader classes={"h-5 w-[80px] rounded"}></SkeletonLoader>
             ) : (
-              <span className="text-[#696F79] text-lg leading-none">
-                {isSuccessful || isConfirming ? (
-                  <div className="flex items-center gap-1  font-medium">
-                    {loading ? (
-                      <SkeletonLoader
-                        classes={"h-5 rounded w-[80px]"}
-                      ></SkeletonLoader>
-                    ) : (
-                      <span className=" text-black dark:text-white text-lg leading-none">
-                        {data?.transactions?.title}
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  `${data?.transactions?.business_name || ""}`
-                )}
-              </span>
+              paywith !== "miniPay" && (
+                <span className="text-[#696F79] text-lg leading-none">
+                  {isSuccessful || isConfirming ? (
+                    <div className="flex items-center gap-1  font-medium">
+                      {loading ? (
+                        <SkeletonLoader
+                          classes={"h-5 rounded w-[80px]"}
+                        ></SkeletonLoader>
+                      ) : (
+                        <span className=" text-black dark:text-white text-lg leading-none">
+                          {data?.transactions?.title}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    `${data?.transactions?.business_name || ""}`
+                  )}
+                </span>
+              )
             )}
             {isConfirming || isSuccessful ? null : (
               <div className="flex items-center gap-1  font-medium">
@@ -241,12 +245,14 @@ export const PayWithModal = ({ children }: any) => {
           )}
 
           <div className="flex gap-4">
-            {isConfirming || isSuccessful ? null : paywith == "stablecoin" ? (
+            {paywith == "miniPay" ? null : isConfirming ||
+              isSuccessful ? null : paywith == "stablecoin" ? (
               <TokensDropDown disabled={isBroken}></TokensDropDown>
             ) : (
               <CurrencyDropDown></CurrencyDropDown>
             )}
-            <div className="px-1 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white">
+
+            <div className="px-1 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] flex items-center justify-center rounded-md dark:border-[#242425] dark:hover:border-white">
               <Image
                 src={network.flag}
                 alt={"flag"}
@@ -255,6 +261,7 @@ export const PayWithModal = ({ children }: any) => {
                 priority
               />
             </div>
+
             <button
               className="px-2 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white"
               onClick={() => toggleTheme()}
@@ -268,9 +275,11 @@ export const PayWithModal = ({ children }: any) => {
           {loading ? (
             <SkeletonLoader classes={"h-5 rounded w-[80px]"}> </SkeletonLoader>
           ) : (
-            <span className=" text-black dark:text-white text-sm">
-              {data?.transactions?.title || "--"}
-            </span>
+            paywith !== "miniPay" && (
+              <span className=" text-black dark:text-white text-sm">
+                {data?.transactions?.title || "--"}
+              </span>
+            )
           )}
         </div>
 
@@ -291,7 +300,7 @@ export const PayWithModal = ({ children }: any) => {
               {isBroken
                 ? "--"
                 : `${tokenAmount || 0}
-                ${token.name} `}
+                ${paywith !== "miniPay" ? token.name : ""} `}
             </span>
           )}
         </div>

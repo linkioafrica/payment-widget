@@ -77,7 +77,6 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
     if (data && data.status != 403) {
       const cur_net = data.transactions.merchant_network;
       const cur_currency = data.transactions.currency;
-
       // const matchedNetwork = Tokens.find(
       //   (token) => token.network === cur_network
       // );
@@ -88,7 +87,8 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
       const cur_token = Tokens.find((token) => token.name === cur_currency);
       if (cur_token) setToken(cur_token);
 
-      const cur_network = Networks.find((token) => token.name === cur_currency);
+      const cur_network = Networks.find((token) => token.name === cur_net);
+
       if (cur_network) setNetwork(cur_network);
 
       console.log(cur_token, cur_network);

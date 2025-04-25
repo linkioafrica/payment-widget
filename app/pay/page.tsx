@@ -17,6 +17,7 @@ import { NavBar } from "@/components/navBar";
 import { useRouter } from "next/navigation";
 import { ExpiredState } from "@/components/states/expiredState";
 import { BrokenState } from "@/components/states/brokenState";
+import { MiniPayHome } from "@/components/miniPay/miniPayHome";
 
 export default function Home() {
   // Constants
@@ -66,11 +67,10 @@ export default function Home() {
           <StableQRCode></StableQRCode>
         );
       return screen;
+    } else if (paywith == "miniPay") {
+      const screen = <MiniPayHome></MiniPayHome>;
+      return screen;
     }
-    // } else if (paywith == "minipay") {
-    //   const screen = <MinipayQRCode></MinipayQRCode>;
-    //   return screen;
-    // }
   };
   useEffect(() => {
     if (!loading) {
