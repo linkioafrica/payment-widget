@@ -258,7 +258,7 @@ export const Tokens = [
       },
       {
         name: "EURC",
-        mintAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        mintAddress: "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42",
         decimals: 6,
         image: "/assets/svg/stables/eurc.svg",
         status: "available",
