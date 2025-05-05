@@ -257,6 +257,13 @@ export const Tokens = [
         status: "available",
       },
       {
+        name: "CADC",
+        mintAddress: "0x043eB4B75d0805c43D7C834902E335621983Cf03",
+        decimals: 18,
+        image: "/assets/svg/stables/cadc.svg",
+        status: "available",
+      },
+      {
         name: "EURC",
         mintAddress: "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42",
         decimals: 6,
@@ -264,10 +271,10 @@ export const Tokens = [
         status: "available",
       },
       {
-        name: "BRZ",
-        mintAddress: "0xE9185Ee218cae427aF7B9764A011bb89FeA761B4",
-        decimals: 18,
-        image: "/assets/svg/stables/brz.svg",
+        name: "IDRX",
+        mintAddress: "0x18bc5bcc660cf2b9ce3cd51a404afe1a0cbd3c22",
+        decimals: 2,
+        image: "/assets/svg/stables/idrx.svg",
         status: "available",
       },
       {
@@ -275,13 +282,6 @@ export const Tokens = [
         mintAddress: "0xb755506531786c8ac63b756bab1ac387bacb0c04",
         decimals: 18,
         image: "/assets/svg/stables/zarp.svg",
-        status: "available",
-      },
-      {
-        name: "IDRX",
-        mintAddress: "0x18bc5bcc660cf2b9ce3cd51a404afe1a0cbd3c22",
-        decimals: 2,
-        image: "/assets/svg/stables/idrx.svg",
         status: "available",
       },
     ],
