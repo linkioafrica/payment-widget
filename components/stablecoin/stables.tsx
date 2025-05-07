@@ -29,11 +29,11 @@ import {
   useWallet,
   Wallet,
 } from "@solana/wallet-adapter-react";
+// Import any other wallet adapters you need
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   TrustWalletAdapter,
-  // Import any other wallet adapters you need
 } from "@solana/wallet-adapter-wallets";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -82,7 +82,7 @@ export const StableCoinHome = () => {
   } = useWalletContext();
 
   const { payCoin, connectWallet } = useMemo(() => {
-    if (network.name === "Solana") { 
+    if (network.name === "Solana") {
       // Dynamic cluster (devnet or mainnet)
       // const isMainnet = true;
       // const connection = new Connection(clusterApiUrl(isMainnet ? "mainnet-beta" : "devnet"));
@@ -217,7 +217,11 @@ export const StableCoinHome = () => {
 
           // Step 2: Fetch the swap transaction
           const { swapTransaction, lastValidBlockHeight } =
-            await fetchSwapTransaction(walletPublicKey, recipientAddress, swapInfo);
+            await fetchSwapTransaction(
+              walletPublicKey,
+              recipientAddress,
+              swapInfo
+            );
           console.log(swapTransaction);
           // Step 3: Send the transaction to the blockchain
           let txid = await sendTransaction(swapTransaction, walletAdapter);
@@ -256,22 +260,25 @@ export const StableCoinHome = () => {
           );
 
           // Get latest blockhash
-          let latestBlockhash = await connection.getLatestBlockhash("confirmed");
+          let latestBlockhash =
+            await connection.getLatestBlockhash("confirmed");
           console.log(latestBlockhash);
           const messageV0 = new TransactionMessage({
             payerKey: walletPubKey,
             recentBlockhash: latestBlockhash.blockhash,
             instructions: [
-              ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 12345 }),
+              ComputeBudgetProgram.setComputeUnitPrice({
+                microLamports: 12345,
+              }),
               transferInstruction,
             ],
           }).compileToV0Message();
           const versionedTransaction = new VersionedTransaction(messageV0);
 
           // Sign the transaction
-          const signedTransaction = await (walletAdapter as any).signTransaction(
-            versionedTransaction
-          );
+          const signedTransaction = await (
+            walletAdapter as any
+          ).signTransaction(versionedTransaction);
 
           // Send the raw transaction
 
@@ -386,7 +393,7 @@ export const StableCoinHome = () => {
         }
       };
 
-      return { payCoin, connectWallet }
+      return { payCoin, connectWallet };
     } else if (network.name === "Base") {
       return {
         payCoin: () => {},
@@ -394,14 +401,14 @@ export const StableCoinHome = () => {
           setConnectedWalletIndex(walletId);
           setWalletConnected(true);
           setStablecoinPaymentMethod("");
-        }
-      }
+        },
+      };
     }
     return {
       payCoin: () => {},
-      connectWallet: (walletId: number) => {}
-    }
-  }, [network])
+      connectWallet: (walletId: number) => {},
+    };
+  }, [network]);
 
   if (isMobile) {
     return (

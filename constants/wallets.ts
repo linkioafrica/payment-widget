@@ -14,6 +14,11 @@ const SolanaWallets = [
     name: "Trust",
     image: "/assets/images/wallets/Solana/trust.svg",
   },
+  {
+    id: 3,
+    name: "Backpack",
+    image: "/assets/images/wallets/Solana/backpack.png",
+  },
 ];
 const CeloWallets = [
   {
@@ -35,11 +40,16 @@ const CeloWallets = [
 const BaseWallets = [
   {
     id: 0,
+    name: "Coinbase",
+    image: "/assets/images/wallets/Celo/coinbase.svg",
+  },
+  {
+    id: 1,
     name: "MetaMask",
     image: "/assets/images/wallets/Celo/metamask.svg",
   },
   {
-    id: 1,
+    id: 2,
     name: "Trust",
     image: "/assets/images/wallets/Solana/trust.svg",
   },
