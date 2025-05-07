@@ -2,7 +2,7 @@ import { CircularLoader } from "../circularLoader";
 import { useEffect, useState } from "react";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
-import { useWallet } from "@/contexts/WalletContext";
+import { useWalletContext } from "@/contexts/WalletContext";
 import { DisconnectWallet } from "../disconnectWallet";
 
 export const LoadingState = () => {
@@ -10,7 +10,7 @@ export const LoadingState = () => {
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
   const [secondsRemaining, setSecondsRemaining] = useState(14 * 60 + 59); // 14:59 in seconds
-  const { walletConnected } = useWallet();
+  const { walletConnected } = useWalletContext();
   useEffect(() => {
     // setTimeout(() => {
     //   setIsSuccessful(true);

@@ -12,6 +12,8 @@ import { SkeletonLoader } from "./UI Helper/skeletonLoader";
 import { spawn } from "child_process";
 import axios from "axios";
 import { Tokens } from "@/constants/token";
+import { useSolanaPayment } from "@/hooks/useSolanaPayment";
+import { useEVMPayment } from "@/hooks/useEVMPayment";
 
 export const PayWithModal = ({ children }: any) => {
   const { isMobile } = useDevice();
@@ -39,45 +41,18 @@ export const PayWithModal = ({ children }: any) => {
     netAndToken,
   } = usePaymentLinkMerchantContext();
 
+  const { quoteAmount } = useEVMPayment()
+
   // Function to get swap price
   const setSelectedTokenPrice = async () => {
     try {
       if (!token) return;
       setConversionLoading(true);
-      var inputPrice = data?.transactions?.amount;
-      var inputTokenName = data?.transactions?.currency;
-      if (inputTokenName == undefined || inputTokenName == "") return;
-      if (inputTokenName == token.name) {
-        setTokenAmount(inputPrice);
-        return;
-      }
-      var inputUnitNumber = 0;
-      var inputMint = "";
-      netAndToken?.stables.forEach((element) => {
-        if (element.name == inputTokenName) {
-          inputMint = element.mintAddress;
-          inputUnitNumber = element.decimals;
-        }
-      });
-      const inputAmountInAtomicUnits = inputPrice * 10 ** inputUnitNumber;
-
-      const response = await axios.get(`https://quote-api.jup.ag/v6/quote`, {
-        params: {
-          inputMint: inputMint, // USDC token
-          outputMint: token.mintAddress,
-          amount: inputAmountInAtomicUnits, // Amount of fromToken you want to swap
-          slippage: 1, // Optional: Set slippage tolerance (1%)
-          // onlyDirectRoutes: true, // Optional: If you only want direct swap routes (could improve speed)
-        },
-      });
-
-      const swapPrice = response.data;
-      console.log("Swap Price:", swapPrice);
-      var TokenUnit = 10 ** token.decimals;
-      var tokenAmount = swapPrice.outAmount / TokenUnit;
+      
+      const amount = await quoteAmount()
 
       // Round up to 2 decimal places
-      setTokenAmount(Math.ceil(tokenAmount * 100) / 100);
+      setTokenAmount(amount);
     } catch (error) {
       console.error("Error fetching swap price:", error);
     } finally {
@@ -208,7 +183,7 @@ export const PayWithModal = ({ children }: any) => {
                   ) : null}
                   {isBroken
                     ? "--"
-                    : `${tokenAmount || 0}
+                    : `${Number(tokenAmount?.toFixed(2) || 0)}
                 ${token?.name} `}
                 </span>
               )}
@@ -301,7 +276,7 @@ export const PayWithModal = ({ children }: any) => {
 
               {isBroken
                 ? "--"
-                : `${tokenAmount || 0}
+                : `${Number(tokenAmount?.toFixed(2) || 0)}
                 ${paywith !== "miniPay" ? token?.name : ""} `}
             </span>
           )}

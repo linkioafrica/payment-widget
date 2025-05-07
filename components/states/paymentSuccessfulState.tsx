@@ -4,7 +4,7 @@ import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantCon
 import { useDevice } from "@/contexts/DeviceContext";
 import { Icons } from "@/app/icons";
 import { DisconnectWallet } from "../disconnectWallet";
-import { useWallet } from "@/contexts/WalletContext";
+import { useWalletContext } from "@/contexts/WalletContext";
 import { UpdateTrxDetails } from "@/www";
 
 export const PaymentSuccessfulState = () => {
@@ -18,7 +18,7 @@ export const PaymentSuccessfulState = () => {
     setStablecoinPaymentMethod,
   } = usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
-  const { walletConnected } = useWallet();
+  const { walletConnected } = useWalletContext();
   // setStablecoinPaymentMethod("wallet");
   useEffect(() => {
     setStablecoinPaymentMethod("wallet");

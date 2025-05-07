@@ -3,14 +3,14 @@ import Image from "next/image";
 import { CopyToClipboard } from "../copyToClicpboard";
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useDevice } from "@/contexts/DeviceContext";
-import { useWallet } from "@/contexts/WalletContext";
+import { useWalletContext } from "@/contexts/WalletContext";
 import { DisconnectWallet } from "../disconnectWallet";
 
 export const StableQRCode = () => {
   const { setIsConfirming, setStablecoinPaymentMethod } =
     usePaymentLinkMerchantContext();
   const { isMobile } = useDevice();
-  const { walletConnected } = useWallet();
+  const { walletConnected } = useWalletContext();
   if (isMobile) {
     return (
       <div>

@@ -25,11 +25,11 @@ export default function RootLayout({
       <body className={`${sora.className}  antialiased`}>
         <DeviceProvider>
           <ThemeProvider>
-            <WalletProvider>
-              <PaymentLinkMerchantProvider>
+            <PaymentLinkMerchantProvider>
+              <WalletProvider>
                 {children}
-              </PaymentLinkMerchantProvider>
-            </WalletProvider>
+              </WalletProvider>
+            </PaymentLinkMerchantProvider>
           </ThemeProvider>
         </DeviceProvider>
       </body>

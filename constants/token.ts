@@ -68,12 +68,14 @@ export const Networks = [
     id: 2,
     name: "Celo",
     label: "Celo",
+    chainId: 42220,
     flag: "/assets/svg/networks/celo.svg",
   },
   {
     id: 3,
     name: "Base",
     label: "Base",
+    chainId: 8543,
     flag: "/assets/svg/networks/base.svg",
   },
 ];

@@ -1,15 +1,10 @@
 import { Icons } from "@/app/icons";
 import { useDevice } from "@/contexts/DeviceContext";
-import { useWallet as walletContext } from "@/contexts/WalletContext";
+import { useWalletContext } from "@/contexts/WalletContext";
 import { truncateMiddle } from "@/functions";
 import { useWallet } from "@solana/wallet-adapter-react";
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-  TrustWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const DisconnectWallet = () => {
   const [isAcitve, setIsActive] = useState(false);
@@ -19,10 +14,9 @@ export const DisconnectWallet = () => {
     setWalletConnected,
     setWalletAddress,
     walletAddress,
-    connectedWalletIndex,
     setConnectedWalletIndex,
     walletAdapter,
-  } = walletContext();
+  } = useWalletContext();
   const { connected, disconnect } = useWallet(); // Get the wallet status
   const [isCopied, setIsCopied] = useState(false);
 

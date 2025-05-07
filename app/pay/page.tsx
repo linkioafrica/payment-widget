@@ -62,9 +62,9 @@ export default function Home() {
     } else if (paywith == "stablecoin") {
       const screen =
         stablecoinPaymentMethod == "" || stablecoinPaymentMethod == "wallet" ? (
-          <StableCoinHome></StableCoinHome>
+          <StableCoinHome />
         ) : (
-          <StableQRCode></StableQRCode>
+          <StableQRCode />
         );
       return screen;
     } else if (paywith == "miniPay") {
