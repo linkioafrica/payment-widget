@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 import { createConfig, http, injected, WagmiProvider } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { createClient } from 'viem'
-import { metaMask, walletConnect } from 'wagmi/connectors'
+import { coinbaseWallet, metaMask, walletConnect } from 'wagmi/connectors'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface WalletContextType {
@@ -32,17 +32,18 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const config = createConfig({
     chains: [base],
     connectors: [
+      coinbaseWallet(),
       metaMask(),
-      injected(),
+      // injected(),
       walletConnect({
-        projectId: '3fcc6bba6f1de962d911bb5b5c3dba68',
+        projectId: '',
       }),
     ],
     // client({ chain }) {
     //   return createClient({ chain, transport: http() })
     // },
     transports: {
-      [base.id]: http('https://virtual.base.rpc.tenderly.co/95f3d92a-6154-41e0-a9fd-4f293822e78c')
+      [base.id]: http()
     }
   })
 

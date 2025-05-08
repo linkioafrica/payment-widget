@@ -123,7 +123,7 @@ export function useEVMPayment() {
             functionName: 'allowance',
             args: [address as Address, ROUTERS[network.name] as Address]
         })
-        return BigInt(result) >= parseUnits(String(tokenAmount), token.decimals)
+        return BigInt(result) >= parseUnits(String(tokenAmount * 1.0025), token.decimals)
     }
 
     const approve = async () => {
@@ -135,8 +135,11 @@ export function useEVMPayment() {
         )
         if (token === null || currency === undefined)
             return
+        const amount = data?.transactions?.amount;
         setIsProcessing(true);
         if (token.name === currency.name) {
+            const sendAmount = parseUnits(String(amount), token.decimals)
+            const fee = sendAmount * BigInt(25) / BigInt(10000)
             await walletClient.writeContract({
                 abi: [{
                     "name": "approve",
@@ -152,9 +155,11 @@ export function useEVMPayment() {
                 }],
                 address: token.mintAddress,
                 functionName: 'approve',
-                args: [multicallAddress as Address, maxUint256]
+                args: [multicallAddress as Address, sendAmount + fee]
             } as any).catch(() => { }).finally(() => setIsProcessing(false))
         } else {
+            const sendAmount = parseUnits(String(tokenAmount), token.decimals)
+            const fee = sendAmount * BigInt(26) / BigInt(10000)
             await walletClient.writeContract({
                 abi: [{
                     "name": "approve",
@@ -170,7 +175,7 @@ export function useEVMPayment() {
                 }],
                 address: token?.mintAddress,
                 functionName: 'approve',
-                args: [ROUTERS[network.name] as Address, maxUint256]
+                args: [ROUTERS[network.name] as Address, sendAmount + fee]
             } as any).catch(() => { }).finally(() => setIsProcessing(false))
         }
     }
