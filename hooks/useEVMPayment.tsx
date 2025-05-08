@@ -2,13 +2,11 @@
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useWalletContext } from "@/contexts/WalletContext";
 import { useState } from "react";
-import { Address, encodeAbiParameters, encodeFunctionData, encodePacked, formatUnits, getContract, maxUint256, parseUnits } from "viem";
-import { useAccount, useChains, useConfig, useConnect, useWalletClient } from "wagmi";
-import abiQuoter from "@/constants/Quoter.json";
-import abiRouter from "@/constants/UniversalRouter.json";
-import { multicall, readContract, simulateContract, waitForTransactionReceipt, writeContract } from "viem/actions";
-import { QUOTERS, ROUTERS, ROUTES } from "@/constants/routes";
-import path from "path";
+import { Address, encodePacked, formatUnits, parseUnits } from "viem";
+import { useAccount, useConfig, useConnect, useWalletClient } from "wagmi";
+import abiMarket from "@/constants/Market.json";
+import { readContract, simulateContract, waitForTransactionReceipt } from "viem/actions";
+import { ROUTERS, ROUTES } from "@/constants/routes";
 
 export function useEVMPayment() {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -30,7 +28,6 @@ export function useEVMPayment() {
     const {
         connectedWalletIndex,
         walletConnected,
-        walletAdapter,
         setWalletAdapter,
         setWalletAddress,
         setWalletConnected,
@@ -38,7 +35,7 @@ export function useEVMPayment() {
     } = useWalletContext()
 
     const config = useConfig()
-    const { chain, address, isConnected, connector } = useAccount()
+    const { address, isConnected, connector } = useAccount()
     const { connectors, connectAsync } = useConnect()
     const { data: walletClient } = useWalletClient()
     // const chains = useChains()
@@ -49,9 +46,8 @@ export function useEVMPayment() {
     }), {}) ?? {}
 
     const routes = ROUTES[network.name]
-    const multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11"
-
-    const quoteAmount = async () => {
+    
+    const quoteAmount = async (asBigInt?: boolean) => {
         const amount = data?.transactions?.amount;
         const currency: any = netAndToken?.stables.find(
             (t) => t.name === data?.transactions?.currency
@@ -60,24 +56,29 @@ export function useEVMPayment() {
         if (token === null || currency === undefined)
             return 0
 
-        if (token.name === currency.name)
+        if (token.name === currency.name) {
+            if (asBigInt)
+                return parseUnits(String(amount * 1.0025), token.decimals)
             return amount
+        }
 
-        const route = [...(routes.find(r => r[0] === token.name && r[r.length - 1] === currency.name) ?? [])].reverse()
+        const route = routes.find(r => r[0] === currency.name && r[r.length - 1] === token.name) ?? []
         const path = encodePacked(
             route.map(r => typeof r === 'string' ? 'address' : 'uint24'),
             route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r))
         )
         const result = await simulateContract(config.getClient(), {
-            abi: abiQuoter as any,
-            address: QUOTERS[network.name],
-            functionName: 'quoteExactOutput',
+            abi: abiMarket as any,
+            address: ROUTERS[network.name],
+            functionName: 'estimate',
             args: [
                 path,
                 parseUnits(String(amount), currency.decimals)
             ]
         })
-        return Number(formatUnits(result.result[0] as bigint, token.decimals))
+        if (asBigInt)
+            return BigInt(String(result.result))
+        return Number(formatUnits(BigInt(String(result.result)), token.decimals))
     }
 
     const isApproved = async () => {
@@ -86,26 +87,6 @@ export function useEVMPayment() {
         )
         if (token === null || currency === undefined || !address)
             return false
-        if (token.name === currency.name) {
-            const result = await readContract(config.getClient(), {
-                abi: [{
-                    "name": "allowance",
-                    "type": "function",
-                    "stateMutability": "view",
-                    "inputs": [
-                        { "name": "owner", "type": "address" },
-                        { "name": "spender", "type": "address" }
-                    ],
-                    "outputs": [
-                        { "name": "", "type": "uint256" }
-                    ]
-                }],
-                address: token.mintAddress as Address,
-                functionName: 'allowance',
-                args: [address as Address, multicallAddress as Address]
-            })
-            return BigInt(result) >= parseUnits(String(tokenAmount * 1.0025), token.decimals)
-        }
         const result = await readContract(config.getClient(), {
             abi: [{
                 "name": "allowance",
@@ -123,7 +104,8 @@ export function useEVMPayment() {
             functionName: 'allowance',
             args: [address as Address, ROUTERS[network.name] as Address]
         })
-        return BigInt(result) >= parseUnits(String(tokenAmount * 1.0025), token.decimals)
+        // console.log(result, tokenAmount)
+        return BigInt(result) >= parseUnits(String(tokenAmount * (token.name === currency.name ? 1.0025 : 1)), token.decimals)
     }
 
     const approve = async () => {
@@ -135,49 +117,25 @@ export function useEVMPayment() {
         )
         if (token === null || currency === undefined)
             return
-        const amount = data?.transactions?.amount;
         setIsProcessing(true);
-        if (token.name === currency.name) {
-            const sendAmount = parseUnits(String(amount), token.decimals)
-            const fee = sendAmount * BigInt(25) / BigInt(10000)
-            await walletClient.writeContract({
-                abi: [{
-                    "name": "approve",
-                    "type": "function",
-                    "stateMutability": "nonpayable",
-                    "inputs": [
-                        { "name": "spender", "type": "address" },
-                        { "name": "amount", "type": "uint256" }
-                    ],
-                    "outputs": [
-                        { "name": "", "type": "bool" }
-                    ]
-                }],
-                address: token.mintAddress,
-                functionName: 'approve',
-                args: [multicallAddress as Address, sendAmount + fee]
-            } as any).catch(() => { }).finally(() => setIsProcessing(false))
-        } else {
-            const sendAmount = parseUnits(String(tokenAmount), token.decimals)
-            const fee = sendAmount * BigInt(26) / BigInt(10000)
-            await walletClient.writeContract({
-                abi: [{
-                    "name": "approve",
-                    "type": "function",
-                    "stateMutability": "nonpayable",
-                    "inputs": [
-                        { "name": "spender", "type": "address" },
-                        { "name": "amount", "type": "uint256" }
-                    ],
-                    "outputs": [
-                        { "name": "", "type": "bool" }
-                    ]
-                }],
-                address: token?.mintAddress,
-                functionName: 'approve',
-                args: [ROUTERS[network.name] as Address, sendAmount + fee]
-            } as any).catch(() => { }).finally(() => setIsProcessing(false))
-        }
+        const estimate = await quoteAmount(true)
+        await walletClient.writeContract({
+            abi: [{
+                "name": "approve",
+                "type": "function",
+                "stateMutability": "nonpayable",
+                "inputs": [
+                    { "name": "spender", "type": "address" },
+                    { "name": "amount", "type": "uint256" }
+                ],
+                "outputs": [
+                    { "name": "", "type": "bool" }
+                ]
+            }],
+            address: token.mintAddress,
+            functionName: 'approve',
+            args: [ROUTERS[network.name] as Address, estimate]
+        } as any).catch(() => { }).finally(() => setIsProcessing(false))
     }
 
     const payCoin = async () => {
@@ -194,111 +152,34 @@ export function useEVMPayment() {
                 return
 
             const merchantAddress = data?.transactions?.merchant_address;
-            const devWalletAddress = "0xed6781e11893f334eAE70C55F64c701a296dBec3";
+            const route = routes.find(r => r[0] === token.name && r[r.length - 1] === currency.name) ?? []
+            const path = route.length ? encodePacked(
+                route.map(r => typeof r === 'string' ? 'address' : 'uint24').reverse(),
+                route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r)).reverse()
+            ) : '0x'
 
-            if (token.name === currency.name) {
-                const tokenAmount = parseUnits(String(amount), token.decimals)
-                const fee = tokenAmount * BigInt(25) / BigInt(10000)
-                const abi = [
-                    {
-                        name: 'transferFrom',
-                        type: 'function',
-                        stateMutability: 'nonpayable',
-                        inputs: [
-                            { name: 'from', type: 'address' },
-                            { name: 'recipient', type: 'address' },
-                            { name: 'amount', type: 'uint256' },
-                        ],
-                        outputs: [{ name: '', type: 'bool' }],
-                    },
+            const tokenAmount = parseUnits(String(amount), token.decimals)
+            const hash = await walletClient.writeContract({
+                abi: abiMarket as any,
+                address: ROUTERS[network.name],
+                functionName: 'pay',
+                args: [
+                    token.mintAddress,
+                    currency.mintAddress,
+                    tokenAmount,
+                    merchantAddress,
+                    path
                 ]
-                const hash = await walletClient.writeContract({
-                    abi: [{
-                        "inputs": [{
-                            "components": [
-                                { "internalType": "address", "name": "target", "type": "address" },
-                                { "internalType": "bytes", "name": "callData", "type": "bytes" }
-                            ],
-                            "internalType": "struct Multicall3.Call[]", "name": "calls", "type": "tuple[]"
-                        }],
-                        "name": "aggregate",
-                        "outputs": [{
-                            "internalType": "uint256",
-                            "name": "blockNumber",
-                            "type": "uint256"
-                        }, { "internalType": "bytes[]", "name": "returnData", "type": "bytes[]" }], "stateMutability": "payable", "type": "function"
-                    }
-                    ],
-                    address: multicallAddress as Address,
-                    functionName: 'aggregate',
-                    args: [
-                        [
-                            {
-                                target: token.mintAddress as Address,
-                                callData: encodeFunctionData({
-                                    abi,
-                                    functionName: 'transferFrom',
-                                    args: [address, merchantAddress, tokenAmount]
-                                })
-                            },
-                            {
-                                target: token.mintAddress as Address,
-                                callData: encodeFunctionData({
-                                    abi,
-                                    functionName: 'transferFrom',
-                                    args: [address, devWalletAddress, fee]
-                                })
-                            }
-                        ]
-                    ]
-                })
-                setIsConfirming(true);
-                await waitForTransactionReceipt(walletClient, { hash });
-                setIsConfirming(false);
+            })
+            setIsConfirming(true);
+            const tx = await waitForTransactionReceipt(walletClient, { hash });
+            setIsConfirming(false);
+            if (tx.status === "success") {
                 setTransactionLink(`https://basescan.io/tx/${hash}`);
+                setIsSuccessful(true);
             } else {
-                const tokenAmount = parseUnits(String(amount), token.decimals)
-                const route = routes.find(r => r[0] === token.name && r[r.length - 1] === currency.name) ?? []
-                const path = encodePacked(
-                    route.map(r => typeof r === 'string' ? 'address' : 'uint24').reverse(),
-                    route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r)).reverse()
-                )
-                const result = await simulateContract(config.getClient(), {
-                    abi: abiQuoter as any,
-                    address: QUOTERS[network.name],
-                    functionName: 'quoteExactOutput',
-                    args: [
-                        path,
-                        parseUnits(String(amount), currency.decimals)
-                    ]
-                })
-                const commands = '0x010504'
-                const bytes = [
-                    encodeAbiParameters(
-                        [{ type: 'address' }, { type: 'uint256' }, { type: 'uint256' }, { type: 'bytes' }, { type: 'bool' }],
-                        ['0x0000000000000000000000000000000000000002', tokenAmount * BigInt(10025) / BigInt(10000), result.result[0] * BigInt(10250) / BigInt(10000), path, true]
-                    ),
-                    encodeAbiParameters(
-                        [{ type: 'address' }, { type: 'address' }, { type: 'uint256' }],
-                        [currency.mintAddress, merchantAddress as Address, tokenAmount]
-                    ),
-                    encodeAbiParameters(
-                        [{ type: 'address' }, { type: 'address' }, { type: 'uint256' }],
-                        [currency.mintAddress, devWalletAddress as Address, BigInt(0)]
-                    ),
-                ]
-                const hash = await writeContract(walletClient, {
-                    abi: abiRouter as any,
-                    address: ROUTERS[network.name],
-                    functionName: 'execute',
-                    args: [commands, bytes]
-                } as any)
-                setIsConfirming(true);
-                await waitForTransactionReceipt(walletClient, { hash });
-                setIsConfirming(false);
-                setTransactionLink(`https://basescan.io/tx/${hash}`);
+                setIsBroken(true);
             }
-            setIsSuccessful(true);
         } catch (error) {
             console.error("Error during payment:", error);
             setIsBroken(true);

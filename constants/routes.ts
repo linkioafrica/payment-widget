@@ -5,18 +5,18 @@ export const QUOTERS: {[network:string]: Address} = {
 }
 
 export const ROUTERS: {[network:string]: Address} = {
-    "Base": "0x6Cb442acF35158D5eDa88fe602221b67B400Be3E"
+    "Base": "0x1fB93c553aC2B3B79fBAfd9dA04290B3339AEAEf"
 }
 
 export const ROUTES: {[network:string]: (string | number)[][]} = {
     "Base": [
         ["USDC", 1, "EURC"],
         ["EURC", 1, "USDC"],
-        ["BRZ", 10, "USDC"],
-        ["BRZ", 10, "USDC", 1, "EURC"],
-        ["ZARP", 10, "USDC"],
-        ["ZARP", 10, "USDC", 1, "EURC"],
-        ["IDRX", 10, "USDC"],
-        ["IDRX", 10, "USDC", 1, "EURC"],
+        ["USDC", 10, "BRZ"],
+        ["EURC", 1, "USDC", 10, "BRZ"],
+        ["USDC", 10, "ZARP"],
+        ["EURC", 1, "USDC", 10, "ZARP"],
+        ["USDC", 10, "IDRX"],
+        ["EURC", 1, "USDC", 10, "IDRX"],
     ]
 }
