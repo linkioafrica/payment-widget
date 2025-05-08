@@ -104,7 +104,7 @@ export function useEVMPayment() {
                 functionName: 'allowance',
                 args: [address as Address, multicallAddress as Address]
             })
-            return BigInt(result) >= parseUnits(String(tokenAmount), token.decimals)
+            return BigInt(result) >= parseUnits(String(tokenAmount * 1.0025), token.decimals)
         }
         const result = await readContract(config.getClient(), {
             abi: [{
@@ -276,7 +276,7 @@ export function useEVMPayment() {
                 const bytes = [
                     encodeAbiParameters(
                         [{ type: 'address' }, { type: 'uint256' }, { type: 'uint256' }, { type: 'bytes' }, { type: 'bool' }],
-                        ['0x0000000000000000000000000000000000000002', tokenAmount * BigInt(10000) / BigInt(10000 - 25), result.result[0] * BigInt(10250) / BigInt(10000), path, true]
+                        ['0x0000000000000000000000000000000000000002', tokenAmount * BigInt(10025) / BigInt(10000), result.result[0] * BigInt(10250) / BigInt(10000), path, true]
                     ),
                     encodeAbiParameters(
                         [{ type: 'address' }, { type: 'address' }, { type: 'uint256' }],

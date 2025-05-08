@@ -43,7 +43,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     //   return createClient({ chain, transport: http() })
     // },
     transports: {
-      [base.id]: http()
+      [base.id]: http('https://base-rpc.publicnode.com')
     }
   })
 
