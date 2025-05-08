@@ -104,7 +104,6 @@ export function useEVMPayment() {
             functionName: 'allowance',
             args: [address as Address, ROUTERS[network.name] as Address]
         })
-        // console.log(result, tokenAmount)
         return BigInt(result) >= parseUnits(String(tokenAmount * (token.name === currency.name ? 1.0025 : 1)), token.decimals)
     }
 
@@ -118,24 +117,29 @@ export function useEVMPayment() {
         if (token === null || currency === undefined)
             return
         setIsProcessing(true);
-        const estimate = await quoteAmount(true)
-        await walletClient.writeContract({
-            abi: [{
-                "name": "approve",
-                "type": "function",
-                "stateMutability": "nonpayable",
-                "inputs": [
-                    { "name": "spender", "type": "address" },
-                    { "name": "amount", "type": "uint256" }
-                ],
-                "outputs": [
-                    { "name": "", "type": "bool" }
-                ]
-            }],
-            address: token.mintAddress,
-            functionName: 'approve',
-            args: [ROUTERS[network.name] as Address, estimate]
-        } as any).catch(() => { }).finally(() => setIsProcessing(false))
+        try {
+            const estimate = await quoteAmount(true)
+            const hash = await walletClient.writeContract({
+                abi: [{
+                    "name": "approve",
+                    "type": "function",
+                    "stateMutability": "nonpayable",
+                    "inputs": [
+                        { "name": "spender", "type": "address" },
+                        { "name": "amount", "type": "uint256" }
+                    ],
+                    "outputs": [
+                        { "name": "", "type": "bool" }
+                    ]
+                }],
+                address: token.mintAddress,
+                functionName: 'approve',
+                args: [ROUTERS[network.name] as Address, estimate * BigInt(1025) / BigInt(1000)]
+            } as any)
+            await waitForTransactionReceipt(walletClient, { hash });
+        } finally {
+            setIsProcessing(false)
+        }
     }
 
     const payCoin = async () => {
@@ -182,8 +186,10 @@ export function useEVMPayment() {
             }
         } catch (error) {
             console.error("Error during payment:", error);
-            setIsBroken(true);
-            alert("Payment failed. Please try again.");
+            if (!String(error).includes("User rejected")) {
+                setIsBroken(true);
+                alert("Payment failed. Please try again.");
+            }
         } finally {
             setIsProcessing(false);
         }
