@@ -32,7 +32,7 @@ export const ConnectWalletMenu = ({
               Connect a {network} Wallet & continue
             </h2>
           </div>
-          <div className="w-full flex flex-col gap-6 mt-7">
+          <div className="w-full flex flex-col gap-4 mt-7">
             {wallets.map((wallet: any) => (
               <div
                 key={wallet.id}
@@ -45,13 +45,13 @@ export const ConnectWalletMenu = ({
                     width={20}
                     height={20}
                   />
-                  <span className="text-[15px]">{wallet.name}</span>
+                  <span className="">{wallet.name}</span>
                 </div>
                 {connectedWalletIndex === wallet.id ? (
                   <span className="text-green-500">Connecting...</span>
                 ) : (
                   <button
-                    className="bg-blue-500 text-white px-4 py-1 rounded text-[15px]"
+                    className="bg-blue-500 text-white px-4 py-1 rounded "
                     onClick={() => {
                       connectWallet(wallet.id);
                     }}
@@ -86,7 +86,7 @@ export const ConnectWalletMenu = ({
               Connect a {network} Wallet & continue
             </h2>
           </div>
-          <div className="w-full flex flex-col gap-6 mt-7">
+          <div className="w-full flex flex-col gap-4 mt-7">
             {wallets.map((wallet: any) => (
               <div
                 key={wallet.id}
@@ -96,16 +96,16 @@ export const ConnectWalletMenu = ({
                   <Image
                     src={wallet.image}
                     alt={wallet.name}
-                    width={30}
-                    height={30}
+                    width={22}
+                    height={22}
                   />
-                  <span className="text-[17px]">{wallet.name}</span>
+                  <span className="">{wallet.name}</span>
                 </div>
                 {connectedWalletIndex === wallet.id ? (
                   <span className="text-green-500">connecting...</span>
                 ) : (
                   <button
-                    className="bg-blue-500 text-white px-4 py-1 rounded text-[17px]"
+                    className="bg-blue-500 text-white px-4 py-1 rounded "
                     onClick={() => connectWallet(wallet.id)}
                   >
                     Connect

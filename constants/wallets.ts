@@ -53,6 +53,16 @@ const BaseWallets = [
     name: "Trust",
     image: "/assets/images/wallets/Solana/trust.svg",
   },
+  {
+    id: 3,
+    name: "Backpack",
+    image: "/assets/images/wallets/Solana/backpack.png",
+  },
+  {
+    id: 4,
+    name: "Phantom",
+    image: "/assets/images/wallets/Solana/phantom.svg",
+  },
 ];
 
 export const AllWallets = [
