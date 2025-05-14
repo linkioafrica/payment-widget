@@ -156,13 +156,13 @@ export function useEVMPayment() {
                 return
 
             const merchantAddress = data?.transactions?.merchant_address;
-            const route = routes.find(r => r[0] === token.name && r[r.length - 1] === currency.name) ?? []
+            const route = routes.find(r => r[0] === currency.name && r[r.length - 1] === token.name) ?? []
             const path = route.length ? encodePacked(
-                route.map(r => typeof r === 'string' ? 'address' : 'uint24').reverse(),
-                route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r)).reverse()
+                route.map(r => typeof r === 'string' ? 'address' : 'uint24'),
+                route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r))
             ) : '0x'
 
-            const tokenAmount = parseUnits(String(amount), token.decimals)
+            const tokenAmount = parseUnits(String(amount), currency.decimals)
             const hash = await walletClient.writeContract({
                 abi: abiMarket as any,
                 address: ROUTERS[network.name],
