@@ -277,7 +277,7 @@ export const Tokens = [
         mintAddress: "0x043eb4b75d0805c43d7c834902e335621983cf03",
         decimals: 18,
         image: "/assets/svg/stables/cadc.svg",
-        status: "unavailable",
+        status: "available",
       },
       {
         name: "IDRX",
@@ -317,18 +317,3 @@ export const Tokens = [
     ],
   },
 ];
-
-// {
-//   name: "MXNE",
-//   mintAddress: "0x269cae7dc59803e5c596c95756faeebb6030e0af",
-//   decimals: 6,
-//   image: "/assets/svg/stables/mxne.svg",
-//   status: "unavailable",
-// },
-// {
-//   name: "TRYB",
-//   mintAddress: "0x18bc5bcc660cf2b9ce3cd51a404afe1a0cbd3c22",
-//   decimals: 2,
-//   image: "/assets/svg/stables/tryb.svg",
-//   status: "unavailable",
-// },
