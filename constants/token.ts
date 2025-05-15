@@ -297,7 +297,7 @@ export const Tokens = [
         name: "TRYB",
         mintAddress: "0x18bc5bcc660cf2b9ce3cd51a404afe1a0cbd3c22",
         decimals: 2,
-        image: "/assets/svg/stables/idrx.svg",
+        image: "/assets/svg/stables/tryb.svg",
         status: "available",
       },
       {
