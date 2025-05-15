@@ -290,7 +290,7 @@ export const Tokens = [
         name: "MXNE",
         mintAddress: "0x269cae7dc59803e5c596c95756faeebb6030e0af",
         decimals: 6,
-        image: "/assets/svg/stablecoins/mxne.svg",
+        image: "/assets/svg/stables/mxne.svg",
         status: "available",
       },
       {
