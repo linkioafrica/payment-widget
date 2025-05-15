@@ -40,16 +40,17 @@ export const PayWithModal = ({ children }: any) => {
     setConversionLoading,
     netAndToken,
   } = usePaymentLinkMerchantContext();
+  console.log("TKAmt", tokenAmount);
 
-  const { quoteAmount } = useEVMPayment()
+  const { quoteAmount } = useEVMPayment();
 
   // Function to get swap price
   const setSelectedTokenPrice = async () => {
     try {
       if (!token) return;
       setConversionLoading(true);
-      
-      const amount = await quoteAmount()
+
+      const amount = await quoteAmount();
 
       // Round up to 2 decimal places
       setTokenAmount(amount);
@@ -183,7 +184,7 @@ export const PayWithModal = ({ children }: any) => {
                   ) : null}
                   {isBroken
                     ? "--"
-                    : `${Number(tokenAmount?.toFixed(2) || 0)}
+                    : `${Number(tokenAmount?.toFixed(6))}
                 ${token?.name} `}
                 </span>
               )}
