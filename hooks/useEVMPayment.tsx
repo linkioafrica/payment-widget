@@ -44,8 +44,19 @@ export function useEVMPayment() {
         ...tokens,
         [token.name]: token.mintAddress
     }), {}) ?? {}
-
-    const routes = ROUTES[network.name]
+    
+    const findRoute = (tokenIn: string, tokenOut: string) => {
+        const routes = [...ROUTES[network.name]]
+        const routesIn = [...routes.filter(r => r[0] === tokenIn), ...routes.filter(r => r[r.length - 1] === tokenIn).map(r => r.reverse())]
+        let route = routesIn.find(r => r[r.length - 1] === tokenOut)
+        if (route)
+            return route
+        const routesOut = [...routes.filter(r => r[r.length - 1] === tokenOut), ...routes.filter(r => r[0] === tokenOut).map(r => r.reverse())]
+        route = routesOut.find(r => r[0] === tokenIn)
+        if (route)
+            return route
+        return routesIn.flatMap(r0 => routesOut.filter(r1 => r1[0] === r0[r0.length - 1]).map(r1 => [...r0, ...r1.slice(1)])).find(Boolean)
+    }
     
     const quoteAmount = async (asBigInt?: boolean) => {
         const amount = data?.transactions?.amount;
@@ -62,7 +73,7 @@ export function useEVMPayment() {
             return amount
         }
 
-        const route = routes.find(r => r[0] === currency.name && r[r.length - 1] === token.name) ?? []
+        const route = findRoute(currency.name, token.name) ?? []
         const path = encodePacked(
             route.map(r => typeof r === 'string' ? 'address' : 'uint24'),
             route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r))
@@ -156,7 +167,7 @@ export function useEVMPayment() {
                 return
 
             const merchantAddress = data?.transactions?.merchant_address;
-            const route = routes.find(r => r[0] === currency.name && r[r.length - 1] === token.name) ?? []
+            const route = findRoute(currency.name, token.name) ?? []
             const path = route.length ? encodePacked(
                 route.map(r => typeof r === 'string' ? 'address' : 'uint24'),
                 route.map(r => typeof r === 'string' ? stables[r] as Address : Number(r))

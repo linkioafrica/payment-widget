@@ -11,28 +11,12 @@ export const ROUTERS: {[network:string]: Address} = {
 export const ROUTES: {[network:string]: (string | number)[][]} = {
     "Base": [
         ["USDC", 1, "EURC"],
-        ["BRZ", 10, "USDC", 1, "EURC"],
-        ["ZARP", 10, "USDC", 1, "EURC"],
-        ["IDRX", 10, "USDC", 1, "EURC"],
-
-        ["EURC", 1, "USDC"],
-        ["BRZ", 10, "USDC"],
-        ["ZARP", 10, "USDC"],
-        ["IDRX", 10, "USDC"],
-
         ["USDC", 10, "BRZ"],
-        ["EURC", 1, "USDC", 10, "BRZ"],
-        ["ZARP", 10, "USDC", 10, "BRZ"],
-        ["IDRX", 10, "USDC", 10, "BRZ"],
-
         ["USDC", 10, "ZARP"],
-        ["EURC", 1, "USDC", 10, "ZARP"],
-        ["BRZ", 10, "USDC", 10, "ZARP"],
-        ["IDRX", 10, "USDC", 10, "ZARP"],
-
         ["USDC", 10, "IDRX"],
-        ["EURC", 1, "USDC", 10, "IDRX"],
-        ["BRZ", 10, "USDC", 10, "IDRX"],
-        ["ZARP", 10, "USDC", 10, "IDRX"],
+        ["USDC", 10, "CADC"],
+        ["USDC", 10, "MXNE"],
+        ["USDC", 10, "TRYB"],
+        ["USDC", 10, "NZDD"],
     ]
 }
