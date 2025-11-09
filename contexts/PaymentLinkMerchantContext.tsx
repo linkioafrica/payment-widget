@@ -49,13 +49,16 @@ const PaymentLinkMerchantContext = createContext<
 
 export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [trx, setTrx] = useState<string | null>(null);
+  console.log("trx", trx);
 
   const { data, loading, error } = useFetchLinkDetails(trx);
+  console.log("data-1", data);
+
 
   const [paywith, setPaywith] = useState("stablecoin");
   const [conversionLoading, setConversionLoading] = useState(false);
   const [token, setToken] = useState<Stable | null>(null);
-  const [network, setNetwork] = useState(Networks[0]);
+  const [network, setNetwork] = useState(Networks[3]);
   const [tokenAmount, setTokenAmount] = useState(0);
   const [currency, setCurrency] = useState(
     fiatCurrency.filter((currency) => currency.status == "available")[0]
@@ -73,12 +76,16 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
+      console.log("searchParams", searchParams);
       const trxValue = searchParams.get("trx");
+      console.log("trxValue", trxValue);
       setTrx(trxValue);
     }
   }, []);
   useEffect(() => {
     if (data && data.status != 403) {
+      console.log("data-2", data);
+
       const cur_net = data.transactions.merchant_network;
       const cur_currency = data.transactions.currency;
       // const matchedNetwork = Tokens.find(

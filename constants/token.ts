@@ -78,6 +78,14 @@ export const Networks = [
     chainId: 8543,
     flag: "/assets/svg/networks/base.svg",
   },
+  {
+    id: 4,
+    name: "Xrpl",
+    label: "Xrpl",
+    chainId: 14,
+    flag: "/assets/svg/networks/xrpl.svg",
+  },
+
 ];
 
 export const Tokens = [
@@ -313,6 +321,26 @@ export const Tokens = [
         decimals: 6,
         image: "/assets/svg/stables/nzdd.svg",
         status: "unavailable",
+      },
+    ],
+  },
+  {
+    id: 4,
+    network: "Xrpl",
+    stables: [
+      {
+        name: "RLUSD",
+        mintAddress: "rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De",
+        decimals: 6,
+        image: "/assets/svg/stables/rlusd.svg",
+        status: "available",
+      },
+      {
+        name: "NGNC",
+        mintAddress: "rHVWgnmdZhLAEpQcVNMaGxk8JdRuwuaha8",
+        decimals: 6,
+        image: "/assets/svg/stables/ngnc.svg",
+        status: "available",
       },
     ],
   },

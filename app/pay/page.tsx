@@ -37,6 +37,8 @@ export default function Home() {
     setIsBroken,
     trx,
   } = usePaymentLinkMerchantContext();
+
+  console.log("trx", trx, data);
   const router = useRouter();
 
   // Functions

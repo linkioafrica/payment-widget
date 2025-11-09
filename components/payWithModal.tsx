@@ -40,7 +40,6 @@ export const PayWithModal = ({ children }: any) => {
     setConversionLoading,
     netAndToken,
   } = usePaymentLinkMerchantContext();
-  console.log("TKAmt", tokenAmount);
 
   const { quoteAmount } = useEVMPayment();
 

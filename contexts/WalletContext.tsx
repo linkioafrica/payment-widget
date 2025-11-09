@@ -35,9 +35,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       coinbaseWallet(),
       metaMask(),
       // injected(),
-      walletConnect({
-        projectId: '',
-      }),
+      // walletConnect({
+      //   projectId: '',
+      // }),
     ],
     // client({ chain }) {
     //   return createClient({ chain, transport: http() })
