@@ -80,7 +80,7 @@ export const Networks = [
   },
   {
     id: 4,
-    name: "Xrpl",
+    name: "xrpl",
     label: "Xrpl",
     chainId: 14,
     flag: "/assets/svg/networks/xrpl.svg",
@@ -326,7 +326,7 @@ export const Tokens = [
   },
   {
     id: 4,
-    network: "Xrpl",
+    network: "xrpl",
     stables: [
       {
         name: "RLUSD",
