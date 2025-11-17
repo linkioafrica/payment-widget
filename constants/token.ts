@@ -335,13 +335,13 @@ export const Tokens = [
         image: "/assets/svg/stables/rlusd.svg",
         status: "available",
       },
-      {
-        name: "NGNC",
-        mintAddress: "rHVWgnmdZhLAEpQcVNMaGxk8JdRuwuaha8",
-        decimals: 6,
-        image: "/assets/svg/stables/ngnc.svg",
-        status: "available",
-      },
+      // {
+      //   name: "NGNC",
+      //   mintAddress: "rHVWgnmdZhLAEpQcVNMaGxk8JdRuwuaha8",
+      //   decimals: 6,
+      //   image: "/assets/svg/stables/ngnc.svg",
+      //   status: "available",
+      // },
     ],
   },
 ];
