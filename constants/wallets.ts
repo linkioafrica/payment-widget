@@ -81,7 +81,6 @@ const XrplWallets = [
     image: "/assets/images/wallets/xrpl/osm.png",
   },
 ];
-
 export const AllWallets = [
   {
     id: 0,
