@@ -51,6 +51,7 @@ export const useXrplPayment = () => {
         setIsConfirming,
         setIsSuccessful,
         setTransactionLink,
+        setStablecoinPaymentMethod,
     } = usePaymentLinkMerchantContext();
 
     // CrossMark SDK Instance
@@ -124,6 +125,7 @@ export const useXrplPayment = () => {
                 setWalletConnected(true);
                 setConnectedWalletIndex(GEMWALLET_ID);
                 setWalletAdapter(createFakeAdapter(GEMWALLET_ID));
+                setStablecoinPaymentMethod("");
             } else {
                 setConnectedWalletIndex(-1);
             }
@@ -151,6 +153,7 @@ export const useXrplPayment = () => {
                 setWalletConnected(true);
                 setConnectedWalletIndex(CROSSMARK_ID);
                 setWalletAdapter(createFakeAdapter(CROSSMARK_ID));
+                setStablecoinPaymentMethod("");
             } else {
                 setConnectedWalletIndex(-1);
             }
