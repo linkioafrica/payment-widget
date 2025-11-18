@@ -90,14 +90,14 @@ export const DisconnectWallet = () => {
                     className="w-full border whitespace-nowrap text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-2 rounded-lg"
                     onClick={
                       isCopied
-                        ? () => {}
+                        ? () => { }
                         : () => {
-                            setIsCopied(true);
-                            copyToClipboard(walletAddress);
-                            setTimeout(() => {
-                              setIsCopied(false);
-                            }, 750);
-                          }
+                          setIsCopied(true);
+                          copyToClipboard(walletAddress);
+                          setTimeout(() => {
+                            setIsCopied(false);
+                          }, 750);
+                        }
                     }
                   >
                     {Icons.copyOutlined}
@@ -139,12 +139,20 @@ export const DisconnectWallet = () => {
               </div>
               <div className="h-full flex flex-col justify-between w-full">
                 <div className="w-full flex justify-center flex-col items-center gap-2">
-                  <Image
-                    src={walletAdapter.icon}
-                    alt="Disconnect Logo"
-                    width={75}
-                    height={75}
-                  ></Image>
+                  {walletAdapter?.icon && ( // <--- CONDITIONALLY RENDER
+                    <Image
+                      src={walletAdapter.icon} // walletAdapter is a Solana adapter here, which has the icon property
+                      alt="Wallet Icon"
+                      width={75}
+                      height={75}
+                    ></Image>
+                  )}
+                  {!walletAdapter?.icon && (
+                    <div className="w-[75px] h-[75px] bg-[#1B1F2D] rounded-full flex items-center justify-center">
+                      {/* You could put a generic Icon here */}
+                      {Icons.disconnect}
+                    </div>
+                  )}
                   <h3 className="text-white font-semibold">
                     {truncateMiddle(walletAddress, 5, 5)}
                   </h3>
@@ -161,14 +169,14 @@ export const DisconnectWallet = () => {
                     className="w-full border whitespace-nowrap text-white border-[#DEDEDE] flex items-center py-2 gap-2 px-2 rounded-lg"
                     onClick={
                       isCopied
-                        ? () => {}
+                        ? () => { }
                         : () => {
-                            setIsCopied(true);
-                            copyToClipboard(walletAddress);
-                            setTimeout(() => {
-                              setIsCopied(false);
-                            }, 750);
-                          }
+                          setIsCopied(true);
+                          copyToClipboard(walletAddress);
+                          setTimeout(() => {
+                            setIsCopied(false);
+                          }, 750);
+                        }
                     }
                   >
                     {Icons.copyOutlined}

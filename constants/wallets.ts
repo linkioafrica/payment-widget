@@ -69,18 +69,18 @@ const XrplWallets = [
   {
     id: 0,
     name: "GemWallet",
-    image: "/assets/images/wallets/xrpl/gemwallet.svg",
+    image: "/assets/images/wallets/xrpl/gemwallet.png",
   },
   {
     id: 1,
     name: "Crossmark Wallet",
     image: "/assets/images/wallets/xrpl/crossmark.webp",
   },
-  {
-    id: 2,
-    name: "Osm Wallet",
-    image: "/assets/images/wallets/xrpl/osm.png",
-  },
+  // {
+  //   id: 2,
+  //   name: "Osm Wallet",
+  //   image: "/assets/images/wallets/xrpl/osm.png",
+  // },
 ];
 
 export const AllWallets = [

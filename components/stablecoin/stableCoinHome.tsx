@@ -9,10 +9,14 @@ import { ConnectWalletMenu } from "./Components/connectWalletMenu";
 import { AllWallets } from "@/constants/wallets";
 import { useSolanaPayment } from "@/hooks/useSolanaPayment";
 import { useEVMPayment } from "@/hooks/useEVMPayment";
+import { useXrplPayment } from "@/hooks/useXRPLPayment";
 
 function usePayment(network: any) {
   const evm = useEVMPayment();
   const sol = useSolanaPayment();
+  const xrpl = useXrplPayment();
+  if (network.id === 4)
+    return xrpl
   if (network.id === 1)
     return sol
   return evm
@@ -59,11 +63,10 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[170px] mt-3 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
-                selectedMethod === "qrCode"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[70px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${selectedMethod === "qrCode"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => {
                 // setSelectedMethod("qrCode")
                 // dark:hover:border-[#9F9F9F] hover:border-black
@@ -89,11 +92,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "qrCode"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "qrCode"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "qrCode" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -103,11 +105,10 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
-                selectedMethod === "wallet"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[70px] px-4 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${selectedMethod === "wallet"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => setSelectedMethod("wallet")}
             >
               <div className="flex items-center gap-2">
@@ -133,11 +134,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "wallet"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "wallet"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "wallet" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -157,15 +157,15 @@ export const StableCoinHome = () => {
               onClick={
                 selectedMethod == "qrCode"
                   ? () => {
-                      setStablecoinPaymentMethod("qrCode");
-                    }
+                    setStablecoinPaymentMethod("qrCode");
+                  }
                   : isConnected
                     ? () => {
-                        payCoin();
-                      }
+                      payCoin();
+                    }
                     : () => {
-                        setStablecoinPaymentMethod("wallet");
-                      }
+                      setStablecoinPaymentMethod("wallet");
+                    }
               }
             >
               {selectedMethod == "qrCode"
@@ -204,11 +204,10 @@ export const StableCoinHome = () => {
 
           <div className="w-full min-h-[150px] mt-5 flex flex-col gap-5">
             <label
-              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${
-                selectedMethod === "qrCode"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[50px] px-4 opacity-50 justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:border-[#242425] dark:bg-[#141415] w-full rounded-lg dark:text-[#F9F9F9] text-black  ${selectedMethod === "qrCode"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => {
                 // setSelectedMethod("qrCode")
                 // dark:hover:border-[#9F9F9F] hover:border-black
@@ -234,11 +233,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "qrCode"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "qrCode"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "qrCode" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -248,11 +246,10 @@ export const StableCoinHome = () => {
             </label>
 
             <label
-              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${
-                selectedMethod === "wallet"
-                  ? "border-black dark:border-[#9F9F9F]"
-                  : ""
-              }`}
+              className={`flex flex-row h-[50px] px-4 cursor-pointer justify-between border-[0.8px] items-center border-[#E2E3E7] bg-[#F3F3F3] dark:hover:border-[#9F9F9F] dark:border-[#242425] dark:bg-[#141415] w-full text-black rounded-lg dark:text-[#F9F9F9] hover:border-black ${selectedMethod === "wallet"
+                ? "border-black dark:border-[#9F9F9F]"
+                : ""
+                }`}
               onClick={() => setSelectedMethod("wallet")}
             >
               <div className="flex items-center gap-2">
@@ -278,11 +275,10 @@ export const StableCoinHome = () => {
                 />
                 {/* Custom radio button styling */}
                 <div
-                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${
-                    selectedMethod === "wallet"
-                      ? "border-black dark:border-[#9F9F9F]"
-                      : "border-gray-400 dark:border-[#242425]"
-                  }`}
+                  className={`w-3 h-3 rounded-full border-[1px]  flex items-center justify-center ${selectedMethod === "wallet"
+                    ? "border-black dark:border-[#9F9F9F]"
+                    : "border-gray-400 dark:border-[#242425]"
+                    }`}
                 >
                   <div
                     className={`w-1.5 h-1.5  rounded-full ${selectedMethod === "wallet" ? "bg-black dark:bg-[#9F9F9F]" : "dark:bg-[#242425] bg-[#9F9F9F]"}`}
@@ -302,18 +298,18 @@ export const StableCoinHome = () => {
               onClick={
                 selectedMethod == "qrCode"
                   ? () => {
-                      setStablecoinPaymentMethod("qrCode");
-                    }
+                    setStablecoinPaymentMethod("qrCode");
+                  }
                   : isConnected
                     ? () => {
-                        if (!approved && approve)
-                          approve().then(() => setApproved(true))
-                        else
-                          payCoin();
-                      }
+                      if (!approved && approve)
+                        approve().then(() => setApproved(true))
+                      else
+                        payCoin();
+                    }
                     : () => {
-                        setStablecoinPaymentMethod("wallet");
-                      }
+                      setStablecoinPaymentMethod("wallet");
+                    }
               }
             >
               {selectedMethod == "qrCode"

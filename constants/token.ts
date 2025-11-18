@@ -336,7 +336,7 @@ export const Tokens = [
         status: "available",
       },
       {
-        name: "NGNC",
+        name: "NGN",
         mintAddress: "rHVWgnmdZhLAEpQcVNMaGxk8JdRuwuaha8",
         decimals: 6,
         image: "/assets/svg/stables/ngnc.svg",
