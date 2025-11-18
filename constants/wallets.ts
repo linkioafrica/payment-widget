@@ -64,7 +64,6 @@ const BaseWallets = [
   //   image: "/assets/images/wallets/Solana/phantom.svg",
   // },
 ];
-
 const XrplWallets = [
   {
     id: 0,
@@ -82,7 +81,6 @@ const XrplWallets = [
   //   image: "/assets/images/wallets/xrpl/osm.png",
   // },
 ];
-
 export const AllWallets = [
   {
     id: 0,
