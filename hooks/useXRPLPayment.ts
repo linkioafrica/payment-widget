@@ -27,29 +27,7 @@ interface TokenDetails {
     decimals: number;
 }
 
-function convertPaymentIdToDestinationTag(paymentId: string | number): number {
-    try {
-        // Convert to string if number
-        const paymentIdStr = String(paymentId);
 
-        // Hash the payment ID using SHA-256
-        const hash = crypto
-            .createHash('sha256')
-            .update(paymentIdStr)
-            .digest();
-
-        // Read first 4 bytes as unsigned 32-bit integer
-        const destinationTag = hash.readUInt32BE(0);
-
-        // Ensure it's in valid range (0 to 4,294,967,295)
-        return Math.min(destinationTag, 4294967295);
-    } catch (error) {
-        console.error("Error converting payment ID to destination tag:", error);
-        // Fallback: use modulo of the numeric value
-        const numericId = parseInt(String(paymentId).replace(/\D/g, '')) || 0;
-        return numericId % 4294967295;
-    }
-}
 
 export const useXrplPayment = () => {
     // Local State
@@ -228,34 +206,60 @@ export const useXrplPayment = () => {
         try {
             let transactionResult = null;
             setIsConfirming(true);
-            const destinationTag = trx ? convertPaymentIdToDestinationTag(trx) : undefined;
+
+            // ✅ Use payment ID directly in memo (no encoding needed!)
+            const memoData = trx ? String(trx) : undefined;
+
             if (currentWalletId === GEMWALLET_ID) {
                 // GEMWALLET PAYMENT
-                // const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: trx ?? "" };
-                const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: destinationTag };
+                const payload: any = {
+                    amount: tokenAmountObject,
+                    destination: merchantAddress,
+                };
+
+                // ✅ Add memo with actual payment ID
+                if (memoData) {
+                    payload.memos = [
+                        {
+                            memo: {
+                                memoData: memoData,  // ✅ Direct payment ID
+                            },
+                        },
+                    ];
+                }
+
+                console.log("GemWallet Payload:", payload);
                 const response = await sendGemPayment(payload);
                 transactionResult = response.result?.hash;
 
             } else if (currentWalletId === CROSSMARK_ID) {
-                // CROSSMARK PAYMENT: Use documentation object literal style
+                // CROSSMARK PAYMENT
                 if (!userAddress) throw new Error("Wallet address is missing for CrossMark transaction.");
 
                 if (tokenAmountObject.currency === "RLUSD") {
                     tokenAmountObject.currency = "524C555344000000000000000000000000000000";
                 }
-                const txPayload = {
+
+                const txPayload: any = {
                     TransactionType: 'Payment' as const,
-                    // Use the connected address as shown in the CrossMark documentation
                     Account: userAddress,
                     Destination: merchantAddress,
                     Amount: tokenAmountObject,
-                    DestinationTag: destinationTag
                 };
 
-                // Use the documented signAndSubmitAndWait method
-                const response = await crossmarkSdk.async.signAndSubmitAndWait(txPayload);
+                // ✅ Add memo with actual payment ID
+                if (memoData) {
+                    txPayload.Memos = [
+                        {
+                            Memo: {
+                                MemoData: memoData,  // ✅ Direct payment ID
+                            },
+                        },
+                    ];
+                }
 
-                // Access the hash as documented: response.response.data.resp.result.hash
+                console.log("CrossMark Payload:", txPayload);
+                const response = await crossmarkSdk.async.signAndSubmitAndWait(txPayload);
                 transactionResult = response.response?.data?.resp?.result?.hash;
 
             } else {
