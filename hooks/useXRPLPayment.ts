@@ -9,6 +9,7 @@ import {
 // --- CrossMark Imports ---
 import sdk from '@crossmarkio/sdk';
 
+import crypto from 'crypto';
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useWalletContext } from "@/contexts/WalletContext";
 
@@ -24,6 +25,30 @@ interface TokenDetails {
     name: string;
     mintAddress: string;
     decimals: number;
+}
+
+function convertPaymentIdToDestinationTag(paymentId: string | number): number {
+    try {
+        // Convert to string if number
+        const paymentIdStr = String(paymentId);
+
+        // Hash the payment ID using SHA-256
+        const hash = crypto
+            .createHash('sha256')
+            .update(paymentIdStr)
+            .digest();
+
+        // Read first 4 bytes as unsigned 32-bit integer
+        const destinationTag = hash.readUInt32BE(0);
+
+        // Ensure it's in valid range (0 to 4,294,967,295)
+        return Math.min(destinationTag, 4294967295);
+    } catch (error) {
+        console.error("Error converting payment ID to destination tag:", error);
+        // Fallback: use modulo of the numeric value
+        const numericId = parseInt(String(paymentId).replace(/\D/g, '')) || 0;
+        return numericId % 4294967295;
+    }
 }
 
 export const useXrplPayment = () => {
@@ -125,7 +150,7 @@ export const useXrplPayment = () => {
                 setWalletAddress(addressResponse.result.address);
                 setWalletConnected(true);
                 setConnectedWalletIndex(GEMWALLET_ID);
-                setWalletAdapter(createFakeAdapter(GEMWALLET_ID)); 
+                setWalletAdapter(createFakeAdapter(GEMWALLET_ID));
                 setStablecoinPaymentMethod("");
             } else {
                 setConnectedWalletIndex(-1);
@@ -203,11 +228,11 @@ export const useXrplPayment = () => {
         try {
             let transactionResult = null;
             setIsConfirming(true);
-
+            const destinationTag = trx ? convertPaymentIdToDestinationTag(trx) : undefined;
             if (currentWalletId === GEMWALLET_ID) {
                 // GEMWALLET PAYMENT
                 // const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: trx ?? "" };
-                const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: trx ? parseInt(trx) : undefined };
+                const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: destinationTag };
                 const response = await sendGemPayment(payload);
                 transactionResult = response.result?.hash;
 
@@ -224,7 +249,7 @@ export const useXrplPayment = () => {
                     Account: userAddress,
                     Destination: merchantAddress,
                     Amount: tokenAmountObject,
-                    DestinationTag: trx ? parseInt(trx) : undefined
+                    DestinationTag: destinationTag
                 };
 
                 // Use the documented signAndSubmitAndWait method
