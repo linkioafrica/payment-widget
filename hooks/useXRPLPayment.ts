@@ -125,7 +125,7 @@ export const useXrplPayment = () => {
                 setWalletAddress(addressResponse.result.address);
                 setWalletConnected(true);
                 setConnectedWalletIndex(GEMWALLET_ID);
-                setWalletAdapter(createFakeAdapter(GEMWALLET_ID));
+                setWalletAdapter(createFakeAdapter(GEMWALLET_ID)); 
                 setStablecoinPaymentMethod("");
             } else {
                 setConnectedWalletIndex(-1);
