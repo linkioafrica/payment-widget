@@ -48,6 +48,7 @@ export const useXrplPayment = () => {
         token,
         data,
         tokenAmount,
+        trx,
         setIsConfirming,
         setIsSuccessful,
         setTransactionLink,
@@ -205,7 +206,8 @@ export const useXrplPayment = () => {
 
             if (currentWalletId === GEMWALLET_ID) {
                 // GEMWALLET PAYMENT
-                const payload = { amount: tokenAmountObject, destination: merchantAddress };
+                // const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: trx ?? "" };
+                const payload = { amount: tokenAmountObject, destination: merchantAddress, destinationTag: trx ? parseInt(trx) : undefined };
                 const response = await sendGemPayment(payload);
                 transactionResult = response.result?.hash;
 
@@ -222,6 +224,7 @@ export const useXrplPayment = () => {
                     Account: userAddress,
                     Destination: merchantAddress,
                     Amount: tokenAmountObject,
+                    DestinationTag: trx ? parseInt(trx) : undefined
                 };
 
                 // Use the documented signAndSubmitAndWait method
