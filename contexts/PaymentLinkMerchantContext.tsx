@@ -49,10 +49,10 @@ const PaymentLinkMerchantContext = createContext<
 
 export const PaymentLinkMerchantProvider = ({ children }: any) => {
   const [trx, setTrx] = useState<string | null>(null);
-  console.log("trx", trx);
+  // console.log("trx", trx);
 
   const { data, loading, error } = useFetchLinkDetails(trx);
-  console.log("data-1", data);
+  // console.log("data-1", data);
 
 
   const [paywith, setPaywith] = useState("stablecoin");
@@ -76,15 +76,15 @@ export const PaymentLinkMerchantProvider = ({ children }: any) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
-      console.log("searchParams", searchParams);
+      // console.log("searchParams", searchParams);
       const trxValue = searchParams.get("trx");
-      console.log("trxValue", trxValue);
+      // console.log("trxValue", trxValue);
       setTrx(trxValue);
     }
   }, []);
   useEffect(() => {
     if (data && data.status != 403) {
-      console.log("data-2", data);
+      // console.log("data-2", data);
 
       const cur_net = data.transactions.merchant_network;
       const cur_currency = data.transactions.currency;

@@ -14,6 +14,7 @@ import axios from "axios";
 import { Tokens } from "@/constants/token";
 import { useSolanaPayment } from "@/hooks/useSolanaPayment";
 import { useEVMPayment } from "@/hooks/useEVMPayment";
+import { useXrplPayment } from "@/hooks/useXRPLPayment"; // ✅ NEW: Import XRPL
 
 export const PayWithModal = ({ children }: any) => {
   const { isMobile } = useDevice();
@@ -41,7 +42,24 @@ export const PayWithModal = ({ children }: any) => {
     netAndToken,
   } = usePaymentLinkMerchantContext();
 
-  const { quoteAmount } = useEVMPayment();
+  // ✅ NEW: Get hooks for all networks
+  const { quoteAmount: quoteAmountEVM } = useEVMPayment();
+  const { quoteAmount: quoteAmountXrpl } = useXrplPayment();
+  const { quoteAmount: quoteAmountSolana } = useSolanaPayment();
+
+  // ✅ NEW: Get the right quoteAmount based on network
+  const getQuoteAmount = () => {
+    if (network?.id === 4) {
+      // XRPL
+      return quoteAmountXrpl;
+    } else if (network?.id === 1) {
+      // Solana
+      return quoteAmountSolana;
+    } else {
+      // EVM (Base, Polygon, etc.)
+      return quoteAmountEVM;
+    }
+  };
 
   // Function to get swap price
   const setSelectedTokenPrice = async () => {
@@ -49,8 +67,10 @@ export const PayWithModal = ({ children }: any) => {
       if (!token) return;
       setConversionLoading(true);
 
+      // ✅ NEW: Call the right quoteAmount for the network
+      const quoteAmount = getQuoteAmount();
       const amount = await quoteAmount();
-
+      console.log("amount", amount);
       // Round up to 2 decimal places
       setTokenAmount(amount);
     } catch (error) {
@@ -59,6 +79,7 @@ export const PayWithModal = ({ children }: any) => {
       setConversionLoading(false);
     }
   };
+
   useEffect(() => {
     var inputPrice = data?.transactions?.amount;
     // console.log("amount=" + inputPrice);
@@ -80,7 +101,8 @@ export const PayWithModal = ({ children }: any) => {
       await setSelectedTokenPrice();
     };
     fetchTokenAmount();
-  }, [token]);
+  }, [token, network]); // ✅ NEW: Add network as dependency
+
   if (isMobile) {
     return (
       <div className="flex-grow  bg-white dark:bg-[#101113] px-5 pt-6 pb-3 flex-col relative ">
@@ -224,8 +246,8 @@ export const PayWithModal = ({ children }: any) => {
           <div className="flex gap-4">
             {paywith == "miniPay" ? null : isConfirming ||
               isSuccessful ? null : paywith == "stablecoin" ? (
-              <TokensDropDown disabled={isBroken}></TokensDropDown>
-            ) : (
+                <TokensDropDown disabled={isBroken}></TokensDropDown>
+              ) : (
               <CurrencyDropDown></CurrencyDropDown>
             )}
 
