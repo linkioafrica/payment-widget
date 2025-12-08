@@ -1,7 +1,7 @@
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { CurrencyDropDown } from "./currencyDropDown";
 import { Icons } from "@/app/icons";
-import { TokensDropDown } from "./tokenDropDown";
+import { NetworkFlagButton, TokensDropDown } from "./tokenDropDown";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useDevice } from "@/contexts/DeviceContext";
@@ -251,15 +251,7 @@ export const PayWithModal = ({ children }: any) => {
               <CurrencyDropDown></CurrencyDropDown>
             )}
 
-            <div className="px-1 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] flex items-center justify-center rounded-md dark:border-[#242425] dark:hover:border-white">
-              <Image
-                src={network.flag}
-                alt={"flag"}
-                width={15}
-                height={15}
-                priority
-              />
-            </div>
+            <NetworkFlagButton network={network}></NetworkFlagButton>
 
             <button
               className="px-2 py-1 border border-[#E2E3E7] hover:border-black text-[#545454] rounded-md dark:border-[#242425] dark:hover:border-white"

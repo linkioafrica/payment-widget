@@ -360,7 +360,7 @@ export const Tokens = [
         name: "EUROP",
         mintAddress: "rMkEuRii9w9uBMQDnWV5AA43gvYZR9JxVK",
         decimals: 6,
-        image: "/assets/svg/stables/eurc.svg",
+        image: "/assets/svg/stables/europ.svg",
         status: "available",
       },
       {
