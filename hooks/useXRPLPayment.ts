@@ -12,6 +12,8 @@ import sdk from '@crossmarkio/sdk';
 import crypto from 'crypto';
 import { usePaymentLinkMerchantContext } from "@/contexts/PaymentLinkMerchantContext";
 import { useWalletContext } from "@/contexts/WalletContext";
+// Add the XRPL Client
+import { Client, convertStringToHex, BookOffersResponse } from 'xrpl';
 
 // Wallet IDs and Constants
 const GEMWALLET_ID = 0;
@@ -20,22 +22,14 @@ const CROSSMARK_ID = 1;
 const GEMWALLET_ICON_URL = "assets/images/wallets/xrpl/gemwallet.svg";
 const CROSSMARK_ICON_URL = "assets/images/wallets/xrpl/crossmark.svg";
 
-// ✅ ROUTE CONFIGURATION (Like Solana/EVM)
-export const XRPL_ROUTES: { [network: string]: (string | number)[][] } = {
-    "XRPL": [
-        ["NGN", 0.0019, "RLUSD"],      // 1 NGN = 0.0019 RLUSD
-        ["USDC", 1.0, "RLUSD"],        // 1 USDC = 1 RLUSD
-        ["XSGD", 0.75, "RLUSD"],       // 1 XSGD = 0.75 RLUSD
-        ["EUROP", 1.1, "RLUSD"],       // 1 EUROP = 1.1 RLUSD
-        ["AUDD", 0.68, "RLUSD"],       // 1 AUDD = 0.68 RLUSD
-        ["RLUSD", 1.0, "RLUSD"],       // 1 RLUSD = 1 RLUSD (no swap)
-    ]
-};
+// New Constant: XRPL Public Server
+const PUBLIC_SERVER = "wss://xrplcluster.com/";
+const RLUSD_ISSUER = "rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De"; // Your RLUSD issuer
 
 // ✅ RLUSD Token Configuration
 const RLUSD_CONFIG = {
     currency: "RLUSD",
-    issuer: "rN7n7otQDd6FczFgLdlqtyMVrDj5d3o8z",
+    issuer: RLUSD_ISSUER,
     decimals: 6,
     hexCurrency: "524C555344000000000000000000000000000000",
 };
@@ -44,7 +38,9 @@ interface TokenDetails {
     name: string;
     mintAddress: string;
     decimals: number;
+    hexCurrency?: string; // Required for non-standard 3-char codes
 }
+
 
 export const useXrplPayment = () => {
     // Local State
@@ -67,7 +63,7 @@ export const useXrplPayment = () => {
     const {
         token,
         data,
-        tokenAmount,
+        tokenAmount, // This should eventually be set to the required source amount
         trx,
         setIsConfirming,
         setIsSuccessful,
@@ -87,7 +83,6 @@ export const useXrplPayment = () => {
             // GemWallet Check
             try {
                 const response = await isGemInstalled();
-                console.log("Response from GemWallet:", response);
                 setIsWalletInstalled(response.result?.isInstalled || false);
             } catch (error) {
                 console.error("Error checking GemWallet:", error);
@@ -194,79 +189,137 @@ export const useXrplPayment = () => {
     };
 
     // ============================================================================
-    // 4. ✅ Find Route (Like EVM)
+    // 4. ✅ Real-Time Exchange Rate Fetch
     // ============================================================================
-    const findRoute = (sourceTokenName?: string): (string | number)[] | null => {
+    const getCurrencyCodeForAPI = (currencyName: string): string => {
+        const cleanName = currencyName.toUpperCase().trim();
+
+        if (cleanName.length === 3) {
+            return cleanName;
+        }
+
         try {
-            const tokenName = sourceTokenName || token?.name;
+            let hex = convertStringToHex(cleanName);
 
-            if (!tokenName) {
-                console.error("No token name provided");
-                return null;
+            // Ensure padding to 40 characters for non-standard codes
+            if (hex.length < 40) {
+                hex = hex.padEnd(40, '0');
             }
 
-            const networkName = network?.name || "XRPL";
-            const routes = XRPL_ROUTES[networkName] || XRPL_ROUTES["XRPL"];
-
-            // Find route that matches source token
-            const route = routes.find(
-                (r) => String(r[0]).toUpperCase() === String(tokenName).toUpperCase()
-            );
-
-            if (!route) {
-                console.warn(`No route found for token: ${tokenName}`);
-                return null;
-            }
-
-            console.log(`Found route: ${route[0]} → ${route[2]} (rate: ${route[1]})`);
-            return route;
-        } catch (error) {
-            console.error("Error finding route:", error);
-            return null;
+            return hex;
+        } catch (e) {
+            console.error(`Failed to convert and pad currency ${cleanName} to hex:`, e);
+            throw new Error(`Invalid currency code: ${cleanName}`);
         }
     };
 
-    // ============================================================================
-    // 5. ✅ Quote Amount (Like EVM - Convert to RLUSD)
-    // ============================================================================
-    const quoteAmount = async () => {
+    const fetchExchangeRate = async (sourceCurrency: string, sourceIssuer: string): Promise<number> => {
+        if (sourceCurrency.toUpperCase() === RLUSD_CONFIG.currency) {
+            return 1.0;
+        }
+        if (!sourceIssuer) {
+            throw new Error(`Issuer is missing for token: ${sourceCurrency}`);
+        }
+
+        const currencyCodeForAPI = getCurrencyCodeForAPI(sourceCurrency);
+
+        const client = new Client(PUBLIC_SERVER);
+        await client.connect();
+
         try {
-            if (!token || !tokenAmount) {
+            const request: any = {
+                command: "book_offers",
+                taker_pays: {
+                    currency: currencyCodeForAPI,
+                    issuer: sourceIssuer,
+                },
+                taker_gets: {
+                    currency: RLUSD_CONFIG.hexCurrency, // ✅ FIX: Use hex code for RLUSD in API call
+                    issuer: RLUSD_CONFIG.issuer,
+                },
+                limit: 1,
+            };
+
+            const response = await client.request(request) as BookOffersResponse;
+
+            if (response.result?.offers && response.result.offers.length > 0) {
+                const bestOffer = response.result.offers[0];
+                const takerPays = bestOffer.TakerPays;
+                const takerGets = bestOffer.TakerGets;
+
+                const RLUSDValue = Number(takerGets.value);
+
+                if (typeof takerPays === 'string') {
+                    throw new Error(`Unexpected XRP as TakerPays for token ${sourceCurrency}.`);
+                }
+                const sourceValue = Number(takerPays.value);
+
+                const rate = RLUSDValue / sourceValue;
+
+                if (isNaN(rate) || rate <= 0) {
+                    throw new Error(`Calculated invalid rate for ${sourceCurrency}: ${rate}`);
+                }
+
+                console.log(`Real-Time Rate for ${sourceCurrency} -> RLUSD: ${rate}`);
+                return rate;
+
+            } else {
+                console.warn(`No active offers found for ${sourceCurrency} -> RLUSD. Using fallback rate (0).`);
                 return 0;
             }
 
-            // Find route for current token
-            const route = findRoute(token.name);
-
-            if (!route) {
-                console.error(`No route found for ${token.name}`);
-                return tokenAmount;
-            }
-
-            // route[1] is the exchange rate
-            const exchangeRate = Number(route[1]);
-
-            // Convert to RLUSD (what merchant receives)
-
-            const originalAmount = data?.transactions?.amount;  // Using original amount!
-            const rlusdAmount = originalAmount * exchangeRate;
-            return rlusdAmount;
         } catch (error) {
-            console.error("Error in quoteAmount:", error);
-            return tokenAmount;
+            console.error(`Error fetching price for ${sourceCurrency}:`, error);
+            // This is where the dstIsrMalformed error occurs if the RLUSD issuer is not funded.
+            throw new Error("Failed to fetch real-time exchange rate.");
+        } finally {
+            await client.disconnect();
         }
     };
 
     // ============================================================================
-    // 6. ✅ Pay Coin (Unified - Swap to RLUSD + Send to Merchant)
+    // 5. ✅ Quote Amount (Calculates required source token amount)
+    // ============================================================================
+    const quoteAmount = async (): Promise<number> => {
+        try {
+            if (!token || !data?.transactions?.amount) {
+                return 0;
+            }
+
+            const tokenName = token.name;
+            const targetRlusdAmount = data.transactions.amount;
+
+            if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
+                return targetRlusdAmount;
+            }
+
+            const tokenIssuer = token.mintAddress;
+
+            const exchangeRate = await fetchExchangeRate(tokenName, tokenIssuer);
+
+            if (exchangeRate <= 0) {
+                throw new Error(`Invalid or zero exchange rate for ${tokenName}.`);
+            }
+
+            const sourceTokenNeeded = targetRlusdAmount / exchangeRate;
+
+            return sourceTokenNeeded;
+        } catch (error) {
+            console.error("Error in quoteAmount:", error);
+            return 0;
+        }
+    };
+
+    // ============================================================================
+    // 6. ✅ Pay Coin (Uses Real-Time Quote)
     // ============================================================================
     const payCoin = async () => {
-        const amountToPay = tokenAmount;
+        const targetRlusdAmount = data?.transactions?.amount;
         const merchantAddress = data?.transactions?.merchant_address;
         const currentWalletId = connectedWalletIndex;
         const userAddress = walletAddress;
 
-        if (!walletConnected || !merchantAddress || !token || amountToPay <= 0) {
+        if (!walletConnected || !merchantAddress || !token || !targetRlusdAmount || targetRlusdAmount <= 0) {
             alert("Missing wallet connection or transaction details.");
             return null;
         }
@@ -274,45 +327,48 @@ export const useXrplPayment = () => {
         setIsProcessing(true);
 
         try {
-            // Step 1: Find route to get exchange rate
-            const route = findRoute(token.name);
-            if (!route) {
-                throw new Error(`No route found for ${token.name}`);
+            const tokenName = token.name;
+            const rlusdAmount = targetRlusdAmount;
+            let amountToPay: number;
+
+            // Step 1: Determine the amount of source token to pay using the real-time rate
+            if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
+                amountToPay = rlusdAmount;
+                console.log("Direct RLUSD payment (no swap needed)");
+            } else {
+                const tokenIssuer = token.mintAddress;
+                const exchangeRate = await fetchExchangeRate(tokenName, tokenIssuer);
+
+                if (exchangeRate <= 0) {
+                    throw new Error(`Invalid or zero exchange rate for ${tokenName}. Cannot proceed with swap.`);
+                }
+
+                amountToPay = rlusdAmount / exchangeRate;
+
+                console.log(`Swap Info: Target ${rlusdAmount} RLUSD requires ${amountToPay} ${tokenName}`);
             }
-
-            const exchangeRate = Number(route[1]);
-            const rlusdAmount = amountToPay * exchangeRate;
-
-            console.log(`Swap Info: ${amountToPay} ${token.name} → ${rlusdAmount} RLUSD`);
 
             let transactionResult = null;
             setIsConfirming(true);
-
             const memoData = trx ? String(trx) : undefined;
 
-            // Step 2: Check if swap is needed
-            if (token.name === "RLUSD") {
+            // Step 2 & 3: Execute Payment/Swap
+            if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
                 // Direct payment - no swap needed
-                console.log("Direct RLUSD payment (no swap needed)");
+                const paymentValue = String(amountToPay.toFixed(RLUSD_CONFIG.decimals));
 
                 if (currentWalletId === GEMWALLET_ID) {
                     const payload: any = {
                         amount: {
-                            currency: RLUSD_CONFIG.currency,
+                            currency: RLUSD_CONFIG.currency, // GemWallet may prefer the string code
                             issuer: RLUSD_CONFIG.issuer,
-                            value: String(amountToPay),
+                            value: paymentValue,
                         },
                         destination: merchantAddress,
                     };
 
                     if (memoData) {
-                        payload.memos = [
-                            {
-                                memo: {
-                                    memoData: memoData,
-                                },
-                            },
-                        ];
+                        payload.memos = [{ memo: { memoData } }];
                     }
 
                     console.log("GemWallet Payload:", payload);
@@ -327,20 +383,14 @@ export const useXrplPayment = () => {
                         Account: userAddress,
                         Destination: merchantAddress,
                         Amount: {
-                            currency: RLUSD_CONFIG.hexCurrency,
+                            currency: RLUSD_CONFIG.hexCurrency, // Use hex code for CrossMark payment
                             issuer: RLUSD_CONFIG.issuer,
-                            value: String(amountToPay),
+                            value: paymentValue,
                         },
                     };
 
                     if (memoData) {
-                        txPayload.Memos = [
-                            {
-                                Memo: {
-                                    MemoData: memoData,
-                                },
-                            },
-                        ];
+                        txPayload.Memos = [{ Memo: { MemoData: memoData } }];
                     }
 
                     console.log("CrossMark Payload:", txPayload);
@@ -349,33 +399,28 @@ export const useXrplPayment = () => {
                 }
             } else {
                 // Swap needed - Create OfferCreate then send RLUSD
+                const sourceCurrencyCode = getCurrencyCodeForAPI(tokenName);
+
                 console.log("Swap needed - Creating OfferCreate...");
 
                 const offerPayload: any = {
                     TransactionType: "OfferCreate",
                     Account: userAddress,
                     TakerPays: {
-                        currency: token.name,
+                        currency: sourceCurrencyCode,
                         issuer: token.mintAddress,
                         value: String(amountToPay.toFixed(token.decimals || 6)),
                     },
                     TakerGets: {
-                        currency: RLUSD_CONFIG.currency,
+                        currency: RLUSD_CONFIG.hexCurrency, // ✅ FIX: Use hex code for TakerGets (RLUSD)
                         issuer: RLUSD_CONFIG.issuer,
                         value: String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals)),
                     },
-                    // IOC Flag: Immediate or Cancel
                     Flags: 0x00080000,
                 };
 
                 if (memoData) {
-                    offerPayload.Memos = [
-                        {
-                            Memo: {
-                                MemoData: memoData,
-                            },
-                        },
-                    ];
+                    offerPayload.Memos = [{ Memo: { MemoData: memoData } }];
                 }
 
                 if (currentWalletId === GEMWALLET_ID) {
@@ -392,27 +437,21 @@ export const useXrplPayment = () => {
 
                     console.log("Swap successful:", transactionResult);
 
-                    // Step 3: Send RLUSD to merchant
+                    // Step 3: Send RLUSD to merchant (Payment)
                     console.log("Sending RLUSD to merchant...");
                     const paymentPayload: any = {
                         TransactionType: "Payment",
                         Account: userAddress,
                         Destination: merchantAddress,
                         Amount: {
-                            currency: RLUSD_CONFIG.currency,
+                            currency: RLUSD_CONFIG.hexCurrency, // ✅ FIX: Use hex code for Payment
                             issuer: RLUSD_CONFIG.issuer,
                             value: String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals)),
                         },
                     };
 
                     if (memoData) {
-                        paymentPayload.Memos = [
-                            {
-                                Memo: {
-                                    MemoData: memoData,
-                                },
-                            },
-                        ];
+                        paymentPayload.Memos = [{ Memo: { MemoData: memoData } }];
                     }
 
                     console.log("Payment Payload:", paymentPayload);
@@ -452,7 +491,7 @@ export const useXrplPayment = () => {
         connectWallet,
         payCoin,
         quoteAmount,
-        findRoute,
+        findRoute: () => null,
         isApproved: async () => true,
         approve: async () => { },
     };

@@ -9,12 +9,12 @@ export const useFetchLinkDetails = (checkout_id: any) => {
 
   useEffect(() => {
     const fetchLinkDetails = async () => {
-      console.log("checkout_id", checkout_id);
+      // console.log("checkout_id", checkout_id);
       try {
         const response = await axios.get(TrxDetails, {
           params: { checkout_id },
         });
-        console.log(response, TrxDetails);
+        // console.log(response, TrxDetails);
         setData(response.data);
       } catch (err: any) {
         setError(err);

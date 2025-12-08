@@ -9656,7 +9656,7 @@ xrpl@2.14.1:
     ws "^8.2.2"
     xrpl-secret-numbers "^0.3.3"
 
-xrpl@^4.4.0:
+xrpl@^4.4.0, xrpl@^4.4.3:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/xrpl/-/xrpl-4.4.3.tgz#b5211d9ce58d70caac1ccbb68f3c13e63f9b2a5c"
   integrity sha512-vi2OjuNkiaP8nv1j+nqHp8GZwwEjO6Y8+j/OuVMg6M4LwXEwyHdIj33dlg7cyY1Lw5+jb9HqFOQvABhaywVbTQ==

@@ -335,13 +335,13 @@ export const Tokens = [
         image: "/assets/svg/stables/rlusd.svg",
         status: "available",
       },
-      {
-        name: "NGN",
-        mintAddress: "rHVWgnmdZhLAEpQcVNMaGxk8JdRuwuaha8",
-        decimals: 6,
-        image: "/assets/svg/stables/ngnc.svg",
-        status: "available",
-      },
+      // {
+      //   name: "NGN",
+      //   mintAddress: "rHVWgnmdZhLAEpQcVNMaGxk8JdRuwuaha8",
+      //   decimals: 6,
+      //   image: "/assets/svg/stables/ngnc.svg",
+      //   status: "available",
+      // },
       {
         name: "USDC",
         mintAddress: "rGm7WCVp9gb4jZHWTEtGUr4dd74z2XuWhE",
@@ -349,13 +349,13 @@ export const Tokens = [
         image: "/assets/svg/stables/usdc.svg",
         status: "available",
       },
-      {
-        name: "XSGD",
-        mintAddress: "rK67JczCpaYXVtfw3qJVmqwpSfa1bYTptw",
-        decimals: 6,
-        image: "/assets/svg/stables/xsgd.svg",
-        status: "available",
-      },
+      // {
+      //   name: "XSGD",
+      //   mintAddress: "rK67JczCpaYXVtfw3qJVmqwpSfa1bYTptw",
+      //   decimals: 6,
+      //   image: "/assets/svg/stables/xsgd.svg",
+      //   status: "available",
+      // },
       {
         name: "EUROP",
         mintAddress: "rMkEuRii9w9uBMQDnWV5AA43gvYZR9JxVK",
@@ -363,13 +363,13 @@ export const Tokens = [
         image: "/assets/svg/stables/europ.svg",
         status: "available",
       },
-      {
-        name: "AUDD",
-        mintAddress: "rUN5Zxt3K1AnMRJgEWywDJT8QDMMeLH5ok",
-        decimals: 6,
-        image: "/assets/svg/stables/audd.svg",
-        status: "available",
-      },
+      // {
+      //   name: "AUDD",
+      //   mintAddress: "rUN5Zxt3K1AnMRJgEWywDJT8QDMMeLH5ok",
+      //   decimals: 6,
+      //   image: "/assets/svg/stables/audd.svg",
+      //   status: "available",
+      // },
     ],
   },
 ];
