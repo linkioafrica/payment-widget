@@ -246,7 +246,11 @@ export const useXrplPayment = () => {
                 const bestOffer = response.result.offers[0];
                 const takerPays = bestOffer.TakerPays;
                 const takerGets = bestOffer.TakerGets;
-
+                if (typeof takerGets === 'string') {
+                    // This scenario means the order book is for XRP/IOU, which shouldn't happen 
+                    // since TakerGets is RLUSD (an IOU). Throw an error if this occurs.
+                    throw new Error("TakerGets unexpectedly returned XRP drops instead of Issued Currency (RLUSD).");
+                }
                 const RLUSDValue = Number(takerGets.value);
 
                 if (typeof takerPays === 'string') {
