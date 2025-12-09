@@ -34,6 +34,14 @@ const RLUSD_CONFIG = {
     hexCurrency: "524C555344000000000000000000000000000000",
 };
 
+// 🛑 FALLBACK RATES: Used when no active offers are found on the order book.
+const FALLBACK_RATES: { [currency: string]: number } = {
+    // Conservative rates: RLUSD / SourceToken
+    "EUROP": 0.75,
+    "USDC": 1.0,
+    "XSGD": 0.75,
+};
+
 interface TokenDetails {
     name: string;
     mintAddress: string;
@@ -229,12 +237,14 @@ export const useXrplPayment = () => {
         try {
             const request: any = {
                 command: "book_offers",
+                // TakerPays: The Source Token (e.g., EUROP)
                 taker_pays: {
                     currency: currencyCodeForAPI,
                     issuer: sourceIssuer,
                 },
+                // TakerGets: The Destination Token (RLUSD)
                 taker_gets: {
-                    currency: RLUSD_CONFIG.hexCurrency, // ✅ FIX: Use hex code for RLUSD in API call
+                    currency: RLUSD_CONFIG.hexCurrency,
                     issuer: RLUSD_CONFIG.issuer,
                 },
                 limit: 1,
@@ -246,18 +256,20 @@ export const useXrplPayment = () => {
                 const bestOffer = response.result.offers[0];
                 const takerPays = bestOffer.TakerPays;
                 const takerGets = bestOffer.TakerGets;
+
+                // Type Guard Check for TakerGets (must be Issued Currency object)
                 if (typeof takerGets === 'string') {
-                    // This scenario means the order book is for XRP/IOU, which shouldn't happen 
-                    // since TakerGets is RLUSD (an IOU). Throw an error if this occurs.
                     throw new Error("TakerGets unexpectedly returned XRP drops instead of Issued Currency (RLUSD).");
                 }
-                const RLUSDValue = Number(takerGets.value);
+                const RLUSDValue = Number(takerGets.value); // RLUSD amount received
 
+                // Type Guard Check for TakerPays (must be Issued Currency object)
                 if (typeof takerPays === 'string') {
                     throw new Error(`Unexpected XRP as TakerPays for token ${sourceCurrency}.`);
                 }
-                const sourceValue = Number(takerPays.value);
+                const sourceValue = Number(takerPays.value); // Source token amount paid
 
+                // Rate = RLUSD / Source Token
                 const rate = RLUSDValue / sourceValue;
 
                 if (isNaN(rate) || rate <= 0) {
@@ -268,13 +280,20 @@ export const useXrplPayment = () => {
                 return rate;
 
             } else {
-                console.warn(`No active offers found for ${sourceCurrency} -> RLUSD. Using fallback rate (0).`);
+                // Use conservative fallback rates if order book is empty
+                const fallbackRate = FALLBACK_RATES[sourceCurrency.toUpperCase()] || 0;
+
+                if (fallbackRate > 0) {
+                    console.warn(`No active offers found for ${sourceCurrency} -> RLUSD. Using conservative fallback rate: ${fallbackRate}.`);
+                    return fallbackRate;
+                }
+
+                console.warn(`No active offers found and no fallback rate defined for ${sourceCurrency}. Returning 0.`);
                 return 0;
             }
 
         } catch (error) {
             console.error(`Error fetching price for ${sourceCurrency}:`, error);
-            // This is where the dstIsrMalformed error occurs if the RLUSD issuer is not funded.
             throw new Error("Failed to fetch real-time exchange rate.");
         } finally {
             await client.disconnect();
@@ -315,7 +334,7 @@ export const useXrplPayment = () => {
     };
 
     // ============================================================================
-    // 6. ✅ Pay Coin (Uses Real-Time Quote)
+    // 6. ✅ Pay Coin (Uses Single Cross-Currency Payment)
     // ============================================================================
     const payCoin = async () => {
         const targetRlusdAmount = data?.transactions?.amount;
@@ -333,38 +352,43 @@ export const useXrplPayment = () => {
         try {
             const tokenName = token.name;
             const rlusdAmount = targetRlusdAmount;
-            let amountToPay: number;
+            let amountToPay: number; // The maximum amount of source token the user will pay
 
-            // Step 1: Determine the amount of source token to pay using the real-time rate
+            // Step 1: Determine the maximum source token amount to pay based on current rate
             if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
                 amountToPay = rlusdAmount;
                 console.log("Direct RLUSD payment (no swap needed)");
             } else {
                 const tokenIssuer = token.mintAddress;
+                // Fetch the rate again for the transaction (best practice)
                 const exchangeRate = await fetchExchangeRate(tokenName, tokenIssuer);
 
                 if (exchangeRate <= 0) {
                     throw new Error(`Invalid or zero exchange rate for ${tokenName}. Cannot proceed with swap.`);
                 }
 
+                // Calculate required Source Token amount: SourceToken_Needed = RLUSD_Target / Rate
+                // This will be used as SendMax
                 amountToPay = rlusdAmount / exchangeRate;
 
-                console.log(`Swap Info: Target ${rlusdAmount} RLUSD requires ${amountToPay} ${tokenName}`);
+                console.log(`Swap Info: Target ${rlusdAmount} RLUSD requires max ${amountToPay} ${tokenName}`);
             }
 
             let transactionResult = null;
             setIsConfirming(true);
             const memoData = trx ? String(trx) : undefined;
 
-            // Step 2 & 3: Execute Payment/Swap
+            // Step 2: Execute Payment
             if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
-                // Direct payment - no swap needed
+                // ====================================================================
+                // A. DIRECT RLUSD PAYMENT
+                // ====================================================================
                 const paymentValue = String(amountToPay.toFixed(RLUSD_CONFIG.decimals));
 
                 if (currentWalletId === GEMWALLET_ID) {
                     const payload: any = {
                         amount: {
-                            currency: RLUSD_CONFIG.currency, // GemWallet may prefer the string code
+                            currency: RLUSD_CONFIG.currency,
                             issuer: RLUSD_CONFIG.issuer,
                             value: paymentValue,
                         },
@@ -387,7 +411,7 @@ export const useXrplPayment = () => {
                         Account: userAddress,
                         Destination: merchantAddress,
                         Amount: {
-                            currency: RLUSD_CONFIG.hexCurrency, // Use hex code for CrossMark payment
+                            currency: RLUSD_CONFIG.hexCurrency,
                             issuer: RLUSD_CONFIG.issuer,
                             value: paymentValue,
                         },
@@ -402,69 +426,45 @@ export const useXrplPayment = () => {
                     transactionResult = response.response?.data?.resp?.result?.hash;
                 }
             } else {
-                // Swap needed - Create OfferCreate then send RLUSD
-                const sourceCurrencyCode = getCurrencyCodeForAPI(tokenName);
-
-                console.log("Swap needed - Creating OfferCreate...");
-
-                const offerPayload: any = {
-                    TransactionType: "OfferCreate",
-                    Account: userAddress,
-                    TakerPays: {
-                        currency: sourceCurrencyCode,
-                        issuer: token.mintAddress,
-                        value: String(amountToPay.toFixed(token.decimals || 6)),
-                    },
-                    TakerGets: {
-                        currency: RLUSD_CONFIG.hexCurrency, // ✅ FIX: Use hex code for TakerGets (RLUSD)
-                        issuer: RLUSD_CONFIG.issuer,
-                        value: String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals)),
-                    },
-                    Flags: 0x00080000,
-                };
-
-                if (memoData) {
-                    offerPayload.Memos = [{ Memo: { MemoData: memoData } }];
-                }
-
+                // ====================================================================
+                // B. CROSS-CURRENCY PAYMENT (SWAP)
+                // ====================================================================
                 if (currentWalletId === GEMWALLET_ID) {
-                    alert("Please use CrossMark wallet for token swaps");
+                    alert("GemWallet does not reliably support complex cross-currency payments (swaps). Please use CrossMark.");
                     return null;
                 } else if (currentWalletId === CROSSMARK_ID) {
-                    console.log("Executing OfferCreate with CrossMark...");
-                    const response = await crossmarkSdk.async.signAndSubmitAndWait(offerPayload);
-                    transactionResult = response.response?.data?.resp?.result?.hash;
+                    if (!userAddress) throw new Error("Wallet address is missing for CrossMark transaction.");
 
-                    if (!transactionResult) {
-                        throw new Error("OfferCreate transaction failed");
-                    }
+                    // 1. Define the Source Token (SendMax) - What user pays
+                    const sendMaxAmount = {
+                        currency: getCurrencyCodeForAPI(tokenName),
+                        issuer: token.mintAddress,
+                        value: String(amountToPay.toFixed(token.decimals || 6)),
+                    };
 
-                    console.log("Swap successful:", transactionResult);
+                    // 2. Define the Destination Token (Amount) - What merchant receives
+                    const destinationAmount = {
+                        currency: RLUSD_CONFIG.hexCurrency,
+                        issuer: RLUSD_CONFIG.issuer,
+                        value: String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals)),
+                    };
 
-                    // Step 3: Send RLUSD to merchant (Payment)
-                    console.log("Sending RLUSD to merchant...");
-                    const paymentPayload: any = {
-                        TransactionType: "Payment",
+                    const txPayload: any = {
+                        TransactionType: 'Payment' as const,
                         Account: userAddress,
                         Destination: merchantAddress,
-                        Amount: {
-                            currency: RLUSD_CONFIG.hexCurrency, // ✅ FIX: Use hex code for Payment
-                            issuer: RLUSD_CONFIG.issuer,
-                            value: String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals)),
-                        },
+                        Amount: destinationAmount, // Target RLUSD amount (What the merchant gets)
+                        SendMax: sendMaxAmount,   // Max source token paid (What the user pays)
                     };
 
                     if (memoData) {
-                        paymentPayload.Memos = [{ Memo: { MemoData: memoData } }];
+                        txPayload.Memos = [{ Memo: { MemoData: memoData } }];
                     }
 
-                    console.log("Payment Payload:", paymentPayload);
-                    const paymentResponse = await crossmarkSdk.async.signAndSubmitAndWait(paymentPayload);
-                    transactionResult = paymentResponse.response?.data?.resp?.result?.hash;
+                    console.log("CrossMark SWAP Payment Payload (Single Transaction):", txPayload);
 
-                    if (!transactionResult) {
-                        throw new Error("Payment transaction failed");
-                    }
+                    const response = await crossmarkSdk.async.signAndSubmitAndWait(txPayload);
+                    transactionResult = response.response?.data?.resp?.result?.hash;
                 }
             }
 
