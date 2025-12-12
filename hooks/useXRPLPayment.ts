@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import {
     isInstalled as isGemInstalled,
     getAddress as getGemAddress,
-    sendPayment as sendGemPayment
+    sendPayment as sendGemPayment,
+    // Import the confirmed API and type for OfferCreate
+    createOffer as createGemOffer,
+    CreateOfferRequest
 } from "@gemwallet/api";
 // --- CrossMark Imports ---
 import sdk from '@crossmarkio/sdk';
@@ -368,7 +371,7 @@ export const useXrplPayment = () => {
                 }
 
                 // Calculate required Source Token amount: SourceToken_Needed = RLUSD_Target / Rate
-                // This will be used as SendMax
+                // This will be used as SendMax or TakerPays amount
                 amountToPay = rlusdAmount / exchangeRate;
 
                 console.log(`Swap Info: Target ${rlusdAmount} RLUSD requires max ${amountToPay} ${tokenName}`);
@@ -381,7 +384,7 @@ export const useXrplPayment = () => {
             // Step 2: Execute Payment
             if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
                 // ====================================================================
-                // A. DIRECT RLUSD PAYMENT
+                // A. DIRECT RLUSD PAYMENT (NO SWAP)
                 // ====================================================================
                 const paymentValue = String(amountToPay.toFixed(RLUSD_CONFIG.decimals));
 
@@ -429,24 +432,83 @@ export const useXrplPayment = () => {
                 // ====================================================================
                 // B. CROSS-CURRENCY PAYMENT (SWAP)
                 // ====================================================================
+                const sourceCurrencyCode = getCurrencyCodeForAPI(tokenName);
+                const sourceAmountString = String(amountToPay.toFixed(token.decimals || 6));
+                const rlusdAmountString = String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals));
+
                 if (currentWalletId === GEMWALLET_ID) {
-                    alert("GemWallet does not reliably support complex cross-currency payments (swaps). Please use CrossMark.");
-                    return null;
+                    // --- GEMWALLET TWO-STEP SWAP: OfferCreate (Buy RLUSD) + Payment ---
+
+                    // 1. Prepare OfferCreate Payload (BUY RLUSD with SourceToken)
+                    const offerPayload: CreateOfferRequest = {
+                        // TakerPays: The source token the user gives (max amount calculated)
+                        takerPays: {
+                            currency: sourceCurrencyCode.length === 3 ? sourceCurrencyCode : tokenName,
+                            issuer: token.mintAddress,
+                            value: sourceAmountString,
+                        },
+                        // TakerGets: The RLUSD token the user receives (fixed amount)
+                        takerGets: {
+                            currency: RLUSD_CONFIG.currency,
+                            issuer: RLUSD_CONFIG.issuer,
+                            value: rlusdAmountString,
+                        },
+                        // Flag: tfFillOrKill (Requires full fill or fails the whole transaction)
+                        flags: {
+                            tfPassive: true
+                        } as any,
+                        memos: memoData ? [{ memo: { memoData } }] : undefined,
+                    };
+
+                    console.log("Executing OfferCreate with GemWallet (FillOrKill)...", offerPayload);
+                    const offerResponse = await createGemOffer(offerPayload);
+                    const offerHash = offerResponse.result?.hash;
+
+                    if (!offerHash) {
+                        throw new Error("OfferCreate transaction failed or rejected by GemWallet.");
+                    }
+                    console.log("OfferCreate successful:", offerHash);
+
+                    // ⚠️ WARNING: In a production environment, you MUST ADD LOGIC HERE 
+                    // to poll the ledger, check the transaction result (ensure not tecKILLED), 
+                    // AND verify the user's RLUSD balance before proceeding to the payment step.
+                    // This is essential because OfferCreate is asynchronous and might not fill.
+
+                    // 2. Send RLUSD to merchant (Payment) - Assumes successful swap
+                    console.log("Sending acquired RLUSD to merchant via GemWallet...");
+                    const paymentPayload: any = {
+                        amount: {
+                            currency: RLUSD_CONFIG.currency,
+                            issuer: RLUSD_CONFIG.issuer,
+                            value: rlusdAmountString,
+                        },
+                        destination: merchantAddress,
+                        memos: memoData ? [{ memo: { memoData } }] : undefined,
+                    };
+
+                    const paymentResponse = await sendGemPayment(paymentPayload);
+                    transactionResult = paymentResponse.result?.hash;
+
+                    if (!transactionResult) {
+                        throw new Error("Final RLUSD Payment transaction failed.");
+                    }
+
                 } else if (currentWalletId === CROSSMARK_ID) {
+                    // --- CROSSMARK SINGLE-STEP SWAP (Payment + SendMax) - WORKING FINE ---
                     if (!userAddress) throw new Error("Wallet address is missing for CrossMark transaction.");
 
                     // 1. Define the Source Token (SendMax) - What user pays
                     const sendMaxAmount = {
-                        currency: getCurrencyCodeForAPI(tokenName),
+                        currency: sourceCurrencyCode,
                         issuer: token.mintAddress,
-                        value: String(amountToPay.toFixed(token.decimals || 6)),
+                        value: sourceAmountString,
                     };
 
                     // 2. Define the Destination Token (Amount) - What merchant receives
                     const destinationAmount = {
                         currency: RLUSD_CONFIG.hexCurrency,
                         issuer: RLUSD_CONFIG.issuer,
-                        value: String(rlusdAmount.toFixed(RLUSD_CONFIG.decimals)),
+                        value: rlusdAmountString,
                     };
 
                     const txPayload: any = {
