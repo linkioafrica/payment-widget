@@ -440,27 +440,28 @@ export const useXrplPayment = () => {
                     // --- GEMWALLET TWO-STEP SWAP: OfferCreate (Buy RLUSD) + Payment ---
 
                     // 1. Prepare OfferCreate Payload (BUY RLUSD with SourceToken)
+                    // 🛑 FIX: Swapped TakerGets (Source Token) and TakerPays (RLUSD)
                     const offerPayload: CreateOfferRequest = {
-                        // TakerPays: The source token the user gives (max amount calculated)
-                        takerPays: {
+                        // TakerGets: The token the user GIVES AWAY (Source Token, e.g., EUROP)
+                        takerGets: {
                             currency: sourceCurrencyCode.length === 3 ? sourceCurrencyCode : tokenName,
                             issuer: token.mintAddress,
                             value: sourceAmountString,
                         },
-                        // TakerGets: The RLUSD token the user receives (fixed amount)
-                        takerGets: {
+                        // TakerPays: The token the user WANTS TO RECEIVE (RLUSD)
+                        takerPays: {
                             currency: RLUSD_CONFIG.currency,
                             issuer: RLUSD_CONFIG.issuer,
                             value: rlusdAmountString,
                         },
                         // Flag: tfFillOrKill (Requires full fill or fails the whole transaction)
                         flags: {
-                            tfPassive: true
+                            tfFillOrKill: true
                         } as any,
                         memos: memoData ? [{ memo: { memoData } }] : undefined,
                     };
 
-                    console.log("Executing OfferCreate with GemWallet (FillOrKill)...", offerPayload);
+                    console.log("Executing OfferCreate with GemWallet (FillOrKill) to BUY RLUSD...", offerPayload);
                     const offerResponse = await createGemOffer(offerPayload);
                     const offerHash = offerResponse.result?.hash;
 
@@ -472,7 +473,6 @@ export const useXrplPayment = () => {
                     // ⚠️ WARNING: In a production environment, you MUST ADD LOGIC HERE 
                     // to poll the ledger, check the transaction result (ensure not tecKILLED), 
                     // AND verify the user's RLUSD balance before proceeding to the payment step.
-                    // This is essential because OfferCreate is asynchronous and might not fill.
 
                     // 2. Send RLUSD to merchant (Payment) - Assumes successful swap
                     console.log("Sending acquired RLUSD to merchant via GemWallet...");
