@@ -52,6 +52,9 @@ interface TokenDetails {
     hexCurrency?: string; // Required for non-standard 3-char codes
 }
 
+function toHex(str: string): string {
+    return Buffer.from(str, "utf8").toString("hex").toUpperCase();
+}
 
 export const useXrplPayment = () => {
     // Local State
@@ -380,7 +383,7 @@ export const useXrplPayment = () => {
             let transactionResult = null;
             setIsConfirming(true);
             // const memoData = trx ? String(trx) : undefined;
-            const memoData = trx ? `LINKIO|v1|${trx}` : undefined;
+            const memoData = trx ? toHex(`LINKIO|v1|${trx}`) : undefined;
 
             // Step 2: Execute Payment
             if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
