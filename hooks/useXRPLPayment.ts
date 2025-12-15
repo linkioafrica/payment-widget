@@ -379,7 +379,8 @@ export const useXrplPayment = () => {
 
             let transactionResult = null;
             setIsConfirming(true);
-            const memoData = trx ? String(trx) : undefined;
+            // const memoData = trx ? String(trx) : undefined;
+            const memoData = trx ? `LINKIO|v1|${trx}` : undefined;
 
             // Step 2: Execute Payment
             if (tokenName.toUpperCase() === RLUSD_CONFIG.currency) {
